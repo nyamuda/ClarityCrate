@@ -1,0 +1,37 @@
+@using Clarity_Crate.Services
+@using Clarity_Crate.Models
+@inject OpenAIService OpenAIService
+@page "/terms/chat"
+
+
+
+<h3>Chat with GPT-3.5 Turbo</h3>
+<div>
+    @foreach (var message in messages)
+    {
+        <p>@message.role : @message.content</p>
+    }
+</div>
+
+<div>
+    <textarea @bind="userInput" rows="5" cols="50"></textarea>
+</div>
+<div>
+    <button @onclick="SendMessage">Send</button>
+</div>
+
+
+@code {
+    private string userInput = string.Empty;
+    private List<(string role, string content)> messages = new List<(string role, string content)>();
+
+    private async Task SendMessage()
+    {
+        messages.Add(("user", userInput));
+        var response = await OpenAIService.GetAssistantResponse(userInput);
+        messages.Add(response);
+
+        StateHasChanged();
+    }
+}
+

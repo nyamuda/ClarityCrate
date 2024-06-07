@@ -1,0 +1,99 @@
+﻿@using Clarity_Crate.Services
+@using Clarity_Crate.Models
+@inject CurriculumService CurriculumService
+@inject NavigationManager NavigationManager
+
+
+
+
+<!--list of curriculums-->
+<div class="mt-5 curriculum-list m-auto">
+     @if (CurriculumService.isGettingItems)
+    {
+        <MudProgressLinear Size="Size.Large" Color="Color.Primary" Indeterminate="true" Class="my-7 mt-12" />
+
+    }
+    else
+    {
+        @if (curriculums.Count == 0)
+        {
+            <div class="alert alert-info mt-4" role="alert">
+                <p class="mb-1">No levels found.</p>
+            </div>
+        }
+        else
+        {
+            <ul class="list-group list-group-flush">
+                @foreach (var curriculum in curriculums)
+                {
+                    <!-- display the name of each curriculum and the delete and edit actions -->
+                    <li class="list-group-item d-flex align-items-center ">
+                        <span class="me-4">@curriculum.Name</span>
+                        <!-- pass the id of the curriculum to the edit method -->
+                        <MudLink Class="mx-2" OnClick="() => Edit(curriculum.Id)" Underline="Underline.None" Typo="Typo.body2">Edit</MudLink>
+                        <!-- pass the id of the curriculum to the delete method -->
+                        <MudLink OnClick="() => Delete(curriculum.Id)" Underline="Underline.None" Typo="Typo.body2">Delete</MudLink>
+                    </li>
+                }
+            </ul>
+        }
+    }
+   
+</div>
+
+
+<!--update curriculum dialog-->
+@code {
+
+    private List<Curriculum> curriculums = new List<Curriculum>();
+
+    [Inject] private IDialogService DialogService { get; set; }
+
+
+
+
+
+
+
+    //get all the curriculums when the component is initialized
+    //using the CurriculumService
+    protected override async Task OnInitializedAsync()
+    {
+        await CurriculumService.GetCurricula();
+
+        curriculums = CurriculumService.Curriculums;
+    }
+
+
+    //delete method
+    private async Task Delete(int id)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+          "Delete curriculum?",
+          "Are you certain you wish to delete this curriculum?",
+          yesText: "Delete", cancelText: "Cancel");
+
+        var state = result == null ? "Cancel" : "Delete";
+        Console.WriteLine(state);
+        //if result is not null, then its confirmed
+        if (state.Equals("Delete"))
+        {
+            await CurriculumService.DeleteCurriculum(id);
+            await CurriculumService.GetCurricula();
+            curriculums = CurriculumService.Curriculums;
+
+            StateHasChanged();
+        }
+
+
+    }
+    //edit method
+    private void Edit(int id)
+    {
+
+        //redirect to the edit page
+        NavigationManager.NavigateTo($"/curriculums/edit/{id}");
+    }
+
+
+}

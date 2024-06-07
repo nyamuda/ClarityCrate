@@ -1,0 +1,69 @@
+﻿@inject CurriculumService CurriculumService
+@using Clarity_Crate.Services
+@inject NavigationManager NavigationManager
+@using Clarity_Crate.Models
+@page "/curriculums/edit/{CurriculumId:int}"
+
+
+<div class="container text-start m-auto mt-16">
+    <h2>Update curriculum</h2>
+    <EditForm Model="@Curriculum" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+
+
+        <div class="mb-3">
+
+            <MudTextField @bind-Value="Curriculum.Name"
+                          For="@(() => Curriculum.Name)"
+                          Immediate="true"
+                          Label="Name" />
+
+
+        </div>
+
+        <MudButton Disabled="@CurriculumService.isProcessing" Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" ButtonType="ButtonType.Submit">
+            @if (CurriculumService.isProcessing)
+            {
+                <MudProgressCircular Class="ms-n1 text-light" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Please wait...</MudText>
+            }
+            else
+            {
+                <MudText>Update</MudText>
+            }
+        </MudButton>
+    </EditForm>
+</div>
+
+
+
+@code {
+
+    private Curriculum? Curriculum { get; set; } = new Curriculum();
+    [Parameter]
+    public int CurriculumId { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //get the curriculum to be edited
+        Curriculum=await CurriculumService.GetCurriculum(CurriculumId);
+
+    }
+
+
+    private async Task HandleValidSubmit()
+    {
+        //add the new curriculum to the database
+        if(Curriculum!=null)
+        {
+            await CurriculumService.UpdateCurriculum(CurriculumId,Curriculum);
+        }
+        //redirect to the curriculums page
+        NavigationManager.NavigateTo("/curriculums");
+
+       
+
+
+    }
+}

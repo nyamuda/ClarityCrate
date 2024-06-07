@@ -1,0 +1,101 @@
+﻿@using Clarity_Crate.Services
+@using Clarity_Crate.Models
+@inject LevelService LevelService
+@inject NavigationManager NavigationManager
+
+
+
+<!--list of Levels-->
+<div class="mt-5 items-list m-auto">
+
+    @if (LevelService.isGettingItems)
+    {
+        <MudProgressLinear Size="Size.Large" Color="Color.Primary" Indeterminate="true" Class="my-7 mt-12" />
+
+    }
+    else
+    {
+        @if (Levels.Count == 0)
+        {
+            <div class="alert alert-info mt-4" role="alert">
+                <p class="mb-1">No levels found.</p>
+            </div>
+        }
+        else
+        {
+            <ul class="list-group list-group-flush">
+                @foreach (var level in Levels)
+                {
+                    <!-- display the name of each Level and the delete and edit actions -->
+                    <li class="list-group-item d-flex align-items-center ">
+                        <span class="me-4">@level.Name</span>
+                        <!-- pass the id of the Level to the edit method -->
+                        <MudLink Class="mx-2" OnClick="() => Edit(level.Id)" Underline="Underline.None" Typo="Typo.body2">Edit</MudLink>
+                        <!-- pass the id of the Level to the delete method -->
+                        <MudLink OnClick="() => Delete(level.Id)" Underline="Underline.None" Typo="Typo.body2">Delete</MudLink>
+                    </li>
+                }
+            </ul>
+        }
+
+    }
+
+   
+</div>
+
+
+<!--update Level dialog-->
+@code {
+
+    private List<Level> Levels = new List<Level>();
+
+    [Inject] private IDialogService DialogService { get; set; }
+
+
+
+
+
+
+
+    //get all the Levels when the component is initialized
+    //using the LevelService
+    protected override async Task OnInitializedAsync()
+    {
+        await LevelService.GetLevels();
+
+        Levels = LevelService.Levels;
+    }
+
+
+    //delete method
+    private async Task Delete(int id)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+          "Delete Level?",
+          "Are you certain you wish to delete this level?",
+          yesText: "Delete", cancelText: "Cancel");
+
+        var state = result == null ? "Cancel" : "Delete";
+        Console.WriteLine(state);
+        //if result is not null, then its confirmed
+        if (state.Equals("Delete"))
+        {
+            await LevelService.DeleteLevel(id);
+            await LevelService.GetLevels();
+            Levels = LevelService.Levels;
+
+            StateHasChanged();
+        }
+
+
+    }
+    //edit method
+    private void Edit(int id)
+    {
+
+        //redirect to the edit page
+        NavigationManager.NavigateTo($"/levels/edit/{id}");
+    }
+
+
+}

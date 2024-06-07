@@ -1,0 +1,204 @@
+﻿@using Clarity_Crate.Services
+@using Clarity_Crate.Models
+@inject SubjectService SubjectService
+@inject CurriculumService CurriculumService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+
+
+<div class="m-auto mt-5">
+    @if (SubjectService.isGettingItems)
+    {
+        <MudProgressLinear Size="Size.Large" Color="Color.Primary" Indeterminate="true" Class="my-7 mt-12" />
+
+    }
+    else
+    {
+        @if (Subjects.Count == 0)
+        {
+            <div class="alert alert-info mt-4" role="alert">
+                <p class="mb-1">No subjects found.</p>
+            </div>
+        }
+        else
+        {
+            <!--MudBlazor table that show a list of items -->
+          
+            <MudTable Items="Subjects" Hover="true" Filter="new Func<Subject,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1" CanCancelEdit="true"
+                      OnCommitEditClick="@(() =>OnRowEditSave())" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues"
+                      RowEditCommit="ItemHasBeenCommitted" IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition" EditButtonPosition="@editButtonPosition" EditTrigger="@editTrigger">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Subjects and their curriculums</MudText>
+                    <MudSpacer />
+                    <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                </ToolBarContent>
+
+                <HeaderContent>
+                    <MudTh><MudTableSortLabel SortBy="new Func<Subject, object>(x=>x.Name)">Subject</MudTableSortLabel></MudTh>
+                    <MudTh>Curriculum</MudTh>
+                   
+                    <MudTh>Delete</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Subject">@context.Name</MudTd>
+                    <MudTd DataLabel="Curriculum">
+                        @foreach (var curriculum in context.Curriculums)
+                        {
+                            <MudChip Variant="Variant.Filled" Color="Color.Primary" Class="m-1">@curriculum.Name</MudChip>
+                        }
+                    </MudTd>
+                    
+                    <MudTd DataLabel="Delete">
+                        <MudButton Class="ms-2" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => Delete(context.Id))">Delete</MudButton>
+                    </MudTd>
+                </RowTemplate>
+                <RowEditingTemplate>
+                    <MudTd DataLabel="Subject"><MudTextField @bind-Value="@context.Name" Required /></MudTd>
+                    <MudTd DataLabel="Curriculum">
+                        <!-- The attribute bind-SelectedValues requires an IEnumerable value-->
+                        <MudSelect Required T="Curriculum" Label="Curriculum" ToStringFunc="@curriculumConverter" MultiSelection="true" @bind-SelectedValues="@context.Curriculums">
+                            @foreach (var curriculum in Curriculums)
+                            {
+                                <MudSelectItem T="Curriculum" Value="@curriculum">@curriculum.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudTd>
+                   
+
+                </RowEditingTemplate>
+
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+
+            </MudTable>
+
+        }
+    }
+
+
+</div>
+
+
+
+
+
+
+
+
+<!--update curriculum dialog-->
+@code {
+    private List<Subject> Subjects = new List<Subject>();
+    private List<Curriculum> Curriculums = new List<Curriculum>();
+
+    [Inject] private IDialogService DialogService { get; set; }
+
+
+    //Table variables
+    private bool blockSwitch = false;
+    private Subject selectedItem1 = null;
+    private string searchString1 = "";
+    private Subject elementBeforeEdit;
+    private TableApplyButtonPosition applyButtonPosition = TableApplyButtonPosition.End;
+    private TableEditButtonPosition editButtonPosition = TableEditButtonPosition.End;
+    private TableEditTrigger editTrigger = TableEditTrigger.RowClick;
+
+    
+
+
+
+
+
+
+    //get all the subjects component is initialized
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SubjectService.GetSubjects();
+        await CurriculumService.GetCurricula();
+        Subjects= SubjectService.Subjects;
+        Curriculums= CurriculumService.Curriculums;
+
+
+    }
+
+
+    //delete method
+    private async Task Delete(int id)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+          "Delete?",
+          "Are you certain you wish to delete this subject?",
+          yesText: "Delete", cancelText: "Cancel");
+
+        var state = result == null ? "Cancel" : "Delete";
+        Console.WriteLine(state);
+        //if result is not null, then its confirmed
+        if (state.Equals("Delete"))
+        {
+            await SubjectService.DeleteSubject(id);
+            await SubjectService.GetSubjects();
+            Subjects= SubjectService.Subjects;
+
+            StateHasChanged();
+        }
+
+
+    }
+    
+    
+
+  
+    //Table functions
+
+    private bool FilterFunc(Subject element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    }
+
+    private bool FilterFunc1(Subject element) => FilterFunc(element, searchString1);
+    private void ResetItemToOriginalValues(object element)
+    {
+        ((Subject)element).Name = elementBeforeEdit.Name;
+        ((Subject)element).Curriculums = elementBeforeEdit.Curriculums;
+        
+    }
+
+    private void BackupItem(object element)
+    {
+        elementBeforeEdit = new()
+            {
+
+                Name = ((Subject)element).Name,
+                
+                Curriculums = ((Subject)element).Curriculums
+
+            };
+    }
+
+    private void ItemHasBeenCommitted(object element)
+    {
+
+    }
+
+    private async Task OnRowEditSave()
+    {
+        await SubjectService.UpdateSubject(selectedItem1);
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomCenter;
+        Snackbar.Add("Subject updated successfully!", Severity.Success);
+    }
+
+
+    Func<Curriculum, string> curriculumConverter = l => l?.Name;
+
+
+   
+
+
+}

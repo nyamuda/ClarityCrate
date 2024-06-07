@@ -1,0 +1,73 @@
+﻿@implements IDisposable
+
+@inject NavigationManager NavigationManager
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            <div class="d-flex justify-content-evenly">
+
+                <MudMenu FullWidth="true" AnchorOrigin="Origin.BottomLeft">
+                    <ActivatorContent>
+                        <MudChip Class="login-btn" Icon="@Icons.Material.Filled.Person" Color="Color.Dark">Account</MudChip>
+                    </ActivatorContent>
+                    <ChildContent>
+
+                        <!--<MudMenuItem Href="Identity/Account/Manage">Profile</MudMenuItem>-->
+
+                        <MudMenuItem>
+                            <MudLink Underline="Underline.None" Color="Color.Dark" Href="Account/Manage">Manage</MudLink>
+                        </MudMenuItem>
+                        <MudMenuItem>
+                            <form method="post" action="Account/Logout">
+                                <AntiforgeryToken />
+                                <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                                <button type="submit" class="">Log out</button>
+                            </form>
+                        </MudMenuItem>
+
+                    </ChildContent>
+                </MudMenu>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <MudButton Class="me-2" Href="Account/Login" Variant="Variant.Outlined">Login</MudButton>
+
+
+            <MudButton Href="Account/Register" Variant="Variant.Filled" Color="Color.Dark">Sign up</MudButton>
+        </NotAuthorized>
+    </AuthorizeView>
+
+
+
+</CascadingAuthenticationState>
+
+
+
+
+
+
+
+
+@code {
+    private string? currentUrl;
+
+    protected override void OnInitialized()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}
+

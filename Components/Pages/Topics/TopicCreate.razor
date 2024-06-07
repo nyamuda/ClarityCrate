@@ -1,0 +1,91 @@
+﻿
+@inject TopicService TopicService
+@inject SubjectService SubjectService
+@using Clarity_Crate.Services
+@using Clarity_Crate.Dtos
+@inject NavigationManager NavigationManager
+@using Clarity_Crate.Models
+@page "/add-topic"
+
+
+<div class="container mt-16 text-start m-auto">
+    <h2>Add a new topic</h2>
+
+    <EditForm Model="@TopicDto" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+
+
+        <div class="mb-3">
+
+            <MudTextField Required @bind-Value="TopicDto.Name"
+                          For="@(() => TopicDto.Name)"
+                          Immediate="true"
+                          Label="Name" />
+
+
+        </div>
+
+      
+
+        <MudSelect Required T="Subject" Label="Subject" ToStringFunc="@converter" MultiSelection="true" @bind-SelectedValues="TopicDto.SelectedTopics">
+            @foreach (var subject in subjects)
+            {
+                <MudSelectItem T="Subject" Value="@subject">@subject.Name</MudSelectItem>
+            }
+        </MudSelect>
+
+
+
+
+
+        <MudButton Class="mt-5" Disabled="@TopicService.isProcessing" Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" ButtonType="ButtonType.Submit">
+            @if (TopicService.isProcessing)
+            {
+                <MudProgressCircular Class="ms-n1 text-light" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Please wait...</MudText>
+            }
+            else
+            {
+                <MudText>Create</MudText>
+            }
+        </MudButton>
+    </EditForm>
+
+
+  
+
+</div>
+@code {
+    private TopicCreateDto TopicDto { get; set; } = new TopicCreateDto();
+
+    private List<Subject> subjects = new List<Subject>();
+   
+
+    private async Task HandleValidSubmit()
+    {
+        //add the new curriculum to the database
+        Topic topic= new Topic()
+        {
+            Name = TopicDto.Name, 
+            Subjects = TopicDto.SelectedTopics.ToList()
+        };
+        await TopicService.CreateTopic(topic);
+
+        //redirect to the curriculums page
+        NavigationManager.NavigateTo("/topics");
+
+    }
+    protected override async Task OnInitializedAsync()
+    {
+       
+
+        //get all the subjects
+        await SubjectService.GetSubjects();
+        subjects= SubjectService.Subjects;
+    }
+
+
+    Func<Subject, string> converter = s => s?.Name;
+
+   
+}

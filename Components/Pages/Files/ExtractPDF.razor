@@ -1,0 +1,99 @@
+﻿@page "/extract"
+<PageTitle>Extract</PageTitle>
+@using iText.Kernel.Pdf;
+@using iText.Kernel.Pdf.Canvas.Parser;
+@using iText.Kernel.Pdf.Canvas.Parser.Listener;
+@using System.Text
+
+
+
+
+<MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+    <ButtonTemplate>
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   for="@context.Id">
+            Upload using FileValueChanged
+        </MudButton>
+    </ButtonTemplate>
+</MudFileUpload>
+@if (files != null)
+{
+    <MudText Typo="@Typo.h6">@files.Count() File@(files.Count() == 1 ? "" : "s"):</MudText>
+    <MudList>
+        @foreach (var file in files)
+        {
+            <MudListItem Icon="@Icons.Material.Filled.AttachFile" @key="@file">
+                @file.Name <code>@file.Size bytes</code>
+            </MudListItem>
+        }
+    </MudList>
+}
+
+@if (!string.IsNullOrEmpty(extractedText))
+{
+    <h3>Extracted Text:</h3>
+    <pre>@extractedText</pre>
+}
+
+@code {
+    IBrowserFile file;
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    private string extractedText;
+
+
+    private async Task UploadFiles(IBrowserFile file)
+    {
+        files.Add(file);
+       await HandleFileUpload(files);
+       
+    }
+
+    private async Task HandleFileUpload(IEnumerable<IBrowserFile> files)
+    {
+        
+       
+        file = files.FirstOrDefault();
+        if (file != null)
+        {
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await file.OpenReadStream().CopyToAsync(memoryStream);
+
+                // Pass the memory stream to iTextSharp for text extraction
+                await ExtractTextFromPdf(memoryStream);
+            }
+        }
+    }
+
+    private async Task ExtractTextFromPdf(MemoryStream memoryStream)
+    {
+        try
+        {
+            memoryStream.Position = 0; // Set the stream position to the beginning
+            PdfReader pdfReader = new PdfReader(memoryStream);
+            PdfDocument pdfDocument = new PdfDocument(pdfReader);
+
+            // Extract text from each page
+            StringBuilder extractedTextBuilder = new StringBuilder();
+            for (int pageNum = 1; pageNum <= pdfDocument.GetNumberOfPages(); pageNum++)
+            {
+                var page = pdfDocument.GetPage(pageNum);
+               //var strategy = new SimpleTextExtractionStrategy();
+               var strategy= new LocationTextExtractionStrategy();
+                extractedTextBuilder.AppendLine(PdfTextExtractor.GetTextFromPage(page, strategy));
+            }
+
+            extractedText = extractedTextBuilder.ToString();
+            pdfDocument.Close();
+        }
+        catch (IOException ex)
+        {
+            // Handle the exception
+            Console.WriteLine($"Error extracting text: {ex.Message}");
+        }
+    }
+}

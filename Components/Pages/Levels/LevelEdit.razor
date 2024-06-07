@@ -1,0 +1,69 @@
+﻿@inject LevelService LevelService
+@using Clarity_Crate.Services
+@inject NavigationManager NavigationManager
+@using Clarity_Crate.Models
+@page "/Levels/edit/{levelId:int}"
+
+
+<div class="container m-auto mt-16 text-start mt-5">
+    <h2>Update level</h2>
+    <EditForm Model="@Level" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+
+
+        <div class="mb-3">
+
+            <MudTextField @bind-Value="Level.Name"
+                          For="@(() => Level.Name)"
+                          Immediate="true"
+                          Label="Name" />
+
+
+        </div>
+
+        <MudButton Disabled="@LevelService.isUpdatingItem" Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" ButtonType="ButtonType.Submit">
+            @if (LevelService.isUpdatingItem)
+            {
+                <MudProgressCircular Class="ms-n1 text-light" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Please wait...</MudText>
+            }
+            else
+            {
+                <MudText>Update</MudText>
+            }
+        </MudButton>
+    </EditForm>
+</div>
+
+
+
+@code {
+
+    private Level? Level { get; set; } = new Level();
+    [Parameter]
+    public int levelId { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //get the Level to be edited
+        Level = await LevelService.GetLevel(levelId);
+
+    }
+
+
+    private async Task HandleValidSubmit()
+    {
+        //add the new Level to the database
+        if (Level != null)
+        {
+            await LevelService.UpdateLevel(levelId, Level);
+        }
+        //redirect to the Levels page
+        NavigationManager.NavigateTo("/levels");
+
+
+
+
+    }
+}

@@ -1,0 +1,34 @@
+﻿@page "/Levels"
+@using Clarity_Crate.Services
+@using Clarity_Crate.Models
+@inject LevelService CurriculumService
+<PageTitle>Levels</PageTitle>
+
+
+<div class="mt-16 text-center">
+    <h1>Levels</h1>
+
+    <div class="d-flex justify-content-end"><MudButton StartIcon="@Icons.Material.Filled.Add" Href="/add-Level" Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary">Add Level</MudButton></div>
+
+    <LevelList />
+</div>
+
+
+
+
+@code {
+
+
+
+
+
+    //get all the Levels when the component is initialized
+    //using the LevelService
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+
+
+}
