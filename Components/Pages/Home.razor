@@ -16,7 +16,7 @@
 
     <!--Search terms-->
     <div>
-        <EditForm Model="@SearchItem" OnValidSubmit="SearchTerm">
+        <EditForm Model="@SearchItem" OnValidSubmit="SearchTerm" FormName="SearchItem">
 
             <MudTextField @bind-Value="Search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
 
