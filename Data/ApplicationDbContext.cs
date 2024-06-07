@@ -1,3 +1,4 @@
+using Clarity_Crate.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -5,9 +6,9 @@ namespace Clarity_Crate.Data
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
-    }
 
-public DbSet<Curriculum> Curriculum { get; set; } = default!;
+
+        public DbSet<Curriculum> Curriculum { get; set; } = default!;
 
         public DbSet<Subject> Subject { get; set; } = default!;
 
@@ -74,4 +75,8 @@ public DbSet<Curriculum> Curriculum { get; set; } = default!;
                 .UsingEntity(j => j.ToTable("TermLevel"));
 
         }
+
+    }
+
+
 }
