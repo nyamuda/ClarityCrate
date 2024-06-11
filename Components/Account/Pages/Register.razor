@@ -30,18 +30,19 @@
                         <div class="row justify-content-center">
                             <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
 
-                                <p class="text-start h1 fw-bold mb-5 mt-4">Sign up</p>
+                                
 
                                 <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
                                     <MudCard>
                                         <MudCardContent>
+                                            <p class="text-start h5 fw-bold mb-4 mt-4">Sign up</p>
                                             <DataAnnotationsValidator />
 
                                             <MudTextField Label="Email" @bind-Value="Input.Email" For="@(() =>Input.Email)" />
                                             <MudTextField Label="Password" @bind-Value="Input.Password" InputType="InputType.Password" For="@(() =>Input.Password)" />
                                             <MudTextField Label="Confirm Password" @bind-Value="Input.ConfirmPassword" InputType="InputType.Password" For="@(() =>Input.ConfirmPassword)" />
-                                            <MudCardActions>
-                                                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
+                                            <MudCardActions Class="mt-4">
+                                                <MudButton FullWidth="true" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="ml-auto text-light" Style="@($"background-color:{Colors.Purple.Darken3};")">Register</MudButton>
                                             </MudCardActions>
                                         </MudCardContent>
                                     </MudCard>
@@ -88,6 +89,8 @@
             identityErrors = result.Errors;
             return;
         }
+
+        
 
         Logger.LogInformation("User created a new account with password.");
 
