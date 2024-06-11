@@ -32,7 +32,7 @@
                                 <MudTextField Label="Email" @bind-Value="Input.Email" For="@(() =>Input.Email)" Variant="Variant.Outlined" />
                             </div>
                             <div class="mb-3">
-                                <MudTextField Label="Password" @bind-Value="Input.Password" InputType="InputType.Password" For="@(() =>Input.Password)" Variant="Variant.Outlined" />
+                                <MudTextField Label="Password" @bind-Value="Input.Password" InputType="@PasswordInput" For="@(() =>Input.Password)" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" />
                             </div>
                             <div class="row mb-3">
                                 <div class="col d-flex justify-content-center">
@@ -63,8 +63,12 @@
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
 
+
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
+    bool isShow;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
 
     protected override async Task OnInitializedAsync()
     {
@@ -118,5 +122,23 @@
 
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
+    }
+
+    
+
+    void ButtonTestclick()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
     }
 }

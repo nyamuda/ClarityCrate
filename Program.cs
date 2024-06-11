@@ -38,7 +38,10 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+//builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+//email
+builder.Services.AddScoped<EmailSender>();
 builder.Services.AddMudServices();
 builder.Services.AddScoped<SubjectService>();
 builder.Services.AddScoped<CurriculumService>();
@@ -48,6 +51,9 @@ builder.Services.AddScoped<LevelService>();
 builder.Services.AddScoped<TemplateService>();
 // Register OpenAIService
 builder.Services.AddHttpClient<OpenAIService>();
+
+
+
 
 var app = builder.Build();
 
