@@ -9,7 +9,7 @@
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
-@rendermode InteractiveServer
+
 
 
 
@@ -21,32 +21,50 @@
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                
-                <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
-                    <MudCard Elevation="0">
-                        <MudCardContent>
-                            <p class="text-start fw-bold h5 mb-4">Log in to your account</p>
-                            <DataAnnotationsValidator />
-                            <div class="mb-3">
-                                <MudTextField Label="Email" @bind-Value="Input.Email" For="@(() =>Input.Email)" Variant="Variant.Outlined" />
-                            </div>
-                            <div class="mb-3">
-                                <MudTextField Label="Password" @bind-Value="Input.Password" InputType="@PasswordInput" For="@(() =>Input.Password)" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" />
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col d-flex justify-content-center">
-                                    <MudCheckBox @bind-Value="Input.RememberMe" Label="Remember me"></MudCheckBox>
-                                </div>
-                                <div class="col d-flex align-items-center">
-                                    <MudLink Href="Account/ForgotPassword">Forgot password?</MudLink>
-                                </div>
-                            </div>
-                            <MudCardActions>
-                                <MudButton Size="Size.Large" FullWidth="true" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="ml-auto text-light" Style="@($"background-color:{Colors.Purple.Darken3};")">Log in</MudButton>
-                            </MudCardActions>
 
-                        </MudCardContent>
-                    </MudCard>
+                <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+
+                    <p class="text-start fw-bold h5 mb-4">Log in to your account</p>
+                    <DataAnnotationsValidator />
+                    @if (errorMessage is not null)
+                    {
+                        <MudAlert Severity="Severity.Error" Variant="Variant.Outlined" Dense="true" Class="mb-4">@errorMessage</MudAlert>
+
+                    }
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                        <label for="email">Email</label>
+                        <ValidationMessage For="() => Input.Email" class="text-danger" />
+                    </div>
+                    <div class="form-floating mb-3">
+                        <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                        <label for="password">Password</label>
+                        <ValidationMessage For="() => Input.Password" class="text-danger" />
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col d-flex justify-content-center">
+                            <!-- Checkbox -->
+                            <div class="form-check">
+                                <label class="form-label">
+                                    <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input me-1" />
+                                    Remember me
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <!-- Simple link -->
+                            <a href="Account/ForgotPassword">Forgot password?</a>
+                        </div>
+                    </div>
+
+
+
+                    <MudButton Size="Size.Large" FullWidth="true" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="ml-auto text-light" Style="@($"background-color:{Colors.Purple.Darken3};")">Log in</MudButton>
+
+
+
                 </EditForm>
 
             </div>
@@ -123,7 +141,7 @@
         public bool RememberMe { get; set; }
     }
 
-    
+
 
     void ButtonTestclick()
     {
