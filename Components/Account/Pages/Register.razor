@@ -16,7 +16,8 @@
 @inject ILogger<Register> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
-@rendermode InteractiveServer
+
+
 
 <PageTitle>Register</PageTitle>
 
@@ -32,29 +33,46 @@
                         <div class="row justify-content-center">
                             <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
 
-                                
+
 
                                 <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
-                                    <MudCard>
-                                        <MudCardContent>
-                                            <p class="text-start h5 fw-bold mb-4 mt-4">Sign up</p>
-                                            <DataAnnotationsValidator />
 
-                                            <MudTextField Label="Email" @bind-Value="Input.Email" For="@(() =>Input.Email)" />
-                                            <MudTextField Label="Password" @bind-Value="Input.Password" InputType="InputType.Password" For="@(() =>Input.Password)" />
-                                            <MudTextField Label="Confirm Password" @bind-Value="Input.ConfirmPassword" InputType="InputType.Password" For="@(() =>Input.ConfirmPassword)" />
-                                            <MudCardActions Class="mt-4">
-                                                @if(isRegistering)
-                                                {
-                                                    <MudButton FullWidth="true" Variant="Variant.Filled" Class="ml-auto text-light" Style="@($"background-color:{Colors.Purple.Darken3};")"><MudProgressCircular Class="me-2 text-light" Size="Size.Small" Indeterminate="true" />Please wait...</MudButton>
-                                                }
-                                                else
-                                                {
-                                                    <MudButton FullWidth="true" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="ml-auto text-light" Style="@($"background-color:{Colors.Purple.Darken3};")">Register</MudButton>
-                                                }
-                                            </MudCardActions>
-                                        </MudCardContent>
-                                    </MudCard>
+
+
+
+                                    <p class="text-start h5 fw-bold mb-4 mt-4">Sign up</p>
+                                    <DataAnnotationsValidator />
+                                    @if (Message is not null)
+                                    {
+                                        <MudAlert Severity="Severity.Error" Variant="Variant.Outlined" Dense="true" Class="mb-4">@Message</MudAlert>
+
+                                    }
+                                    <div class="form-floating mb-3">
+                                        <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                                        <label for="email">Email</label>
+                                        <ValidationMessage For="() => Input.Email" class="text-danger" />
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                                        <label for="password">Password</label>
+                                        <ValidationMessage For="() => Input.Password" class="text-danger" />
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                                        <label for="confirm-password">Confirm Password</label>
+                                        <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+                                    </div>
+
+                                    @if (isRegistering)
+                                    {
+                                        <MudButton FullWidth="true" Variant="Variant.Filled" Class="ml-auto text-light" Style="@($"background-color:{Colors.Purple.Darken3};")"><MudProgressCircular Class="me-2 text-light" Size="Size.Small" Indeterminate="true" />Please wait...</MudButton>
+                                    }
+                                    else
+                                    {
+                                        <MudButton Size="Size.Large" FullWidth="true" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="ml-auto text-light" Style="@($"background-color:{Colors.Purple.Darken3};")">Register</MudButton>
+                                    }
+
+
                                 </EditForm>
 
                             </div>
@@ -77,13 +95,13 @@
     private IEnumerable<IdentityError>? identityErrors;
     private bool isRegistering = false;
 
-
-    private InputModel Input { get; set; } = new InputModel();
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
 
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
 
-    private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
+    private string? Message => identityErrors is null ? null : $"{string.Join(", ", identityErrors.Select(error => error.Description))}";
 
     public async Task RegisterUser(EditContext editContext)
     {
@@ -102,7 +120,7 @@
             return;
         }
 
-        
+
 
         Logger.LogInformation("User created a new account with password.");
 

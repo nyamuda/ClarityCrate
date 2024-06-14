@@ -3,69 +3,66 @@
 @using Clarity_Crate.Components.Pages
 
 
+
 <PageTitle>Clarity Crate</PageTitle>
 
 <MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
+<style>
+    .nav-link.active {
+        color: #6A1B9A !important;
+        font-weight:bold;
+    }
+</style>
 
 
 
-<div class="page">
+<div class="page d-flex flex-column justify-content-between">
 
-    <main>
-        <MudLayout>
-            <MudAppBar Style="@($"background-color:{Colors.Grey.Lighten5};")">
-                <MudIconButton Size="Size.Large" Icon="@Icons.Material.Filled.Menu" Color="Color.Dark" Edge="Edge.Start" OnClick="@ToggleDrawer" />
-                <div class="me-auto ms-3">
-                    <ul class="navbar-nav mb-0 ">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark fw-bold" aria-current="page" href="/">Clarity Crate</a>
-                        </li>
-                    </ul>
 
-                </div>
-                <MudSpacer />
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <MudIconButton Class="navbar-toggler" Icon="@Icons.Material.Filled.Menu" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-label="Toggle navigation" aria-controls="navbarSupportedContent" aria-expanded="false"></MudIconButton>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">Home</NavLink>
+
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/terms" Match="NavLinkMatch.All">Terms</NavLink>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled">Disabled</a>
+                    </li>
+                </ul>
                 <LoginDisplay />
-                <!-- <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" />-->
-            </MudAppBar>
-            <MudDrawer @bind-Open="@open" ClipMode="clipMode" Elevation="1">
-                <MudDrawerHeader>
-                    <MudText Typo="Typo.h6">Clarity Crate</MudText>
-                </MudDrawerHeader>
-                <MudNavMenu Color="Color.Info" Rounded="true">
-                    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+            </div>
+        </div>
+    </nav>
 
-                    @if (isLoggedIn)
-                    {
-                        <MudNavGroup Title="Admin" @bind-Expanded=_isExpanded Icon="@Icons.Material.Filled.AdminPanelSettings">
-                            <MudNavLink Href="/curriculums" Match="NavLinkMatch.All">Curriculums</MudNavLink>
-                            <MudNavLink Href="/subjects" Match="NavLinkMatch.All">Subjects</MudNavLink>
-                            <MudNavLink Href="/topics" Match="NavLinkMatch.All">Topics</MudNavLink>
-
-                            <MudNavLink Href="/terms" Match="NavLinkMatch.All">Terms</MudNavLink>
-                            <MudNavLink Href="/levels" Match="NavLinkMatch.All">Levels</MudNavLink>
-                        </MudNavGroup>
-                    }
-
-                    <MudNavLink Href="/about" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Info">About us</MudNavLink>
-
-                    <MudNavLink Href="/contact" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Phone">Contact us</MudNavLink>
-                </MudNavMenu>
-            </MudDrawer>
-            <MudMainContent>
-                <MudContainer>
-                    @Body
-                </MudContainer>
-            </MudMainContent>
-
-
-        </MudLayout>
-
+    <main class="vh-100 container">
+        @Body
     </main>
 
     <Footer />
+
 </div>
 
 
@@ -125,4 +122,4 @@
         }
         */
     };
-    }
+}
