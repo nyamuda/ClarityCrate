@@ -11,12 +11,50 @@
 
 <PageTitle>Confirm email change</PageTitle>
 
-<h1>Confirm email change</h1>
 
-<StatusMessage Message="@message" />
+<div class="mt-5 container py-5">
+    <MudCard Style="max-width: 500px;" Class="py-4 m-auto">
+        <MudCardContent Class="text-center">
+            @if (isSuccess)
+            {
+                
+                <MudIcon Class="mb-4" Icon="fa-regular fa-square-check text-success fa-5x"/>
+            }
+            else
+            {
+
+                
+                <MudIcon Class="mb-4" Icon="fa-solid fa-xmark text-danger fa-5x" />
+
+            }
+            
+            <h2 class="card-title">Confirm your email</h2>
+            @if (isSuccess)
+            {
+
+                <MudAlert Severity="Severity.Success" Variant="Variant.Outlined">@message</MudAlert>
+
+
+                <p class="text-center">Your email has been confirmed. <MudButton Href="/Identity/Account/Login" Variant="Variant.Text" Color="Color.Primary">Login</MudButton> using your email to access your account.</p>
+
+            }
+            else
+            {
+                <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">@message</MudAlert>
+            }
+        </MudCardContent>
+        <MudCardActions class="d-flex justify-content-center">
+            <MudButton Variant="Variant.Filled" Color="Color.Dark">Go to Home Page</MudButton>
+        </MudCardActions>
+    </MudCard>
+</div>
+
+
+
 
 @code {
     private string? message;
+    private bool isSuccess = false;
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
@@ -42,6 +80,7 @@
         if (user is null)
         {
             message = "Unable to find user with Id '{userId}'";
+            isSuccess = false;
             return;
         }
 
@@ -50,6 +89,7 @@
         if (!result.Succeeded)
         {
             message = "Error changing email.";
+            isSuccess = false;
             return;
         }
 
@@ -59,10 +99,12 @@
         if (!setUserNameResult.Succeeded)
         {
             message = "Error changing user name.";
+            isSuccess = false;
             return;
         }
 
         await SignInManager.RefreshSignInAsync(user);
         message = "Thank you for confirming your email change.";
+        isSuccess = true;
     }
 }

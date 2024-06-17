@@ -10,11 +10,43 @@
 
 <PageTitle>Confirm email</PageTitle>
 
-<h1>Confirm email</h1>
-<StatusMessage Message="@statusMessage" />
+
+<div class="mt-5 container py-5">
+    <MudCard Style="max-width: 500px;" Class="py-4 m-auto">
+        <MudCardContent Class="text-center">
+           
+            <h2 class="card-title mb-5">Confirm your email</h2>
+            @if (isSuccess)
+            {
+
+                <MudAlert Severity="Severity.Success" Variant="Variant.Outlined">@statusMessage</MudAlert>
+
+
+            }
+            else
+            {
+                <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">@statusMessage</MudAlert>
+            }
+        </MudCardContent>
+        <MudCardActions class="d-flex justify-content-center">
+            @if(isSuccess)
+            {
+                <MudButton Href="Account/Login" Variant="Variant.Filled" Color="Color.Dark">Login</MudButton>
+            }
+            else
+            {
+                <MudButton Href="/"  Variant="Variant.Filled" Color="Color.Dark">Go to Home Page</MudButton>
+            }
+        </MudCardActions>
+    </MudCard>
+</div>
+
+
 
 @code {
     private string? statusMessage;
+    private bool isSuccess = false;
+
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
@@ -37,12 +69,14 @@
         {
             HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
             statusMessage = $"Error loading user with ID {UserId}";
+            isSuccess=false;
         }
         else
         {
             var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Code));
             var result = await UserManager.ConfirmEmailAsync(user, code);
-            statusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
+            isSuccess = result.Succeeded ? true : false;
+            statusMessage = result.Succeeded ? "Thank you for confirming your email. Login using your email to access your account." : "Error confirming your email.";
         }
     }
 }

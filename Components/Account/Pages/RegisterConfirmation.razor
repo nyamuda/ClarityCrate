@@ -16,19 +16,24 @@
 <PageTitle>Register confirmation</PageTitle>
 
 
+
 <StatusMessage Message="@statusMessage" />
 
-<div class="container py-5">
-    <div class="card shadow mx-auto py-2" style="max-width: 500px;">
-        <div class="card-body text-center">
-            <i class="fas fa-envelope-open-text fa-5x text-primary mb-4"></i>
+<div class="mt-5 container py-5">
+    <MudCard Style="max-width: 500px;" Class="py-4 m-auto">
+        <MudCardContent Class="text-center">
+            <MudIcon Class="mb-4" Icon="fas fa-envelope-open-text fa-5x" Style="@($"color:{Colors.Purple.Darken3};")" />
             <h2 class="card-title">Confirm your email</h2>
             <p class="card-text">An email has been sent to your email address.</p>
             <p class="card-text">Please check your inbox and follow the instructions to confirm your email.</p>
-            <a href="/" class="btn btn-primary">Go to Home Page</a>
-        </div>
-    </div>
+        </MudCardContent>
+        <MudCardActions class="d-flex justify-content-center">
+            <MudButton Href="/" Variant="Variant.Filled" Color="Color.Dark">Go to Home Page</MudButton>
+        </MudCardActions>
+    </MudCard>
 </div>
+
+
 
 @code {
     private string? emailConfirmationLink;
