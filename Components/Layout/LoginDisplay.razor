@@ -6,29 +6,44 @@
 <CascadingAuthenticationState>
     <AuthorizeView>
         <Authorized>
-            <div class="d-flex justify-content-evenly">
+            <div class="">
+                <div class="dropdown">
+                    <MudChip Class="login-btn" Icon="@Icons.Material.Filled.Person" Color="Color.Dark" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">Account</MudChip>
 
-                <MudMenu FullWidth="true" AnchorOrigin="Origin.BottomLeft">
-                    <ActivatorContent>
-                        <MudChip Class="login-btn" Icon="@Icons.Material.Filled.Person" Color="Color.Dark">Account</MudChip>
-                    </ActivatorContent>
-                    <ChildContent>
+                    <ul class="dropdown-menu dropdown-menu-start dropdown-menu-lg-end" aria-labelledby="dropdownMenuButton1">
+                        <MudButton FullWidth="true" Href="Account/Manage" Variant="Variant.Text" Color="Color.Dark">Manage</MudButton>
+                        <form method="post" action="Account/Logout">
+                            <AntiforgeryToken />
+                            <input type="hidden" name="ReturnUrl" value="@currentUrl" />
 
-                        <!--<MudMenuItem Href="Identity/Account/Manage">Profile</MudMenuItem>-->
+                            <MudButton FullWidth="true" ButtonType="ButtonType.Submit" Href="Account/Register" Variant="Variant.Text" Color="Color.Dark">Log out</MudButton>
+                        </form>
+                    </ul>
+                </div>
 
-                        <MudMenuItem>
-                            <MudLink Underline="Underline.None" Color="Color.Dark" Href="Account/Manage">Manage</MudLink>
-                        </MudMenuItem>
-                        <MudMenuItem>
-                            <form method="post" action="Account/Logout">
-                                <AntiforgeryToken />
-                                <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                                <button type="submit" class="">Log out</button>
-                            </form>
-                        </MudMenuItem>
+                <!--
+                                <MudMenu FullWidth="true" AnchorOrigin="Origin.BottomLeft">
+                                    <ActivatorContent>
+                                        <MudChip Class="login-btn" Icon="@Icons.Material.Filled.Person" Color="Color.Dark">Account</MudChip>
+                                    </ActivatorContent>
+                                    <ChildContent>
 
-                    </ChildContent>
-                </MudMenu>
+
+                                        <MudMenuItem>
+                                            <MudLink Underline="Underline.None" Color="Color.Dark" Href="Account/Manage">Manage</MudLink>
+                                        </MudMenuItem>
+                                        <MudMenuItem>
+                                            <form method="post" action="Account/Logout">
+                                                <AntiforgeryToken />
+                                                <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                                                <button type="submit" class="">Log out</button>
+                                            </form>
+                                        </MudMenuItem>
+
+
+                                    </ChildContent>
+                                </MudMenu>
+                                -->
             </div>
         </Authorized>
         <NotAuthorized>
@@ -36,6 +51,7 @@
 
 
             <MudButton Href="Account/Register" Variant="Variant.Filled" Color="Color.Dark">Sign up</MudButton>
+
         </NotAuthorized>
     </AuthorizeView>
 
@@ -52,6 +68,8 @@
 
 @code {
     private string? currentUrl;
+
+
 
     protected override void OnInitialized()
     {

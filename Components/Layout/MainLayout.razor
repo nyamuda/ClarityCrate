@@ -76,6 +76,11 @@
 
     DrawerClipMode clipMode = DrawerClipMode.Docked;
 
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    //Is it an Identity page or not
+    private bool isAccountPage => HttpContext.Request.Path.StartsWithSegments("/Account") ? true : false;
 
     protected async override Task OnInitializedAsync()
     {
