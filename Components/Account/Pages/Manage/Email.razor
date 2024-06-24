@@ -6,25 +6,31 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 @using Clarity_Crate.Data
+@using Clarity_Crate.Services
 
 @inject UserManager<ApplicationUser> UserManager
-@inject IEmailSender<ApplicationUser> EmailSender
+@inject EmailSender EmailSender
+@inject TemplateService TemplateService
 @inject IdentityUserAccessor UserAccessor
 @inject NavigationManager NavigationManager
 
 <PageTitle>Manage email</PageTitle>
 
-<h3>Manage email</h3>
+<h4>Manage email</h4>
 
 <StatusMessage Message="@message"/>
-<div class="row">
-    <div class="col-md-6">
+<div class="text-start" style="max-width: 32rem;">
+    <div class="">
         <form @onsubmit="OnSendEmailVerificationAsync" @formname="send-verification" id="send-verification-form" method="post">
             <AntiforgeryToken />
         </form>
         <EditForm Model="Input" FormName="change-email" OnValidSubmit="OnValidSubmitAsync" method="post">
             <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
+            @if (message is not null)
+            {
+                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Dense="true" Class="mb-4">@message</MudAlert>
+
+            }
             @if (isEmailConfirmed)
             {
                 <div class="form-floating mb-3 input-group">
@@ -40,7 +46,7 @@
                 <div class="form-floating mb-3">
                     <input type="text" value="@email" class="form-control" placeholder="Please enter your email." disabled />
                     <label for="email" class="form-label">Email</label>
-                    <button type="submit" class="btn btn-link" form="send-verification-form">Send verification email</button>
+                    <MudButton Size="Size.Large" FullWidth="true" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="ml-auto text-light" Style="@($"background-color:{Colors.Purple.Darken3};")" form="send-verification-form">Send verification email</MudButton>
                 </div>
             }
             <div class="form-floating mb-3">
@@ -48,7 +54,7 @@
                 <label for="new-email" class="form-label">New email</label>
                 <ValidationMessage For="() => Input.NewEmail" class="text-danger" />
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Change email</button>
+            <MudButton Size="Size.Large" FullWidth="true" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="ml-auto text-light" Style="@($"background-color:{Colors.Purple.Darken3};")">Change email</MudButton>
         </EditForm>
     </div>
 </div>
@@ -89,7 +95,10 @@
             NavigationManager.ToAbsoluteUri("Account/ConfirmEmailChange").AbsoluteUri,
             new Dictionary<string, object?> { ["userId"] = userId, ["email"] = Input.NewEmail, ["code"] = code });
 
-        await EmailSender.SendConfirmationLinkAsync(user, Input.NewEmail, HtmlEncoder.Default.Encode(callbackUrl));
+        //await EmailSender.SendConfirmationLinkAsync(user, Input.NewEmail, HtmlEncoder.Default.Encode(callbackUrl));
+
+        //send confirmation email
+        await EmailSender.SendEmailAsync(Input.NewEmail, "Verify email", TemplateService.ConfirmEmail(HtmlEncoder.Default.Encode(callbackUrl)));
 
         message = "Confirmation link to change email sent. Please check your email.";
     }
@@ -108,7 +117,10 @@
             NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
             new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code });
 
-        await EmailSender.SendConfirmationLinkAsync(user, email, HtmlEncoder.Default.Encode(callbackUrl));
+        //await EmailSender.SendConfirmationLinkAsync(user, email, HtmlEncoder.Default.Encode(callbackUrl));
+
+        //send confirmation email
+        await EmailSender.SendEmailAsync(email, "Verify email", TemplateService.ConfirmEmail(HtmlEncoder.Default.Encode(callbackUrl)));
 
         message = "Verification email sent. Please check your email.";
     }
