@@ -1,4 +1,5 @@
-﻿using OpenAI_API;
+﻿/*
+using OpenAI_API;
 using OpenAI_API.Models;
 
 namespace Clarity_Crate.Services
@@ -40,3 +41,4 @@ namespace Clarity_Crate.Services
         }
     }
 }
+*/
