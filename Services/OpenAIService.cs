@@ -1,4 +1,4 @@
-﻿/*
+﻿
 using OpenAI_API;
 using OpenAI_API.Models;
 
@@ -8,7 +8,7 @@ namespace Clarity_Crate.Services
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;
-        private readonly OpenAIAPI _api = new OpenAIAPI("sk-proj-ttVRwCIEC6lScWFZw6CyT3BlbkFJZEEyoreZl0vTchGCG9RC");
+        private readonly OpenAIAPI _api = new OpenAIAPI("");
 
         public OpenAIService(HttpClient httpClient)
         {
@@ -41,4 +41,3 @@ namespace Clarity_Crate.Services
         }
     }
 }
-*/
