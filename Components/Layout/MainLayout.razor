@@ -13,7 +13,7 @@
 <style>
     .nav-link.active {
         color: #6A1B9A !important;
-        font-weight:bold;
+        font-weight: bold;
     }
 
 </style>
@@ -58,10 +58,39 @@
         </div>
     </nav>
 
-    <main class="vh-100 container">
-        @Body
-    </main>
+    <main class="vh-100">
+        @if (isAccountManagePage)
+        {
+            <MudLayout>
 
+                <MudDrawer @bind-Open="@open" Elevation="1">
+                    <MudDrawerHeader>
+                        <MudText Typo="Typo.h6">Account</MudText>
+                    </MudDrawerHeader>
+                    <MudNavMenu>
+                        <MudNavLink Href="Account/Manage/Email" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Email">Email</MudNavLink>
+                        <MudNavLink Href="Account/Manage/ChangePassword" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Password">Library</MudNavLink>
+                        <MudNavLink Href="Account/Manage/PersonalData" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.DataObject">Personal data</MudNavLink>
+                    </MudNavMenu>
+                </MudDrawer>
+                <MudMainContent Class="pt-16 px-16">
+                    <MudContainer Class="mt-6">
+                        @Body
+                    </MudContainer>
+                </MudMainContent>
+            </MudLayout>
+        }
+        else
+        {
+
+            <div class="container">
+                @Body
+            </div>
+
+
+        }
+
+    </main>
     <Footer />
 
 </div>
@@ -69,8 +98,8 @@
 
 
 @code {
-    bool open = false;
-    bool _isExpanded = false;
+    bool open = true;
+
     bool isLoggedIn = false;
 
 
@@ -80,7 +109,7 @@
     private HttpContext HttpContext { get; set; } = default!;
 
     //Is it an Identity page or not
-    private bool isAccountPage => HttpContext.Request.Path.StartsWithSegments("/Account") ? true : false;
+    private bool isAccountManagePage => HttpContext.Request.Path.StartsWithSegments("/Account/Manage") ? true : false;
 
     protected async override Task OnInitializedAsync()
     {
