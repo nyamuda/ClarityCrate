@@ -17,8 +17,10 @@
 <PageTitle>Manage email</PageTitle>
 
 <h4>Manage email</h4>
+<p>Once you update your email address, we will send a confirmation email to the new address.</p>
+<p>Please check your inbox and follow the instructions to verify your new email address and complete the update process.</p>
 
-<StatusMessage Message="@message"/>
+
 <div class="text-start" style="max-width: 32rem;">
     <div class="">
         <form @onsubmit="OnSendEmailVerificationAsync" @formname="send-verification" id="send-verification-form" method="post">
@@ -35,9 +37,7 @@
             {
                 <div class="form-floating mb-3 input-group">
                     <input type="text" value="@email" class="form-control" placeholder="Please enter your email." disabled />
-                    <div class="input-group-append">
-                        <span class="h-100 input-group-text text-success font-weight-bold">✓</span>
-                    </div>
+                    
                     <label for="email" class="form-label">Email</label>
                 </div>
             }

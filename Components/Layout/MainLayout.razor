@@ -24,7 +24,7 @@
 
 
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-lg-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Navbar</a>
             <MudIconButton Class="navbar-toggler" Icon="@Icons.Material.Filled.Menu" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-label="Toggle navigation" aria-controls="navbarSupportedContent" aria-expanded="false"></MudIconButton>
@@ -69,12 +69,12 @@
                     </MudDrawerHeader>
                     <MudNavMenu>
                         <MudNavLink Href="Account/Manage/Email" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Email">Email</MudNavLink>
-                        <MudNavLink Href="Account/Manage/ChangePassword" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Password">Library</MudNavLink>
+                        <MudNavLink Href="Account/Manage/ChangePassword" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Password">Password</MudNavLink>
                         <MudNavLink Href="Account/Manage/PersonalData" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.DataObject">Personal data</MudNavLink>
                     </MudNavMenu>
                 </MudDrawer>
-                <MudMainContent Class="pt-16 px-16">
-                    <MudContainer Class="mt-6">
+                <MudMainContent Class="px-lg-5">
+                    <MudContainer Class="container">
                         @Body
                     </MudContainer>
                 </MudMainContent>

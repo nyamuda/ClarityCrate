@@ -4,9 +4,21 @@
 
 
 
-
-<div class="mt-15">
-    @Body
+<div class="mt-10">
+    <ul class="nav d-lg-none">
+        <li class="nav-item">
+            <MudNavLink Href="Account/Manage/Email" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Email">Email</MudNavLink>
+        </li>
+        <li class="nav-item">
+            <MudNavLink Href="Account/Manage/ChangePassword" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Password">Password</MudNavLink>
+        </li>
+        <li class="nav-item">
+            <MudNavLink Href="Account/Manage/PersonalData" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.DataObject">Personal data</MudNavLink>
+        </li>
+    </ul>
+    <div class="mt-10">
+        @Body
+    </div>
 </div>
 <!--
 <h1>Manage your account</h1>
