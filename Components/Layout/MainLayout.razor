@@ -109,7 +109,7 @@
     private HttpContext HttpContext { get; set; } = default!;
 
     //Is it an Identity page or not
-    private bool isAccountManagePage => HttpContext.Request.Path.StartsWithSegments("/Account/Manage") ? true : false;
+    private bool isAccountManagePage => HttpContext is not null && HttpContext.Request.Path.StartsWithSegments("/Account/Manage") ? true : false;
 
     protected async override Task OnInitializedAsync()
     {
