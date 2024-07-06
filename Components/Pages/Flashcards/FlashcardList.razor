@@ -1,0 +1,78 @@
+﻿@page "/flashcards"
+<PageTitle>Flashcards</PageTitle>
+
+
+<div class="row">
+    @foreach(Item item in items)
+    {
+        <div class="col-lg-4">
+        <FlashcardItem Id="@(item.Id)" Term="@(item.Name)" Description="@(item.Description)"/>
+        </div>
+    }
+
+</div>
+
+
+
+
+@code {
+
+
+    private List<Item> items = new List<Item>();
+
+
+
+    protected override void OnInitialized()
+    {
+        items = GenerateRandomItems(10);
+    }
+
+
+
+    private class Item
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+
+    }
+
+    private List<Item> GenerateRandomItems(int count)
+    {
+        var randomItems = new List<Item>();
+        var random = new Random();
+
+        var terms = new List<string>
+        {
+            "Osmosis", "Photosynthesis", "Mitosis", "Evolution", "Gravity",
+            "Atom", "Molecule", "Energy", "Velocity", "Acceleration"
+        };
+
+        var descriptions = new List<string>
+        {
+            "The movement of water molecules through a selectively permeable membrane from a region of high water concentration to a region of low water concentration.",
+            "The process by which green plants and some other organisms use sunlight to synthesize foods with the help of chlorophyll.",
+            "A type of cell division that results in two daughter cells each having the same number and kind of chromosomes as the parent nucleus.",
+            "The process by which different kinds of living organisms are thought to have developed and diversified from earlier forms during the history of the earth.",
+            "The force that attracts a body towards the centre of the earth, or towards any other physical body having mass.",
+            "The basic unit of a chemical element.",
+            "A group of atoms bonded together, representing the smallest fundamental unit of a chemical compound that can take part in a chemical reaction.",
+            "The strength and vitality required for sustained physical or mental activity.",
+            "The speed of something in a given direction.",
+            "The rate of change of velocity per unit of time."
+        };
+        for (int i = 0; i < count; i++)
+        {
+            randomItems.Add(new Item
+                {
+                    Id = i,
+                    Name = terms[random.Next(terms.Count)],
+                    Description = descriptions[random.Next(descriptions.Count)]
+                });
+        }
+
+        return randomItems;
+
+    }
+}

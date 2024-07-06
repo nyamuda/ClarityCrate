@@ -31,8 +31,4 @@
     <_ContentIncludedByDefault Remove="Components\FlashCard.razor" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="Components\Pages\FlashCard.razor" />
-  </ItemGroup>
-
 </Project>
