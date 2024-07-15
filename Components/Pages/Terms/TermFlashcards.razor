@@ -1,12 +1,13 @@
-﻿@page "/flashcards"
-<PageTitle>Flashcards</PageTitle>
+﻿@page "/cards"
+<PageTitle>Cards</PageTitle>
 
+<style></style>
 
 <div class="row">
     @foreach(Item item in items)
     {
         <div class="col-lg-4">
-        <FlashcardItem Id="@(item.Id)" Term="@(item.Name)" Description="@(item.Description)"/>
+            <TermFlashcardItem Id="@(item.Id)" Term="@(item.Name)" Description="@(item.Description)" Level="@(item.Level)" Curriculum="@(item.Curriculum)" />
         </div>
     }
 
@@ -34,6 +35,8 @@
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string Curriculum { get; set; }
+        public string Level { get; set; }
 
 
     }
@@ -62,13 +65,17 @@
             "The speed of something in a given direction.",
             "The rate of change of velocity per unit of time."
         };
+        var curriculums = new List<string> { "Cambridge", "Edexcel", "CAPS" };
+        var levels = new List<string> { "Level 1", "Level 2", "Level 3" };
         for (int i = 0; i < count; i++)
         {
             randomItems.Add(new Item
                 {
                     Id = i,
                     Name = terms[random.Next(terms.Count)],
-                    Description = descriptions[random.Next(descriptions.Count)]
+                    Description = descriptions[random.Next(descriptions.Count)],
+                    Curriculum = curriculums[random.Next(curriculums.Count)],
+                    Level = levels[random.Next(levels.Count)]
                 });
         }
 

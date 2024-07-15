@@ -11,11 +11,16 @@
 <MudSnackbarProvider />
 
 <style>
-    .nav-link.active {
-        color: #6A1B9A !important;
-        font-weight: bold;
+    .page {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
     }
 
+    main {
+        flex: 1;
+        overflow: auto;
+    }
 </style>
 
 
@@ -58,7 +63,7 @@
         </div>
     </nav>
 
-    <main class="vh-100">
+    <main class="">
         @if (isAccountManagePage)
         {
             <MudLayout>
