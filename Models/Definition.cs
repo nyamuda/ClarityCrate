@@ -5,6 +5,9 @@
         public int Id { get; set; }
         public string? Content { get; set; }
 
+
+        public List<string>? Keywords { get; set; }
+
         public int TopicId { get; set; }
 
         public int CurriculumId { get; set; }

@@ -10,7 +10,7 @@
 @page "/add-term"
 
 
-<div class="mt-16 container text-start m-auto">
+<div class="my-15 container text-start m-auto">
     <h2>Add a new term</h2>
 
     <EditForm Model="@TermDto" OnValidSubmit="@HandleValidSubmit">
@@ -36,42 +36,58 @@
 
 
         </div>
+        <div class="mb-3">
 
-        <!--Levels-->
-        <MudSelect Required T="Level" Label="Level" ToStringFunc="@levelConverter" MultiSelection="true" @bind-SelectedValues="TermDto.SelectedLevels">
-            @foreach (var level in levels)
-            {
-                <MudSelectItem T="Level" Value="@level">@level.Name</MudSelectItem>
-            }
-        </MudSelect>
-        
-       <!--Curriculums-->
-        <MudSelect Required ValueChanged="FilterSubjects" HelperText="The curriculum the term falls under" T="Curriculum" Label="Curriculum" Variant="Variant.Text" ToStringFunc="@curriculumConverter">
-            @foreach (var curriculum in curriculums)
-            {
-                <MudSelectItem Value="@curriculum">@curriculum.Name</MudSelectItem>
-            }
-        </MudSelect>
+            <MudTextField AutoGrow HelperText="The keywords of the definition separated by a comma." @bind-Value="TermDto.Keywords"
+                          For="@(() => TermDto.Keywords)"
+                          Immediate="true"
+                          Label="Keywords" />
 
 
-        <!--Subjects-->
-        <!--Disable the subject select input if not curriculum is selected-->
-        <MudSelect Required disabled="@(TermDto.Curriculum==null)" ValueChanged="FilterTopics" HelperText="The subject the term falls under" T="Subject" Label="Subject" Variant="Variant.Text" ToStringFunc="@subjectConverter">
-            @foreach (var subject in subjects)
-            {
-                <MudSelectItem Value="@subject">@subject.Name</MudSelectItem>
-            }
-        </MudSelect>
+        </div>
+
+        <div class="mb-3">
+            <!--Levels-->
+            <MudSelect Required T="Level" Label="Level" ToStringFunc="@levelConverter" MultiSelection="true" @bind-SelectedValues="TermDto.SelectedLevels">
+                @foreach (var level in levels)
+                {
+                    <MudSelectItem T="Level" Value="@level">@level.Name</MudSelectItem>
+                }
+            </MudSelect>
+       </div>
+        <div class="mb-3">
+            <!--Curriculums-->
+            <MudSelect Required ValueChanged="FilterSubjects" HelperText="The curriculum the term falls under" T="Curriculum" Label="Curriculum" Variant="Variant.Text" ToStringFunc="@curriculumConverter">
+                @foreach (var curriculum in curriculums)
+                {
+                    <MudSelectItem Value="@curriculum">@curriculum.Name</MudSelectItem>
+                }
+            </MudSelect>
+
+       </div>
+
+        <div class="mb-3">
+            <!--Subjects-->
+            <!--Disable the subject select input if not curriculum is selected-->
+            <MudSelect Required disabled="@(TermDto.Curriculum==null)" ValueChanged="FilterTopics" HelperText="The subject the term falls under" T="Subject" Label="Subject" Variant="Variant.Text" ToStringFunc="@subjectConverter">
+                @foreach (var subject in subjects)
+                {
+                    <MudSelectItem Value="@subject">@subject.Name</MudSelectItem>
+                }
+            </MudSelect>
+       </div>
 
 
-        <!--Topics-->
-        <MudSelect Required disabled="@(TermDto.Subject==null)" @bind-Value="TermDto.Topic" HelperText="The topic the term falls under" T="Topic" Label="Topic" Variant="Variant.Text" ToStringFunc="@topicConverter">
-            @foreach (var topic in topics)
-            {
-                <MudSelectItem Value="@topic">@topic.Name</MudSelectItem>
-            }
-        </MudSelect>
+    <div class="mb-3">
+            <!--Topics-->
+            <MudSelect Required disabled="@(TermDto.Subject==null)" @bind-Value="TermDto.Topic" HelperText="The topic the term falls under" T="Topic" Label="Topic" Variant="Variant.Text" ToStringFunc="@topicConverter">
+                @foreach (var topic in topics)
+                {
+                    <MudSelectItem Value="@topic">@topic.Name</MudSelectItem>
+                }
+            </MudSelect>
 
+    </div>
 
 
         <MudButton Class="mt-5" Disabled="@TermService.isProcessing" Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" ButtonType="ButtonType.Submit">
@@ -97,18 +113,21 @@
     private List<Subject> subjects= new List<Subject>();
     private List<Curriculum> curriculums=new List<Curriculum>();
     private List<Level> levels= new List<Level>();
-    
+
 
 
     private async Task HandleValidSubmit()
     {
+        //convert the keywords into a list
+        var keywords = ConvertKeywordsToList(TermDto.Keywords);
         //first create a definition
         Definition definition = new Definition()
         {
             Content=TermDto.Definition,
             TopicId=TermDto.Topic.Id,
             CurriculumId=TermDto.Curriculum.Id,
-            SubjectId=TermDto.Subject.Id
+            SubjectId=TermDto.Subject.Id,
+            Keywords=keywords
 
 
         };
@@ -152,23 +171,35 @@
         TermDto.Curriculum = selected;
         //a subject can have multiple curricula
         //get all the subjects that have the selected curriculum
-       subjects = SubjectService.Subjects.Where(s => s.Curriculums.Any(c => c.Id == selected.Id)).ToList();
+        subjects = SubjectService.Subjects.Where(s => s.Curriculums.Any(c => c.Id == selected.Id)).ToList();
 
-       StateHasChanged();
+        StateHasChanged();
 
-       
+
     }
 
     //filter the topics based on the selected subject
     private void FilterTopics(Subject selected)
     {
-        
+
         TermDto.Subject = selected;
         //a topic can have multiple subjects
         //get all the topics that have the selected subject
         topics = TopicService.Topics.Where(t => t.Subjects.Any(s => s.Id == selected.Id)).ToList();
-        
+
         StateHasChanged();
+    }
+
+
+    //convert comma separated keywords into a list
+    private List<string> ConvertKeywordsToList(string keywords)
+    {
+        //first trim the keywords
+        string trimmedKeywords = keywords.Trim();
+
+        List<string> keywordList = trimmedKeywords.Split(",").ToList();
+
+        return keywordList;
     }
 
 

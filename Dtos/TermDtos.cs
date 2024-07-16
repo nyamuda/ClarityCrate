@@ -9,6 +9,8 @@ public class TermCreateDto
     [Required]
     public string? Definition { get; set; }
 
+    public string? Keywords { get; set; }
+
 
     [Required]
     public Subject? Subject { get; set; }

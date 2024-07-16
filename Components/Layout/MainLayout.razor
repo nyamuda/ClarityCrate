@@ -11,15 +11,8 @@
 <MudSnackbarProvider />
 
 <style>
-    .page {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-    }
-
-    main {
-        flex: 1;
-        overflow: auto;
+    .nav-link.active {
+        color: #6A1B9A !important;
     }
 </style>
 
@@ -41,7 +34,7 @@
 
                     </li>
                     <li class="nav-item">
-                        <NavLink class="nav-link" href="/terms" Match="NavLinkMatch.All">Terms</NavLink>
+                        <NavLink class="nav-link" href="/definitions" Match="NavLinkMatch.All">Definitions</NavLink>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
