@@ -3,6 +3,7 @@
 @inject LevelService LevelService
 @inject CurriculumService CurriculumService
 @inject SubjectService SubjectService
+@inject AppService AppService
 @using Clarity_Crate.Services
 @using Clarity_Crate.Dtos
 @inject NavigationManager NavigationManager
@@ -111,14 +112,15 @@
     private List<Curriculum> curriculums = new List<Curriculum>();
     private List<Level> levels = new List<Level>();
 
-    
+
 
 
     //Submit form
     private async Task HandleValidSubmit()
     {
         //convert the keywords into a list
-        var keywords = ConvertKeywordsToList(TermDto.Keywords);
+        string keywords = TermDto.Keywords is not null ? TermDto.Keywords : "";
+        var keywordList = ConvertKeywordsToList(keywords);
         //first create a definition
         Definition definition = new Definition()
             {
@@ -126,7 +128,7 @@
                 TopicId = TermDto.Topic.Id,
                 CurriculumId = TermDto.Curriculum.Id,
                 SubjectId = TermDto.Subject.Id,
-                Keywords = keywords
+                Keywords = keywordList
 
 
             };
@@ -140,6 +142,10 @@
             };
 
         await TermService.CreateTerm(term, definition);
+
+        //show snack bar
+        string message = "Term added successfully!";
+        AppService.ShowSnackBar(message,isSuccess: true);
 
         //redirect to the terms page
         NavigationManager.NavigateTo("/terms");
@@ -193,12 +199,14 @@
     //convert comma separated keywords into a list
     private List<string> ConvertKeywordsToList(string keywords)
     {
-        //first trim the keywords
-        string trimmedKeywords = keywords.Trim();
+        
+            //first trim the keywords
+            string trimmedKeywords = keywords.Trim();
 
-        List<string> keywordList = trimmedKeywords.Split(",").ToList();
+            List<string> keywordList = trimmedKeywords.Split(",").ToList();
 
-        return keywordList;
+            return keywordList;
+        
     }
 
 

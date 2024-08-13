@@ -1,9 +1,9 @@
 ﻿@using Clarity_Crate.Services
 @using Clarity_Crate.Models
 @using Clarity_Crate.Dtos
+@inject AppService AppService
 @inject TermService TermService
 @inject LevelService LevelService
-@inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
 
@@ -145,9 +145,10 @@
             bool isSuccess = await TermService.DeleteTerm(id);
             if (isSuccess)
             {
+                //show snack bar
+                string message = "Term deleted successfully!";
+                AppService.ShowSnackBar(message, true);
 
-                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomCenter;
-                Snackbar.Add("Term deleted successfully!", Severity.Success);
 
                 await TermService.GetTerms();
                 Terms = TermService.Terms;
@@ -157,8 +158,10 @@
             }
             else
             {
-                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomCenter;
-                Snackbar.Add("An error occurred while deleting the Term", Severity.Error);
+                //show snack bar
+                string message = "An error occurred while deleting the term";
+                AppService.ShowSnackBar(message, false);
+
             }
         }
 
@@ -212,9 +215,8 @@
 
     private async Task OnRowEditSave()
     {
-        await TermService.UpdateTerm(selectedItem1);
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomCenter;
-        Snackbar.Add("Term updated successfully!", Severity.Success);
+        string message = "Term updated successfully!";
+        AppService.ShowSnackBar(message, true);
     }
 
 

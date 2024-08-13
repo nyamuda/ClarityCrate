@@ -49,6 +49,7 @@ builder.Services.AddScoped<TopicService>();
 builder.Services.AddScoped<TermService>();
 builder.Services.AddScoped<LevelService>();
 builder.Services.AddScoped<TemplateService>();
+builder.Services.AddScoped<AppService>();
 // Register OpenAIService
 builder.Services.AddHttpClient<OpenAIService>();
 
