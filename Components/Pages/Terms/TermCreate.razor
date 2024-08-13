@@ -94,8 +94,8 @@
         <MudButton Class="" Disabled="@TermService.isCreating" Variant="Variant.Filled" DisableElevation="true" Color="Color.Dark" ButtonType="ButtonType.Submit">
             @if (TermService.isCreating)
             {
-                <MudProgressCircular Class="ms-n1 text-light" Size="Size.Small" Indeterminate="true" />
-                <MudText Class="ms-2">Please wait...</MudText>
+                <MudProgressCircular Class="ms-n1 text-dark" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2 text-dark">Please wait...</MudText>
             }
             else
             {

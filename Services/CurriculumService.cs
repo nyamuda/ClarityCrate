@@ -9,7 +9,8 @@ namespace Clarity_Crate.Services
         private readonly ApplicationDbContext _context;
 
 
-        public bool isProcessing = false;
+        public bool isCreating = false;
+        public bool isUpdating = false;
         public bool isGettingItems = false;
 
         public List<Curriculum> Curriculums { get; set; }
@@ -41,7 +42,7 @@ namespace Clarity_Crate.Services
 
         public async Task<Boolean> UpdateCurriculum(int id, Curriculum curriculum)
         {
-            isProcessing = !isProcessing;
+            isUpdating = !isUpdating;
             var itemExists = await _context.Curriculum.FindAsync(id);
 
             if (itemExists == null)
@@ -51,7 +52,7 @@ namespace Clarity_Crate.Services
 
             try
             {
-                isProcessing = !isProcessing;
+                isUpdating = !isUpdating;
 
                 itemExists.Name = curriculum.Name;
 
@@ -62,21 +63,20 @@ namespace Clarity_Crate.Services
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                isProcessing = !isProcessing;
+                isUpdating = !isUpdating;
                 throw;
             }
         }
 
         public async Task PostCurriculum(Curriculum curriculum)
         {
-            isProcessing = !isProcessing;
+            isCreating = !isCreating;
 
             _context.Curriculum.Add(curriculum);
 
             await _context.SaveChangesAsync();
 
-            isProcessing = !isProcessing;
-
+            isCreating = !isCreating;
         }
 
         public async Task<Boolean> DeleteCurriculum(int id)

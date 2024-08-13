@@ -2,6 +2,7 @@
 @using Clarity_Crate.Models
 @inject CurriculumService CurriculumService
 @inject NavigationManager NavigationManager
+@inject AppService AppService
 
 
 
@@ -78,11 +79,25 @@
         //if result is not null, then its confirmed
         if (state.Equals("Delete"))
         {
-            await CurriculumService.DeleteCurriculum(id);
-            await CurriculumService.GetCurricula();
-            curriculums = CurriculumService.Curriculums;
+            bool isSuccess=await CurriculumService.DeleteCurriculum(id);
+            if(isSuccess)
+            {
+                //show snack bar
+                string message = "Curriculum deleted successfully!";
+                AppService.ShowSnackBar(message, true);
 
-            StateHasChanged();
+                await CurriculumService.GetCurricula();
+                curriculums = CurriculumService.Curriculums;
+
+                StateHasChanged();
+            }
+            else
+            {
+                //show snack bar
+                string message = "An error occurred while deleting the curriculum";
+                AppService.ShowSnackBar(message, false);
+            }
+
         }
 
 

@@ -1,21 +1,22 @@
 ﻿@inject CurriculumService CurriculumService
 @using Clarity_Crate.Services
 @inject NavigationManager NavigationManager
+@inject AppService AppService
 
 @using Clarity_Crate.Models
 @page "/add-curriculum"
 
 
 <div class="container mt-16 text-start m-auto">
-    <h2>Add a new curriculum</h2>
+    <h1 class="display-6">Add a new curriculum</h1>
 
-    <EditForm Model="@Curriculum" OnValidSubmit="@HandleValidSubmit">
+    <EditForm class="py-3 px-4 shadow" Model="@Curriculum" OnValidSubmit="@HandleValidSubmit">
         <DataAnnotationsValidator />
 
 
         <div class="mb-3">
 
-            <MudTextField @bind-Value="Curriculum.Name"
+            <MudTextField Variant="Variant.Outlined" @bind-Value="Curriculum.Name"
                           For="@(() => Curriculum.Name)"
                           Immediate="true"
                           Label="Name" />
@@ -24,11 +25,11 @@
         </div>
 
 
-        <MudButton Disabled="@CurriculumService.isProcessing" Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" ButtonType="ButtonType.Submit">
-            @if (CurriculumService.isProcessing)
+        <MudButton Disabled="@CurriculumService.isCreating" Variant="Variant.Filled" DisableElevation="true" Color="Color.Dark" ButtonType="ButtonType.Submit" Size="Size.Large">
+            @if (CurriculumService.isCreating)
             {
-                <MudProgressCircular Class="ms-n1 text-light" Size="Size.Small" Indeterminate="true" />
-                <MudText Class="ms-2">Please wait...</MudText>
+                <MudProgressCircular Class="ms-n1 text-dark" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2 text-dark">Please wait...</MudText>
             }
             else
             {
@@ -46,6 +47,11 @@
     {
         //add the new curriculum to the database
         await CurriculumService.PostCurriculum(Curriculum);
+
+
+        //show snack bar
+        string message = "Curriculum added successfully!";
+        AppService.ShowSnackBar(message, isSuccess: true);
 
         //redirect to the curriculums page
         NavigationManager.NavigateTo("/curriculums");
