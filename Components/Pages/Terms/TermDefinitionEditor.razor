@@ -1,0 +1,44 @@
+﻿@using Blazored.TextEditor
+
+ <!--Blazored Text Editor-->
+<BlazoredTextEditor @ref="@QuillHtml" EditorCssStyle="font-size:1rem;"
+                    Placeholder="Enter definition">
+    <ToolbarContent>
+
+
+        <span class="ql-formats">
+            <button class="ql-bold"></button>
+            <button class="ql-italic"></button>
+            <button class="ql-underline"></button>
+            <button class="ql-strike"></button>
+        </span>
+        <span class="ql-formats">
+            <select class="ql-color"></select>
+            <select class="ql-background"></select>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-list" value="ordered"></button>
+            <button class="ql-list" value="bullet"></button>
+        </span>
+
+    </ToolbarContent>
+    <EditorContent>
+
+    </EditorContent>
+</BlazoredTextEditor>
+
+<!--Blazored Text Editor-->
+
+@code {
+    //Blazored text editor
+    BlazoredTextEditor QuillHtml;
+
+    //Blazored text editor function
+    public async void GetHTML()
+    {
+        //TermDto.Definition = await this.QuillHtml.GetHTML();
+        StateHasChanged();
+    }
+
+
+}

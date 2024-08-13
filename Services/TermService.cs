@@ -8,7 +8,7 @@ namespace Clarity_Crate.Services
     {
         private readonly ApplicationDbContext _context;
         public List<Term> Terms { get; set; } = new List<Term>();
-        public bool isProcessing = false;
+        public bool isCreating = false;
         public bool isGettingItems = false;
         public bool isSearching = false;
 
@@ -20,7 +20,7 @@ namespace Clarity_Crate.Services
         //CREATE
         public async Task CreateTerm(Term term, Definition definition)
         {
-            isProcessing = !isProcessing;
+            isCreating = !isCreating;
 
             //first save the term and add the saved term to the definition
             //save the term and get the id
@@ -36,7 +36,7 @@ namespace Clarity_Crate.Services
             _context.Definition.Add(definition);
             await _context.SaveChangesAsync();
 
-            isProcessing = !isProcessing;
+            isCreating = !isCreating;
 
 
 

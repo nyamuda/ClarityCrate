@@ -7,13 +7,12 @@
 @using Clarity_Crate.Dtos
 @inject NavigationManager NavigationManager
 @using Clarity_Crate.Models
-@using Blazored.TextEditor
 @page "/add-term"
 
 
-<div class="my-15 container text-start m-auto">
-    <h2>Add a new term</h2>
-
+<div class="mt-15 container text-start m-auto">
+    
+    <h1 class="display-6">Add a new term</h1>
     <EditForm Model="@TermDto" OnValidSubmit="@HandleValidSubmit">
         <DataAnnotationsValidator />
 
@@ -31,33 +30,10 @@
 
         <div class="mb-3">
 
-            <!--Blazored Text Editor-->
-            <BlazoredTextEditor @ref="@QuillHtml" EditorCssStyle="font-size:1rem;" Placeholder="Enter definition">
-                <ToolbarContent>
+            <MudTextField Required T="string" For="@(() => TermDto.Definition)"
+                          Immediate="true" Label="Definition" Variant="Variant.Outlined" @bind-Value="TermDto.Definition" Lines="3" />
 
-
-                    <span class="ql-formats">
-                        <button class="ql-bold"></button>
-                        <button class="ql-italic"></button>
-                        <button class="ql-underline"></button>
-                        <button class="ql-strike"></button>
-                    </span>
-                    <span class="ql-formats">
-                        <select class="ql-color"></select>
-                        <select class="ql-background"></select>
-                    </span>
-                    <span class="ql-formats">
-                        <button class="ql-list" value="ordered"></button>
-                        <button class="ql-list" value="bullet"></button>
-                    </span>
-
-                </ToolbarContent>
-                <EditorContent>
-                   
-                </EditorContent>
-            </BlazoredTextEditor>
-
-            <!--Blazored Text Editor-->
+           
         </div>
         <div class="mb-3">
 
@@ -81,7 +57,7 @@
         </div>
         <div class="mb-3">
             <!--Curriculums-->
-            <MudSelect Required  ValueChanged="FilterSubjects" HelperText="The curriculum the term falls under" T="Curriculum" Label="Curriculum" Variant="Variant.Outlined" ToStringFunc="@curriculumConverter">
+            <MudSelect Required ValueChanged="FilterSubjects" HelperText="The curriculum the term falls under." T="Curriculum" Label="Curriculum" Variant="Variant.Outlined" ToStringFunc="@curriculumConverter">
                 @foreach (var curriculum in curriculums)
                 {
                     <MudSelectItem Value="@curriculum">@curriculum.Name</MudSelectItem>
@@ -93,7 +69,7 @@
         <div class="mb-3">
             <!--Subjects-->
             <!--Disable the subject select input if not curriculum is selected-->
-            <MudSelect Required  disabled="@(TermDto.Curriculum==null)" ValueChanged="FilterTopics" HelperText="The subject the term falls under" T="Subject" Label="Subject" Variant="Variant.Outlined" ToStringFunc="@subjectConverter">
+            <MudSelect Required disabled="@(TermDto.Curriculum==null)" ValueChanged="FilterTopics" HelperText="The subject the term falls under." T="Subject" Label="Subject" Variant="Variant.Outlined" ToStringFunc="@subjectConverter">
                 @foreach (var subject in subjects)
                 {
                     <MudSelectItem Value="@subject">@subject.Name</MudSelectItem>
@@ -104,7 +80,7 @@
 
         <div class="mb-3">
             <!--Topics-->
-            <MudSelect Required disabled="@(TermDto.Subject==null)" @bind-Value="TermDto.Topic" HelperText="The topic the term falls under" T="Topic" Label="Topic" Variant="Variant.Outlined" ToStringFunc="@topicConverter">
+            <MudSelect Required disabled="@(TermDto.Subject==null)" @bind-Value="TermDto.Topic" HelperText="The topic the term falls under." T="Topic" Label="Topic" Variant="Variant.Outlined" ToStringFunc="@topicConverter">
                 @foreach (var topic in topics)
                 {
                     <MudSelectItem Value="@topic">@topic.Name</MudSelectItem>
@@ -114,8 +90,8 @@
         </div>
 
 
-        <MudButton Class="mt-5" Disabled="@TermService.isProcessing" Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" ButtonType="ButtonType.Submit">
-            @if (TermService.isProcessing)
+        <MudButton Class="" Disabled="@TermService.isCreating" Variant="Variant.Filled" DisableElevation="true" Color="Color.Dark" ButtonType="ButtonType.Submit">
+            @if (TermService.isCreating)
             {
                 <MudProgressCircular Class="ms-n1 text-light" Size="Size.Small" Indeterminate="true" />
                 <MudText Class="ms-2">Please wait...</MudText>
@@ -134,11 +110,11 @@
     private List<Subject> subjects = new List<Subject>();
     private List<Curriculum> curriculums = new List<Curriculum>();
     private List<Level> levels = new List<Level>();
-    //Blazored text editor
-    BlazoredTextEditor QuillHtml;
+
+    
 
 
-
+    //Submit form
     private async Task HandleValidSubmit()
     {
         //convert the keywords into a list
@@ -223,13 +199,6 @@
         List<string> keywordList = trimmedKeywords.Split(",").ToList();
 
         return keywordList;
-    }
-
-    //Blazored text editor function
-    public async void GetHTML()
-    {
-        TermDto.Definition = await this.QuillHtml.GetHTML();
-        StateHasChanged();
     }
 
 

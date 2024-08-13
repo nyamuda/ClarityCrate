@@ -1,6 +1,5 @@
 ﻿@inherits LayoutComponentBase
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@using Clarity_Crate.Components.Pages
 
 
 
@@ -20,41 +19,9 @@
 
 <div class="page d-flex flex-column justify-content-between">
 
+    <NavBar/>
 
-
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-lg-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
-            <MudIconButton Class="navbar-toggler" Icon="@Icons.Material.Filled.Menu" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-label="Toggle navigation" aria-controls="navbarSupportedContent" aria-expanded="false"></MudIconButton>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">Home</NavLink>
-
-                    </li>
-                    <li class="nav-item">
-                        <NavLink class="nav-link" href="/definitions" Match="NavLinkMatch.All">Definitions</NavLink>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Dropdown
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled">Disabled</a>
-                    </li>
-                </ul>
-                <LoginDisplay />
-            </div>
-        </div>
-    </nav>
+    
 
     <main class="">
         @if (isAccountManagePage)
@@ -89,7 +56,7 @@
         }
 
     </main>
-    <Footer />
+    <Footer/>
 
 </div>
 
