@@ -1,17 +1,12 @@
 ﻿@page "/cards"
+@using Clarity_Crate.Models
+@using Clarity_Crate.Services
+@inject TermService TermService
 <PageTitle>Cards</PageTitle>
 
 <style></style>
 
-<div class="row">
-    @foreach(Item item in items)
-    {
-        <div class="col-lg-4">
-            <TermFlashcardItem Id="@(item.Id)" Term="@(item.Name)" Description="@(item.Description)" Level="@(item.Level)" Curriculum="@(item.Curriculum)" />
-        </div>
-    }
 
-</div>
 
 
 
@@ -19,13 +14,15 @@
 @code {
 
 
-    private List<Item> items = new List<Item>();
+    private List<Term> terms = new List<Term>();
 
 
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        items = GenerateRandomItems(10);
+        await TermService.GetTerms();
+        terms = TermService.Terms;
+        
     }
 
 

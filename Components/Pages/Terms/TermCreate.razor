@@ -7,6 +7,7 @@
 @using Clarity_Crate.Dtos
 @inject NavigationManager NavigationManager
 @using Clarity_Crate.Models
+@using Blazored.TextEditor
 @page "/add-term"
 
 
@@ -20,6 +21,7 @@
         <div class="mb-3">
 
             <MudTextField Required @bind-Value="TermDto.Name"
+                          Variant="Variant.Outlined"
                           For="@(() => TermDto.Name)"
                           Immediate="true"
                           Label="Name" />
@@ -29,16 +31,38 @@
 
         <div class="mb-3">
 
-            <MudTextField AutoGrow HelperText="The definition of the term" Required @bind-Value="TermDto.Definition"
-                          For="@(() => TermDto.Definition)"
-                          Immediate="true"
-                          Label="Definition" />
+            <!--Blazored Text Editor-->
+            <BlazoredTextEditor @ref="@QuillHtml" EditorCssStyle="font-size:1rem;" Placeholder="Enter definition">
+                <ToolbarContent>
 
 
+                    <span class="ql-formats">
+                        <button class="ql-bold"></button>
+                        <button class="ql-italic"></button>
+                        <button class="ql-underline"></button>
+                        <button class="ql-strike"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <select class="ql-color"></select>
+                        <select class="ql-background"></select>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-list" value="ordered"></button>
+                        <button class="ql-list" value="bullet"></button>
+                    </span>
+
+                </ToolbarContent>
+                <EditorContent>
+                   
+                </EditorContent>
+            </BlazoredTextEditor>
+
+            <!--Blazored Text Editor-->
         </div>
         <div class="mb-3">
 
             <MudTextField AutoGrow HelperText="The keywords of the definition separated by a comma." @bind-Value="TermDto.Keywords"
+                          Variant="Variant.Outlined"
                           For="@(() => TermDto.Keywords)"
                           Immediate="true"
                           Label="Keywords" />
@@ -48,46 +72,46 @@
 
         <div class="mb-3">
             <!--Levels-->
-            <MudSelect Required T="Level" Label="Level" ToStringFunc="@levelConverter" MultiSelection="true" @bind-SelectedValues="TermDto.SelectedLevels">
+            <MudSelect Required Variant="Variant.Outlined" T="Level" Label="Level" ToStringFunc="@levelConverter" MultiSelection="true" @bind-SelectedValues="TermDto.SelectedLevels">
                 @foreach (var level in levels)
                 {
                     <MudSelectItem T="Level" Value="@level">@level.Name</MudSelectItem>
                 }
             </MudSelect>
-       </div>
+        </div>
         <div class="mb-3">
             <!--Curriculums-->
-            <MudSelect Required ValueChanged="FilterSubjects" HelperText="The curriculum the term falls under" T="Curriculum" Label="Curriculum" Variant="Variant.Text" ToStringFunc="@curriculumConverter">
+            <MudSelect Required  ValueChanged="FilterSubjects" HelperText="The curriculum the term falls under" T="Curriculum" Label="Curriculum" Variant="Variant.Outlined" ToStringFunc="@curriculumConverter">
                 @foreach (var curriculum in curriculums)
                 {
                     <MudSelectItem Value="@curriculum">@curriculum.Name</MudSelectItem>
                 }
             </MudSelect>
 
-       </div>
+        </div>
 
         <div class="mb-3">
             <!--Subjects-->
             <!--Disable the subject select input if not curriculum is selected-->
-            <MudSelect Required disabled="@(TermDto.Curriculum==null)" ValueChanged="FilterTopics" HelperText="The subject the term falls under" T="Subject" Label="Subject" Variant="Variant.Text" ToStringFunc="@subjectConverter">
+            <MudSelect Required  disabled="@(TermDto.Curriculum==null)" ValueChanged="FilterTopics" HelperText="The subject the term falls under" T="Subject" Label="Subject" Variant="Variant.Outlined" ToStringFunc="@subjectConverter">
                 @foreach (var subject in subjects)
                 {
                     <MudSelectItem Value="@subject">@subject.Name</MudSelectItem>
                 }
             </MudSelect>
-       </div>
+        </div>
 
 
-    <div class="mb-3">
+        <div class="mb-3">
             <!--Topics-->
-            <MudSelect Required disabled="@(TermDto.Subject==null)" @bind-Value="TermDto.Topic" HelperText="The topic the term falls under" T="Topic" Label="Topic" Variant="Variant.Text" ToStringFunc="@topicConverter">
+            <MudSelect Required disabled="@(TermDto.Subject==null)" @bind-Value="TermDto.Topic" HelperText="The topic the term falls under" T="Topic" Label="Topic" Variant="Variant.Outlined" ToStringFunc="@topicConverter">
                 @foreach (var topic in topics)
                 {
                     <MudSelectItem Value="@topic">@topic.Name</MudSelectItem>
                 }
             </MudSelect>
 
-    </div>
+        </div>
 
 
         <MudButton Class="mt-5" Disabled="@TermService.isProcessing" Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" ButtonType="ButtonType.Submit">
@@ -103,16 +127,15 @@
         </MudButton>
     </EditForm>
 
-
-
-
 </div>
 @code {
     private TermCreateDto TermDto { get; set; } = new TermCreateDto();
     private List<Topic> topics = new List<Topic>();
-    private List<Subject> subjects= new List<Subject>();
-    private List<Curriculum> curriculums=new List<Curriculum>();
-    private List<Level> levels= new List<Level>();
+    private List<Subject> subjects = new List<Subject>();
+    private List<Curriculum> curriculums = new List<Curriculum>();
+    private List<Level> levels = new List<Level>();
+    //Blazored text editor
+    BlazoredTextEditor QuillHtml;
 
 
 
@@ -122,23 +145,23 @@
         var keywords = ConvertKeywordsToList(TermDto.Keywords);
         //first create a definition
         Definition definition = new Definition()
-        {
-            Content=TermDto.Definition,
-            TopicId=TermDto.Topic.Id,
-            CurriculumId=TermDto.Curriculum.Id,
-            SubjectId=TermDto.Subject.Id,
-            Keywords=keywords
+            {
+                Content = TermDto.Definition,
+                TopicId = TermDto.Topic.Id,
+                CurriculumId = TermDto.Curriculum.Id,
+                SubjectId = TermDto.Subject.Id,
+                Keywords = keywords
 
 
-        };
+            };
 
         //then create a term
         Term term = new Term()
-        {
-            Name=TermDto.Name,
-            Levels=TermDto.SelectedLevels.ToList(),
+            {
+                Name = TermDto.Name,
+                Levels = TermDto.SelectedLevels.ToList(),
 
-        };
+            };
 
         await TermService.CreateTerm(term, definition);
 
@@ -155,10 +178,10 @@
         await LevelService.GetLevels();
 
 
-        topics= TopicService.Topics;
-        subjects= SubjectService.Subjects;
-        curriculums= CurriculumService.Curriculums;
-        levels= LevelService.Levels;
+        topics = TopicService.Topics;
+        subjects = SubjectService.Subjects;
+        curriculums = CurriculumService.Curriculums;
+        levels = LevelService.Levels;
     }
 
     //filter the subjects based on the selected curriculum
@@ -200,6 +223,13 @@
         List<string> keywordList = trimmedKeywords.Split(",").ToList();
 
         return keywordList;
+    }
+
+    //Blazored text editor function
+    public async void GetHTML()
+    {
+        TermDto.Definition = await this.QuillHtml.GetHTML();
+        StateHasChanged();
     }
 
 

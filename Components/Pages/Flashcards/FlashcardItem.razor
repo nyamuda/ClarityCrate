@@ -1,4 +1,5 @@
-﻿<style>
+﻿@using Clarity_Crate.Models
+<style>
     .flashcard {
         width: 100%;
         height: 12.5rem;
@@ -34,20 +35,24 @@
 
 </style>
 
-
 <MudPaper Class="flashcard" Elevation="0" @onclick="ToggleFlip">
     <div class="shadow flashcard-inner @(isFlipped ? "flipped" : "")">
         <div class="flashcard-front flashcard-content d-flex justify-content-center align-items-center p-2">
-            <MudText Typo="Typo.h4">@Term</MudText>
+            <MudText Typo="Typo.h4">@Term.Name</MudText>
         </div>
         <div class="flashcard-back flashcard-content d-flex flex-column justify-content-between text-start p-4">
-            <MudText>@Description</MudText>
+            <MudText>@Term.Definition.Content</MudText>
 
 
             <div class="pt-2">
                 <MudDivider />
-                <MudText>@Curriculum</MudText>
-                <MudText>@Level</MudText>
+                <MudText>@Term.Definition.Curriculum.Name</MudText>
+                <div class="d-flex justify-content-start">
+                    @foreach(var level in Term.Levels)
+                    {
+                        <MudChip T="string" Color="Color.Info">@level.Name</MudChip>
+                    }
+                </div>
             </div>
 
 
@@ -61,11 +66,8 @@
 @code {
 
     [Parameter]
-    public string Term { get; set; }
-    [Parameter]
-    public string Description { get; set; }
-    [Parameter] public string Curriculum { get; set; }
-    [Parameter] public string Level { get; set; }
+    public Term Term { get; set; }
+   
 
     private bool isFlipped = false;
 

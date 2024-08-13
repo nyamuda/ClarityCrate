@@ -53,6 +53,7 @@ builder.Services.AddScoped<TemplateService>();
 builder.Services.AddHttpClient<OpenAIService>();
 
 
+
 builder.WebHost.UseStaticWebAssets();
 
 

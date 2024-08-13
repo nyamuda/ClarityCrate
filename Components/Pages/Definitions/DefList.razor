@@ -1,7 +1,5 @@
-﻿@page "/definitions"
-@using Clarity_Crate.Services
+﻿@using Clarity_Crate.Services
 @using Clarity_Crate.Models
-@using Clarity_Crate.Components.Pages.Flashcards
 <PageTitle>Definitions</PageTitle>
 @inject NavigationManager NavigationManager
 @inject CurriculumService CurriculumService
@@ -85,15 +83,40 @@
         }
         else
         {
-            <div class="row">
-                @foreach (var term in terms)
-                {
-                    <div class="col-lg-4">
-                        <FlashcardItem Term="@(term)" />
-                    </div>
-                }
+            <!--MudBlazor table that show a list of Terms -->
+            <!--Each Term shows its levels, subject, and definition-->
+            <MudTable Class="mt-5" Items="@terms" Dense="true" Bordered="true" Striped="true" @bind-SelectedItem="SelectedTerm">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Terms</MudText>
 
-            </div>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Term, object>(x=>x.Name)">Term</MudTableSortLabel></MudTh>
+                    <MudTh Class="d-none d-md-block">Level</MudTh>
+                    <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Term, object>(x=>x.Definition.Topic.Name)">Topic</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Term, object>(x=>x.Definition.Subject.Name)">Subject</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Term, object>(x=>x.Definition.Curriculum.Name)">Curriculum</MudTableSortLabel></MudTh>
+                    <MudTh>Definition</MudTh>
+
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Term">@context.Name</MudTd>
+
+                    <MudTd Class="d-none d-md-block" DataLabel="Level">
+                        @foreach (var level in context.Levels)
+                        {
+                            <MudChip Variant="Variant.Filled" Color="Color.Primary" Class="m-1">@level.Name</MudChip>
+                        }
+                    </MudTd>
+                    <MudTd DataLabel="Topic">@context.Definition.Topic.Name</MudTd>
+                    <MudTd DataLabel="Subject">@context.Definition.Subject.Name</MudTd>
+                    <MudTd DataLabel="Curriculum">@context.Definition.Curriculum.Name</MudTd>
+                    <MudTd DataLabel="Definition">@context.Definition.Content</MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>
 
         }
     }
