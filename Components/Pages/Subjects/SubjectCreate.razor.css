@@ -1,8 +1,4 @@
-﻿.container {
-    margin-top: 5rem !important;
-}
-
-@media (min-width:768px) {
+﻿@media (min-width:768px) {
     .container {
         width: 40rem;
     }

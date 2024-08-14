@@ -9,6 +9,8 @@ namespace Clarity_Crate.Services
     {
         private readonly ApplicationDbContext _context;
         public List<Subject> Subjects { get; set; }
+        public bool isCreating = false;
+        public bool isUpdating = false;
         public bool isGettingItems = false;
 
 
@@ -21,14 +23,18 @@ namespace Clarity_Crate.Services
 
         public async Task<bool> CreateSubject(Subject subject)
         {
+
             try
             {
+                isCreating = true;
                 _context.Subject.Add(subject);
                 await _context.SaveChangesAsync();
+                isCreating = false;
                 return true;
             }
             catch (DBConcurrencyException ex)
             {
+                isCreating = false;
 
                 return false;
             }
@@ -54,25 +60,30 @@ namespace Clarity_Crate.Services
 
         public async Task<Boolean> UpdateSubject(Subject subject)
         {
-            var itemExists = await _context.Subject.FindAsync(subject.Id);
-
-            if (itemExists == null)
-            {
-                return false;
-            }
 
             try
             {
+                isUpdating = true;
+                var itemExists = await _context.Subject.FindAsync(subject.Id);
+
+                if (itemExists == null)
+                {
+                    isUpdating = false;
+                    return false;
+                }
+
                 itemExists.Name = subject.Name;
                 itemExists.Curriculums = subject.Curriculums;
 
 
                 await _context.SaveChangesAsync();
+                isUpdating = false;
                 return true;
 
             }
             catch (DbUpdateConcurrencyException ex)
             {
+                isUpdating = false;
                 return false;
             }
         }

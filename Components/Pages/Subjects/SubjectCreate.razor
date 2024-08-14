@@ -3,28 +3,29 @@
 @inject NavigationManager NavigationManager
 @inject SubjectService SubjectService
 @inject CurriculumService CurriculumService
+@inject AppService AppService
 
 @using Clarity_Crate.Models
 @page "/add-subject"
 
 
 <div class="container text-start m-auto">
-    <h2>Add a new subject</h2>
+    <h1 class="display-6">Add a new subject</h1>
 
-    <EditForm Model="@SubjectCreateDto" OnValidSubmit="@HandleValidSubmit">
+    <EditForm class="py-3 px-4 shadow" Model="@SubjectCreateDto" OnValidSubmit="@HandleValidSubmit">
         <DataAnnotationsValidator />
 
 
         <div class="mb-3">
 
-            <MudTextField @bind-Value="SubjectCreateDto.Name"
+            <MudTextField @bind-Value="SubjectCreateDto.Name" Variant="Variant.Outlined"
                           For="@(() => SubjectCreateDto.Name)"
                           Immediate="true"
                           Label="Name" />
 
             
 
-            <MudSelect Required T="Curriculum" Label="Subject" ToStringFunc="@converter" MultiSelection="true" @bind-SelectedValues="SubjectCreateDto.SelectedCurriculums">
+            <MudSelect Required Variant="Variant.Outlined" T="Curriculum" Label="Curriculum" ToStringFunc="@converter" MultiSelection="true" @bind-SelectedValues="SubjectCreateDto.SelectedCurriculums">
                 @foreach (var curriculum in Curriculums)
                 {
                     <MudSelectItem T="Curriculum" Value="@curriculum">@curriculum.Name</MudSelectItem>
@@ -35,9 +36,16 @@
 
         </div>
 
-
-        <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" ButtonType="ButtonType.Submit">
-            Create
+        <MudButton Disabled="@SubjectService.isCreating" Variant="Variant.Filled" DisableElevation="true" Color="Color.Dark" ButtonType="ButtonType.Submit" Size="Size.Large">
+            @if (SubjectService.isCreating)
+            {
+                <MudProgressCircular Class="ms-n1 text-dark" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2 text-dark">Please wait...</MudText>
+            }
+            else
+            {
+                <MudText>Create</MudText>
+            }
         </MudButton>
     </EditForm>
 
@@ -45,13 +53,18 @@
 @code {
     private SubjectCreateDto SubjectCreateDto { get; set; } = new SubjectCreateDto();
     private List<Curriculum> Curriculums { get; set; } = new List<Curriculum>();
-    
+
 
 
     private async Task HandleValidSubmit()
     {
-       
+        if (SubjectCreateDto.SelectedCurriculums == null || !SubjectCreateDto.SelectedCurriculums.Any())
+        {
+            AppService.ShowSnackBar("Please select at least one curriculum.", isSuccess: false);
+            return;
+        }
 
+        //new subject
         Subject subject = new Subject
             {
                 Name = SubjectCreateDto.Name,
@@ -60,11 +73,26 @@
             };
 
 
-        await SubjectService.CreateSubject(subject);
+            //add the subject to the database
+        bool isSuccess=await SubjectService.CreateSubject(subject);
 
 
-        //redirect to the subjects page
-        NavigationManager.NavigateTo("/subjects");
+        if(isSuccess)
+        {
+            //show snack bar
+            string message = "Subject added successfully!";
+            AppService.ShowSnackBar(message, isSuccess: true);
+            //redirect to the subjects page
+            NavigationManager.NavigateTo("/subjects");
+        }
+        else
+        {
+            //show snack bar
+            string message = "An error occurred while creating the subject";
+            AppService.ShowSnackBar(message, false);
+        }
+
+       
 
     }
     protected override async Task OnInitializedAsync()
