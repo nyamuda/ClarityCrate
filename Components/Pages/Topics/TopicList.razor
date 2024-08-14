@@ -3,7 +3,7 @@
 @inject TopicService TopicService
 @inject SubjectService SubjectService
 
-@inject ISnackbar Snackbar
+@inject AppService AppService
 @inject NavigationManager NavigationManager
 
 
@@ -138,20 +138,25 @@
             if(isSuccess)
             {
 
-                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomCenter;
-                Snackbar.Add("Topic deleted successfully!", Severity.Success);
 
                 await TopicService.GetTopics();
                 Topics = TopicService.Topics;
 
+                //show snack bar
+                string message = "Topic deleted successfully!";
+                AppService.ShowSnackBar(message, isSuccess: true);
 
                 StateHasChanged();
             }
             else
             {
-                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomCenter;
-                Snackbar.Add("An error occurred while deleting the topic", Severity.Error);
+                //show snack bar
+                string message = "An error occurred while deleting the topic";
+                AppService.ShowSnackBar(message, isSuccess: false);
+
             }
+
+
         }
 
 
@@ -199,9 +204,21 @@
 
     private async Task OnRowEditSave()
     {
-        await TopicService.UpdateTopic(selectedItem1);
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomCenter;
-        Snackbar.Add("Topic updated successfully!", Severity.Success);
+        bool isSuccess=await TopicService.UpdateTopic(selectedItem1);
+        if (isSuccess)
+        {
+            //show snack bar
+            string message = "Topic updated successfully!";
+            AppService.ShowSnackBar(message, isSuccess: true);
+         
+        }
+        else
+        {
+            //show snack bar
+            string message = "An error occurred while updating the topic";
+            AppService.ShowSnackBar(message, false);
+        }
+
     }
 
 

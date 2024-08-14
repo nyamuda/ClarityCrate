@@ -4,20 +4,21 @@
 @using Clarity_Crate.Services
 @using Clarity_Crate.Dtos
 @inject NavigationManager NavigationManager
+@inject AppService AppService
 @using Clarity_Crate.Models
 @page "/add-topic"
 
 
-<div class="container mt-16 text-start m-auto">
-    <h2>Add a new topic</h2>
+<div class="container text-start m-auto">
+    <h1 class="display-6">Add a new topic</h1>
 
-    <EditForm Model="@TopicDto" OnValidSubmit="@HandleValidSubmit">
+    <EditForm class="py-3 px-4 shadow" Model="@TopicDto" OnValidSubmit="@HandleValidSubmit">
         <DataAnnotationsValidator />
 
 
         <div class="mb-3">
 
-            <MudTextField Required @bind-Value="TopicDto.Name"
+            <MudTextField Required @bind-Value="TopicDto.Name" Variant="Variant.Outlined"
                           For="@(() => TopicDto.Name)"
                           Immediate="true"
                           Label="Name" />
@@ -27,7 +28,7 @@
 
       
 
-        <MudSelect Required T="Subject" Label="Subject" ToStringFunc="@converter" MultiSelection="true" @bind-SelectedValues="TopicDto.SelectedTopics">
+        <MudSelect SelectAll="true" Required T="Subject" Label="Subject" ToStringFunc="@converter" MultiSelection="true" @bind-SelectedValues="TopicDto.SelectedSubjects" Variant="Variant.Outlined">
             @foreach (var subject in subjects)
             {
                 <MudSelectItem T="Subject" Value="@subject">@subject.Name</MudSelectItem>
@@ -38,11 +39,11 @@
 
 
 
-        <MudButton Class="mt-5" Disabled="@TopicService.isProcessing" Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" ButtonType="ButtonType.Submit">
-            @if (TopicService.isProcessing)
+        <MudButton Class="mt-5" Disabled="@TopicService.isCreating" Variant="Variant.Filled" DisableElevation="true" Color="Color.Dark" ButtonType="ButtonType.Submit" Size="Size.Large">
+            @if (TopicService.isCreating)
             {
-                <MudProgressCircular Class="ms-n1 text-light" Size="Size.Small" Indeterminate="true" />
-                <MudText Class="ms-2">Please wait...</MudText>
+                <MudProgressCircular Class="ms-n1 text-dark" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2 text-dark">Please wait...</MudText>
             }
             else
             {
@@ -59,20 +60,40 @@
     private TopicCreateDto TopicDto { get; set; } = new TopicCreateDto();
 
     private List<Subject> subjects = new List<Subject>();
-   
+
 
     private async Task HandleValidSubmit()
     {
+        //check if a subject has been selected
+        if(TopicDto.SelectedSubjects is null || !TopicDto.SelectedSubjects.Any())
+        {
+            AppService.ShowSnackBar("Please select at least one subject.", isSuccess: false);
+            return;
+        }
         //add the new curriculum to the database
         Topic topic= new Topic()
         {
             Name = TopicDto.Name, 
-            Subjects = TopicDto.SelectedTopics.ToList()
+            Subjects = TopicDto.SelectedSubjects.ToList()
         };
-        await TopicService.CreateTopic(topic);
+       bool isSuccess= await TopicService.CreateTopic(topic);
 
-        //redirect to the curriculums page
-        NavigationManager.NavigateTo("/topics");
+        if (isSuccess)
+        {
+            //show snack bar
+            string message = "Topic added successfully!";
+            AppService.ShowSnackBar(message, isSuccess: true);
+            //redirect to the topics page
+            NavigationManager.NavigateTo("/topics");
+        }
+        else
+        {
+            //show snack bar with error message
+            string message = "An error occurred while creating the topic";
+            AppService.ShowSnackBar(message, false);
+        }
+
+
 
     }
     protected override async Task OnInitializedAsync()

@@ -25,7 +25,7 @@
 
             
 
-            <MudSelect Required Variant="Variant.Outlined" T="Curriculum" Label="Curriculum" ToStringFunc="@converter" MultiSelection="true" @bind-SelectedValues="SubjectCreateDto.SelectedCurriculums">
+            <MudSelect SelectAll="true" Required Variant="Variant.Outlined" T="Curriculum" Label="Curriculum" ToStringFunc="@converter" MultiSelection="true" @bind-SelectedValues="SubjectCreateDto.SelectedCurriculums">
                 @foreach (var curriculum in Curriculums)
                 {
                     <MudSelectItem T="Curriculum" Value="@curriculum">@curriculum.Name</MudSelectItem>

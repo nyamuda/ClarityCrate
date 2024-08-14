@@ -9,7 +9,8 @@ namespace Clarity_Crate.Services
     {
         private readonly ApplicationDbContext _context;
         public List<Topic> Topics { get; set; } = new List<Topic>();
-        public bool isProcessing = false;
+        public bool isCreating = false;
+        public bool isUpdating = false;
         public bool isGettingItems = false;
 
         public TopicService(ApplicationDbContext context)
@@ -31,13 +32,21 @@ namespace Clarity_Crate.Services
             return await _context.Topic.FindAsync(id);
         }
 
-        public async Task<Topic> CreateTopic(Topic topic)
+        public async Task<Boolean> CreateTopic(Topic topic)
         {
-            isProcessing = !isProcessing;
-            _context.Topic.Add(topic);
-            await _context.SaveChangesAsync();
-            isProcessing = !isProcessing;
-            return topic;
+            try
+            {
+                isCreating = true;
+                _context.Topic.Add(topic);
+                await _context.SaveChangesAsync();
+                isCreating = false;
+                return true;
+            }
+            catch (DBConcurrencyException ex)
+            {
+                isCreating = false;
+                return false;
+            }
         }
 
 
@@ -45,12 +54,14 @@ namespace Clarity_Crate.Services
         {
             try
             {
+                isUpdating = true;
                 Topic topicExists = await _context.Topic.FindAsync(topic.Id);
                 if (topicExists != null)
                 {
                     topicExists.Name = topic.Name;
                     topicExists.Subjects = topic.Subjects;
                     await _context.SaveChangesAsync();
+                    isUpdating = false;
                     return true;
                 }
 
@@ -58,6 +69,7 @@ namespace Clarity_Crate.Services
             }
             catch (DBConcurrencyException e)
             {
+                isUpdating = false;
                 return false;
             }
         }
