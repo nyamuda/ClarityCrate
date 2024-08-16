@@ -114,18 +114,39 @@ namespace Clarity_Crate.Services
 
         }
 
-        public async Task<List<Term>> SearchTerm(string term)
+        //Search a term by name
+        public async Task<PaginationInfo<Term>> SearchTerm(string term, int pageNumber)
         {
+
             isSearching = !isSearching;
 
+            //Pagination Information
+            const int PAGE_SIZE = 3;
+
+            //total items
+            int totalItems = await _context.Term.Where(t => t.Name.Contains(term) || term == "").CountAsync();
+
+            // Get the terms for the current page
             var terms = await _context.Term
                 .Include(t => t.Definition)
                 .Include(t => t.Levels)
                 .Where(t => t.Name.Contains(term) || term == "")
+                .Skip((pageNumber - 1) * PAGE_SIZE)
+                .Take(PAGE_SIZE)
                 .ToListAsync();
 
             isSearching = !isSearching;
-            return terms;
+
+            var paginationInfo = new PaginationInfo<Term>
+            {
+                PageSize = PAGE_SIZE,
+                PageNumber = pageNumber,
+                TotalItems = totalItems,
+                Items = terms
+            };
+
+
+            return paginationInfo;
         }
 
     }

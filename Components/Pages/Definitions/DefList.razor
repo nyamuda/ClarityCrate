@@ -216,7 +216,7 @@
     //Search for a term
     public async Task SearchTerm()
     {
-        terms = await TermService.SearchTerm(Search);
+        var terms = await TermService.SearchTerm(Search,5);
 
     }
 
