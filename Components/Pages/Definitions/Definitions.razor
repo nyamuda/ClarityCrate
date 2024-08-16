@@ -64,7 +64,7 @@
         </div>
 
         <div class="col d-flex justify-content-start mt-2 mt-md-0 align-items-center">
-            <MudButton OnClick="Filter" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.FilterAlt" Color="Color.Dark" Size="Size.Medium">Filter</MudButton>
+            <MudButton Class="purple darken-3 text-light" OnClick="Filter" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.FilterAlt" Size="Size.Medium">Filter</MudButton>
         </div>
 
     </div>
@@ -84,17 +84,19 @@
     }
     else
     {
-        <div class="row">
-            @foreach (var term in terms)
-            {
-                <div class="col-lg-4">
-                    <FlashcardItem Term="@(term)" />
-                </div>
-            }
-
-        </div>
         <div>
-            <MudPagination SelectedChanged="GoToPage" Selected="_currentPage" BoundaryCount="@BOUNDARY_COUNT" MiddleCount="@MIDDLE_COUNT" Count="@_totalPages" />
+            <div class="row">
+                @foreach (var term in terms)
+                {
+                    <div class="col-lg-4">
+                        <FlashcardItem Term="@(term)" />
+                    </div>
+                }
+
+            </div>
+            <div>
+                <MudPagination Size="Size.Medium" Color="Color.Dark" SelectedChanged="GoToPage" Selected="_currentPage" BoundaryCount="@BOUNDARY_COUNT" MiddleCount="@MIDDLE_COUNT" Count="@_totalPages" ShowFirstButton="true" ShowLastButton="true" />
+            </div>
         </div>
     }
 
@@ -120,8 +122,8 @@
     //pagination info
     private int _totalPages = 1;
     private int _currentPage = 1;
-    private const int BOUNDARY_COUNT = 1;
-    private const int MIDDLE_COUNT = 2;
+    private const int BOUNDARY_COUNT = 4;
+    private const int MIDDLE_COUNT = 3;
 
 
 
@@ -194,8 +196,11 @@
         int levelId = SelectedLevel.Id;
 
 
-        //search for the term
-        terms = await TermService.FilterTerms(Search, curriculumId, subjectId, topicId, levelId);
+        //filter the terms
+        var pageInfo = await TermService.FilterTerms(Search, curriculumId, subjectId, topicId, levelId, pageNumber: _currentPage);
+
+        terms = pageInfo.Items;
+        _totalPages = pageInfo.TotalPages;
     }
 
     //Search for a term
@@ -204,11 +209,8 @@
         var pageInfo = await TermService.SearchTerm(Search, _currentPage);
 
         terms = pageInfo.Items;
-        var pageSize = pageInfo.PageSize;
-        var totalItems = pageInfo.TotalItems;
 
-        //calculate number of pages
-        _totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+        _totalPages = pageInfo.TotalPages;
 
 
     }
