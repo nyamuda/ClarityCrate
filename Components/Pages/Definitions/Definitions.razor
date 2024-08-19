@@ -9,14 +9,16 @@
 @inject TopicService TopicService
 @inject LevelService LevelService
 @inject TermService TermService
+@inject IJSRuntime JSRuntime
 
 
 
-<div class="container text-center py-5 mt-15">
+
+<div id="term-definitions" class="container text-center py-5 mt-15">
 
     <!--Search terms-->
     <div>
-        <EditForm Model="@SearchItem" OnValidSubmit="SearchTerm" FormName="SearchItem">
+        <EditForm Model="@SearchItem" OnValidSubmit="Filter" FormName="SearchItem">
 
             <MudTextField @bind-Value="Search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
 
@@ -99,8 +101,7 @@
             </div>
         </div>
     }
-
-
+    
 </div>
 
 
@@ -203,24 +204,21 @@
         _totalPages = pageInfo.TotalPages;
     }
 
-    //Search for a term
-    public async Task SearchTerm()
-    {
-        var pageInfo = await TermService.SearchTerm(Search, _currentPage);
-
-        terms = pageInfo.Items;
-
-        _totalPages = pageInfo.TotalPages;
-
-
-    }
 
     //Go to another page using the pagination
     public async Task GoToPage(int pageNumber)
     {
         _currentPage = pageNumber;
-        await SearchTerm();
 
+        await Filter();
+
+        await ScrollToSection();   
+
+    }
+
+    private async Task ScrollToSection()
+    {
+        await JSRuntime.InvokeVoidAsync("scrollToElement", "term-definitions");
     }
 
     //convert the selected topic to a string

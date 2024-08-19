@@ -98,6 +98,7 @@ namespace Clarity_Crate.Services
         public async Task<PaginationInfo<Term>> FilterTerms(string searchTerm, int curriculumId, int subjectId, int topicId, int levelId, int pageNumber)
         {
 
+            isSearching = !isSearching;
             //get all terms with their definitions and levels
             //that match the search term, curriculum, subject, topic, and level
             // while keeping in mind that the search term can be empty
@@ -144,6 +145,7 @@ namespace Clarity_Crate.Services
         }
 
         //Search a term by name
+        /*
         public async Task<PaginationInfo<Term>> SearchTerm(string term, int pageNumber)
         {
 
@@ -182,6 +184,7 @@ namespace Clarity_Crate.Services
 
             return paginationInfo;
         }
+        */
 
     }
 }
