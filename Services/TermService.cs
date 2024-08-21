@@ -13,7 +13,7 @@ namespace Clarity_Crate.Services
         public bool isSearching = false;
         //page size for pagination
         //Pagination Information
-        private const int PAGE_SIZE = 10;
+        private const int PAGE_SIZE = 9;
 
         public TermService(ApplicationDbContext context)
         {

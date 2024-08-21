@@ -17,11 +17,11 @@
 
 
 
-<div class="page d-flex flex-column justify-content-between">
+<div>
 
-    <NavBar/>
+    <NavBar />
 
-    
+
 
     <main class="">
         @if (isAccountManagePage)
@@ -38,27 +38,70 @@
                         <MudNavLink Href="Account/Manage/PersonalData" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.DataObject">Personal data</MudNavLink>
                     </MudNavMenu>
                 </MudDrawer>
-                <MudMainContent Class="px-lg-5">
-                    <MudContainer Class="container">
+                <MudMainContent Class="vh-100 page d-flex flex-column justify-content-between">
+
+                    <MudContainer>
                         @Body
                     </MudContainer>
+
+                    <MudContainer>
+                        <Footer />
+                    </MudContainer>
+
                 </MudMainContent>
             </MudLayout>
+        }
+        else if (isLoggedIn)
+        {
+            <MudLayout>
+
+                <MudDrawer @bind-Open="@_openAdminDrawer" Elevation="1">
+                    <MudDrawerHeader>
+                        <MudText Typo="Typo.h6">Admin Panel</MudText>
+                    </MudDrawerHeader>
+                    <MudNavMenu>
+                        <MudNavLink Href="/terms" Match="NavLinkMatch.All">Terms</MudNavLink>
+                        <MudNavLink Href="/topics" Match="NavLinkMatch.All">Topics</MudNavLink>
+                        <MudNavLink Href="/subjects" Match="NavLinkMatch.All">Subjects</MudNavLink>
+                        <MudNavLink Href="/curriculums" Match="NavLinkMatch.All">Curriculums</MudNavLink>
+                    </MudNavMenu>
+                </MudDrawer>
+
+
+                <MudMainContent Class="vh-100 page d-flex flex-column justify-content-between">
+
+                    <MudContainer>
+                        @Body
+                    </MudContainer>
+
+                    <MudContainer>
+                       <Footer/>
+                    </MudContainer>
+
+                </MudMainContent>
+            </MudLayout>
+
         }
         else
         {
 
-            <div class="container">
-               <div class="mt-15">
+            <MudMainContent Class="vh-100 page d-flex flex-column justify-content-between">
+
+                <MudContainer>
                     @Body
-               </div>
-            </div>
+                </MudContainer>
+
+                <MudContainer>
+                    <Footer />
+                </MudContainer>
+
+            </MudMainContent>
 
 
         }
 
     </main>
-    <Footer/>
+
 
 </div>
 
@@ -66,6 +109,7 @@
 
 @code {
     bool open = true;
+    private bool _openAdminDrawer = true;
 
     bool isLoggedIn = false;
 
