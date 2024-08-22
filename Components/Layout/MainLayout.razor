@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@using Clarity_Crate.Components
+@inject NavigationManager Navigation
 
 
 
@@ -19,25 +21,32 @@
 
 <div>
 
-    <NavBar />
 
-
-
-    <main class="">
-        @if (isAccountManagePage)
+    <main>
+        @if(IsAdminPage)
         {
             <MudLayout>
+                <MudAppBar Elevation="1">
+                    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                        OnClick="@ToggleDrawer" />
+                    <MudSpacer />
+                    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit"
+                        Href="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+                </MudAppBar>
 
-                <MudDrawer @bind-Open="@open" Elevation="1">
+                <MudDrawer @bind-Open="@_openAdminDrawer" Elevation="1">
                     <MudDrawerHeader>
-                        <MudText Typo="Typo.h6">Account</MudText>
+                        <MudText Typo="Typo.h6">Admin Dashboard</MudText>
                     </MudDrawerHeader>
                     <MudNavMenu>
-                        <MudNavLink Href="Account/Manage/Email" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Email">Email</MudNavLink>
-                        <MudNavLink Href="Account/Manage/ChangePassword" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Password">Password</MudNavLink>
-                        <MudNavLink Href="Account/Manage/PersonalData" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.DataObject">Personal data</MudNavLink>
+                        <MudNavLink Href="/admin/terms" Match="NavLinkMatch.All">Terms</MudNavLink>
+                        <MudNavLink Href="/admin/topics" Match="NavLinkMatch.All">Topics</MudNavLink>
+                        <MudNavLink Href="/admin/subjects" Match="NavLinkMatch.All">Subjects</MudNavLink>
+                        <MudNavLink Href="/admin/curriculums" Match="NavLinkMatch.All">Curriculums</MudNavLink>
                     </MudNavMenu>
                 </MudDrawer>
+
+
                 <MudMainContent Class="vh-100 page d-flex flex-column justify-content-between">
 
                     <MudContainer>
@@ -50,40 +59,11 @@
 
                 </MudMainContent>
             </MudLayout>
-        }
-        else if (isLoggedIn)
-        {
-            <MudLayout>
-
-                <MudDrawer @bind-Open="@_openAdminDrawer" Elevation="1">
-                    <MudDrawerHeader>
-                        <MudText Typo="Typo.h6">Admin Panel</MudText>
-                    </MudDrawerHeader>
-                    <MudNavMenu>
-                        <MudNavLink Href="/terms" Match="NavLinkMatch.All">Terms</MudNavLink>
-                        <MudNavLink Href="/topics" Match="NavLinkMatch.All">Topics</MudNavLink>
-                        <MudNavLink Href="/subjects" Match="NavLinkMatch.All">Subjects</MudNavLink>
-                        <MudNavLink Href="/curriculums" Match="NavLinkMatch.All">Curriculums</MudNavLink>
-                    </MudNavMenu>
-                </MudDrawer>
-
-
-                <MudMainContent Class="vh-100 page d-flex flex-column justify-content-between">
-
-                    <MudContainer>
-                        @Body
-                    </MudContainer>
-
-                    <MudContainer>
-                       <Footer/>
-                    </MudContainer>
-
-                </MudMainContent>
-            </MudLayout>
 
         }
         else
         {
+            <NavBar />
 
             <MudMainContent Class="vh-100 page d-flex flex-column justify-content-between">
 
@@ -109,10 +89,7 @@
 
 @code {
     bool open = true;
-    private bool _openAdminDrawer = true;
-
-    bool isLoggedIn = false;
-
+    private bool _openAdminDrawer = false;
 
     DrawerClipMode clipMode = DrawerClipMode.Docked;
 
@@ -120,24 +97,28 @@
     private HttpContext HttpContext { get; set; } = default!;
 
     //Is it an Identity page or not
-    private bool isAccountManagePage => HttpContext is not null && HttpContext.Request.Path.StartsWithSegments("/Account/Manage") ? true : false;
+    private bool isAccountManagePage => HttpContext is not null &&
+    HttpContext.Request.Path.StartsWithSegments("/Account/Manage") ? true : false;
 
+
+    //Is it an Admin page or not
+    private bool IsAdminPage => Navigation.Uri != null &&
+    Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith("admin", StringComparison.OrdinalIgnoreCase);
     protected async override Task OnInitializedAsync()
     {
 
         //check to see f the use is logged in
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        //var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
-        var user = authState.User;
+        //var user = authState.User;
 
-        isLoggedIn = user.Identity.IsAuthenticated;
 
 
     }
 
     void ToggleDrawer()
     {
-        open = !open;
+        _openAdminDrawer = !_openAdminDrawer;
     }
 
 
@@ -149,22 +130,22 @@
         Palette = new PaletteLight
         {
 
-            Primary = "#007bff", // Blue
-            Secondary = "#6c757d", // Gray
-            Info = "#17a2b8", // Cyan
-            Success = "#28a745", // Green
-            Warning = "#ffc107", // Yellow
-            Error = "#dc3545", // Red
-            AppbarBackground = "#212121", // Dark gray
-            TextPrimary = "#212529", // Dark gray
-            TextSecondary = "#6c757d", // Gray
+        Primary = "#007bff", // Blue
+        Secondary = "#6c757d", // Gray
+        Info = "#17a2b8", // Cyan
+        Success = "#28a745", // Green
+        Warning = "#ffc107", // Yellow
+        Error = "#dc3545", // Red
+        AppbarBackground = "#212121", // Dark gray
+        TextPrimary = "#212529", // Dark gray
+        TextSecondary = "#6c757d", // Gray
         },
-            Typography = new Typography()
+        Typography = new Typography()
         {
-            Default = new Default()
-            {
-                FontFamily = new[] { "Poppins", "Helvetica", "Arial", "sans-serif" }
-            }
+        Default = new Default()
+        {
+        FontFamily = new[] { "Poppins", "Helvetica", "Arial", "sans-serif" }
+        }
         }
         */
     };

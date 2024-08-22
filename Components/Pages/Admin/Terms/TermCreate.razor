@@ -8,7 +8,10 @@
 @using Clarity_Crate.Dtos
 @inject NavigationManager NavigationManager
 @using Clarity_Crate.Models
-@page "/add-term"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+<PageTitle>Add Term</PageTitle>
+@page "/admin/add-term"
 
 
 <div class="mt-15 container text-start m-auto">

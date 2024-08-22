@@ -1,0 +1,18 @@
+﻿@page "/admin/terms"
+@using Clarity_Crate.Services
+@inject TermService TermService
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+<PageTitle>Terms</PageTitle>
+
+
+
+<div class="mt-16 text-center">
+    <div class="d-flex justify-content-end">
+        <MudButton StartIcon="@Icons.Material.Filled.Add" Href="/add-term" Variant="Variant.Filled"
+            DisableElevation="true" Color="Color.Dark">Add term</MudButton>
+    </div>
+
+
+    <TermList />
+</div>

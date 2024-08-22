@@ -6,7 +6,10 @@
 @inject NavigationManager NavigationManager
 @inject AppService AppService
 @using Clarity_Crate.Models
-@page "/add-topic"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+@page "/admin/add-topic"
+<PageTitle>Add Topic</PageTitle>
 
 
 <div class="container text-start m-auto">

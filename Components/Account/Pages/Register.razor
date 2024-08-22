@@ -124,6 +124,13 @@
 
         Logger.LogInformation("User created a new account with password.");
 
+        //Add a role to the user
+        //Role can be either "Admin" or "User"
+        //Any user who registers has a role of "User"
+        await UserManager.AddToRoleAsync(user,"User");
+
+
+        //Email verification 
         var userId = await UserManager.GetUserIdAsync(user);
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

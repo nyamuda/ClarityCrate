@@ -2,9 +2,11 @@
 @using Clarity_Crate.Services
 @inject NavigationManager NavigationManager
 @inject AppService AppService
-
 @using Clarity_Crate.Models
-@page "/add-curriculum"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+@page "/admin/add-curriculum"
+<PageTitle>Add Curriculum</PageTitle>
 
 
 <div class="container mt-16 text-start m-auto">
@@ -54,7 +56,7 @@
         AppService.ShowSnackBar(message, isSuccess: true);
 
         //redirect to the curriculums page
-        NavigationManager.NavigateTo("/curriculums");
+        NavigationManager.NavigateTo("/admin/curriculums");
 
     }
     protected override async Task OnInitializedAsync()

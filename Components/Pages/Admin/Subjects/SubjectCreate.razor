@@ -4,9 +4,12 @@
 @inject SubjectService SubjectService
 @inject CurriculumService CurriculumService
 @inject AppService AppService
-
 @using Clarity_Crate.Models
-@page "/add-subject"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+<PageTitle>Add Subject</PageTitle>
+@page "/admin/add-subject"
+
 
 
 <div class="container text-start m-auto">
