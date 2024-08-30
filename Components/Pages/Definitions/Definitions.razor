@@ -31,7 +31,7 @@
 
         <div class="col mb-2">
             <MudSelect ValueChanged=" OnCurriculumChanged" T="Curriculum" Label="Select curriculum" Clearable=true
-                Variant="Variant.Outlined">
+                Variant="Variant.Outlined" Disabled="@(!curriculums.Any())">
                 @foreach (var curriculum in curriculums)
                 {
                     <MudSelectItem T="Curriculum" Value="@curriculum">@curriculum.Name</MudSelectItem>
@@ -41,7 +41,7 @@
 
         <div class="col mb-2">
             <MudSelect ValueChanged="OnSubjectChanged" T="Subject" Label="Select subject" Clearable=true
-                Variant="Variant.Outlined">
+                Variant="Variant.Outlined" Disabled="@(!subjects.Any())">
                 @foreach (var subject in subjects)
                 {
                     <MudSelectItem T="Subject" Value="@subject">@subject.Name</MudSelectItem>
@@ -52,7 +52,7 @@
 
         <div class="col mb-2">
             <MudSelect ValueChanged="OnTopicChanged" T="Topic" Label="Select topic" ToStringFunc="@topicConverter"
-                Clearable=true Variant="Variant.Outlined">
+                Clearable=true Variant="Variant.Outlined" Disabled="@(!topics.Any())">
                 @foreach (var topic in topics)
                 {
                     <MudSelectItem T="Topic" Value="@topic">@topic.Name</MudSelectItem>
@@ -62,7 +62,7 @@
 
         <div class="col mb-2">
             <MudSelect ValueChanged="OnLevelChanged" T="Level" Label="Select level" ToStringFunc="@levelConverter"
-                Clearable=true Variant="Variant.Outlined">
+                Clearable=true Variant="Variant.Outlined" Disabled="@(!levels.Any())">
                 @foreach (var level in levels)
                 {
                     <MudSelectItem T="Level" Value="@level">@level.Name</MudSelectItem>
