@@ -14,13 +14,14 @@
 
 
 
-<div id="term-definitions" class="container text-center py-5 mt-15">
+<div id="term-definitions" class="container text-center py-5">
 
     <!--Search terms-->
     <div>
         <EditForm Model="@SearchItem" OnValidSubmit="Filter" FormName="SearchItem">
 
-            <MudTextField @bind-Value="Search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+            <MudTextField @bind-Value="Search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End"
+                AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
 
         </EditForm>
     </div>
@@ -29,7 +30,8 @@
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 mt-2">
 
         <div class="col mb-2">
-            <MudSelect ValueChanged=" OnCurriculumChanged" T="Curriculum" Label="Select curriculum" Clearable=true Variant="Variant.Outlined">
+            <MudSelect ValueChanged=" OnCurriculumChanged" T="Curriculum" Label="Select curriculum" Clearable=true
+                Variant="Variant.Outlined">
                 @foreach (var curriculum in curriculums)
                 {
                     <MudSelectItem T="Curriculum" Value="@curriculum">@curriculum.Name</MudSelectItem>
@@ -38,7 +40,8 @@
         </div>
 
         <div class="col mb-2">
-            <MudSelect ValueChanged="OnSubjectChanged" T="Subject" Label="Select subject" Clearable=true Variant="Variant.Outlined">
+            <MudSelect ValueChanged="OnSubjectChanged" T="Subject" Label="Select subject" Clearable=true
+                Variant="Variant.Outlined">
                 @foreach (var subject in subjects)
                 {
                     <MudSelectItem T="Subject" Value="@subject">@subject.Name</MudSelectItem>
@@ -48,7 +51,8 @@
         </div>
 
         <div class="col mb-2">
-            <MudSelect ValueChanged="OnTopicChanged" T="Topic" Label="Select topic" ToStringFunc="@topicConverter" Clearable=true Variant="Variant.Outlined">
+            <MudSelect ValueChanged="OnTopicChanged" T="Topic" Label="Select topic" ToStringFunc="@topicConverter"
+                Clearable=true Variant="Variant.Outlined">
                 @foreach (var topic in topics)
                 {
                     <MudSelectItem T="Topic" Value="@topic">@topic.Name</MudSelectItem>
@@ -57,7 +61,8 @@
         </div>
 
         <div class="col mb-2">
-            <MudSelect ValueChanged="OnLevelChanged" T="Level" Label="Select level" ToStringFunc="@levelConverter" Clearable=true Variant="Variant.Outlined">
+            <MudSelect ValueChanged="OnLevelChanged" T="Level" Label="Select level" ToStringFunc="@levelConverter"
+                Clearable=true Variant="Variant.Outlined">
                 @foreach (var level in levels)
                 {
                     <MudSelectItem T="Level" Value="@level">@level.Name</MudSelectItem>
@@ -66,7 +71,8 @@
         </div>
 
         <div class="col d-flex justify-content-start mt-2 mt-md-0 align-items-center">
-            <MudButton Color="Color.Dark" OnClick="Filter" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.FilterAlt" Size="Size.Medium">Filter</MudButton>
+            <MudButton Color="Color.Dark" OnClick="Filter" Variant="Variant.Filled"
+                StartIcon="@Icons.Material.Filled.FilterAlt" Size="Size.Medium">Filter</MudButton>
         </div>
 
     </div>
@@ -86,7 +92,7 @@
             <MudText Typo="Typo.body1">
                 Enter a term to begin your search.
             </MudText>
-            
+
         </div>
 
     }
@@ -116,9 +122,15 @@
                 }
 
             </div>
-            <div>
-                <MudPagination Size="Size.Medium" Color="Color.Dark" SelectedChanged="GoToPage" Selected="_currentPage" BoundaryCount="@BOUNDARY_COUNT" MiddleCount="@MIDDLE_COUNT" Count="@_totalPages" ShowFirstButton="true" ShowLastButton="true" />
-            </div>
+            <!--Display MudPagination if the is at least one item-->
+            @if (terms.Any())
+            {
+                <div class="mt-5">
+                    <MudPagination Size="Size.Medium" Color="Color.Dark" SelectedChanged="GoToPage" Selected="_currentPage"
+                        BoundaryCount="@BOUNDARY_COUNT" MiddleCount="@MIDDLE_COUNT" Count="@_totalPages" ShowFirstButton="true"
+                        ShowLastButton="true" />
+                </div>
+            }
         </div>
     }
 
@@ -220,7 +232,8 @@
 
 
         //filter the terms
-        var pageInfo = await TermService.FilterTerms(Search, curriculumId, subjectId, topicId, levelId, pageNumber: _currentPage);
+        var pageInfo = await TermService.FilterTerms(Search, curriculumId, subjectId, topicId, levelId, pageNumber:
+        _currentPage);
 
         terms = pageInfo.Items;
         _totalPages = pageInfo.TotalPages;

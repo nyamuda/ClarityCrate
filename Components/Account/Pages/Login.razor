@@ -72,7 +72,7 @@
             </div>
         </div>
     </div>
-    <a href="@NavigationManager.ToAbsoluteUri("GoogleLogin")" class="btn btn-success">Sign in with Google</a>
+    <!-- <a href="@NavigationManager.ToAbsoluteUri("GoogleLogin")" class="btn btn-success">Sign in with Google</a>-->
 </section>
 
 
@@ -164,24 +164,5 @@
             PasswordInput = InputType.Text;
         }
     }
-    private void SignInWithGoogle()
-    {
-        Console.WriteLine("hello");
 
-
-        // Create the external login properties for Google
-        //var redirectUrl = NavigationManager.ToAbsoluteUri("/"); // Redirect to home after login
-        //var properties = SignInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl.ToString());
-
-
-
-
-        // Trigger the navigation to Google OAuth
-        // NavigationManager.NavigateTo(properties.RedirectUri, forceLoad: true);
-    }
-
-    private class GoogleLogin
-    {
-
-    }
 }
