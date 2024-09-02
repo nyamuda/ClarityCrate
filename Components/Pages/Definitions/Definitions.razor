@@ -14,14 +14,15 @@
 
 
 
-<div id="term-definitions" class="container text-center py-5">
+<div id="term-definitions" class="container text-center">
 
     <!--Search terms-->
     <div>
         <EditForm Model="@SearchItem" OnValidSubmit="Filter" FormName="SearchItem">
 
             <MudTextField @bind-Value="Search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End"
-                AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+                AdornmentIcon="@Icons.Material.Filled.Search"
+                HelperText="Enter the term that you want to know how to define or state, e.g., 'Newton's second law.'" />
 
         </EditForm>
     </div>
@@ -87,7 +88,7 @@
     @if (!_hasSearched)
     {
         <div class="mt-4 text-center">
-            <MudIcon Icon="@Icons.Material.Filled.Explore" Size="Size.Large" Color="Color.Primary" />
+            <MudIcon Icon="@Icons.Material.Filled.Explore" Size="Size.Large" Color="Color.Dark" />
             <MudText Typo="Typo.h5" Color="Color.Dark">Start Exploring!</MudText>
             <MudText Typo="Typo.body1">
                 Enter a term to begin your search.
