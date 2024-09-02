@@ -19,6 +19,11 @@ namespace Clarity_Crate.Data
 
 		public DbSet<Level> Level { get; set; } = default!;
 
+
+		public DbSet<DefinitionLike> DefinitionLike { get; set; } = default!;
+
+		public DbSet<DefinitionFavorite> DefinitionFavorite { get; set; } = default!;
+
 		public DbSet<Comment<Definition>> DefinitionComment { get; set; } = default!;
 
 
@@ -94,10 +99,6 @@ namespace Clarity_Crate.Data
 			.WithMany(u => u.FavoriteDefinitions)
 			.HasForeignKey(d => d.UserId)
 			.OnDelete(DeleteBehavior.Cascade);
-
-
-
-
 
 
 
