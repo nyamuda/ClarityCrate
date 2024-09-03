@@ -1,4 +1,8 @@
 ﻿@using Clarity_Crate.Models
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using System.Security.Claims;
+@using Clarity_Crate.Services
+@inject DefinitionService DefinitionService
 <style>
     .flashcard {
         width: 100%;
@@ -76,11 +80,33 @@
     [Parameter]
     public Term Term { get; set; }
 
-
     private bool isFlipped = false;
+
+    private bool isLiked = false;
 
     [Parameter]
     public int Id { get; set; }
+
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        //get the id of the user
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId != null)
+        {
+            //check if user has liked the definition
+            isLiked = await DefinitionService.HasUserLiked(userId: userId, definitionId: Id);
+        }
+
+
+
+    }
 
     private void ToggleFlip()
     {

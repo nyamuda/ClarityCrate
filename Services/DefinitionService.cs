@@ -8,6 +8,7 @@ namespace Clarity_Crate.Services
 	public class DefinitionService
 	{
 		private readonly ApplicationDbContext _context;
+		public int Likes { get; set; }
 
 
 		public DefinitionService(ApplicationDbContext context)
@@ -15,10 +16,10 @@ namespace Clarity_Crate.Services
 			_context = context;
 		}
 
-		public async Task ToggleLikeAsync(int userId, int definitionId)
+		public async Task ToggleLike(string userId, int definitionId)
 		{
 			//first, get the user who made the like
-			var user = await _context.Users.Include(u => u.LikedDefinitions).FirstOrDefaultAsync(u => u.Id == userId.ToString());
+			var user = await _context.Users.Include(u => u.LikedDefinitions).FirstOrDefaultAsync(u => u.Id == userId);
 
 			//second,get the liked definition
 			var definition = await _context.Definition.FirstOrDefaultAsync(d => d.Id == definitionId);
@@ -66,7 +67,49 @@ namespace Clarity_Crate.Services
 				_context.DefinitionLike.Remove(existingLike);
 			}
 
+			//save changes
 			await _context.SaveChangesAsync();
+
+
 		}
+
+
+		//Get the total number of likes for a definition
+		public async Task<int> GetDefinitionLikes(int definitionId)
+		{
+			var definition = await _context.Definition.FirstOrDefaultAsync(d => d.Id == definitionId);
+
+			if (definition is not null)
+			{
+				return definition.Likes.Count;
+			}
+			return 0;
+		}
+
+		//Check to see if the user has liked the definition or not
+		public async Task<bool> HasUserLiked(string userId, int definitionId)
+		{
+			//first, get the user who made the like
+			var user = await _context.Users.Include(u => u.LikedDefinitions).FirstOrDefaultAsync(u => u.Id == userId);
+
+			//second,get the liked definition
+			var definition = await _context.Definition.FirstOrDefaultAsync(d => d.Id == definitionId);
+
+			if (user is not null || definition is not null)
+			{
+				//check if the user has liked the definition
+				var existingLike = await _context.DefinitionLike.FirstOrDefaultAsync(dl => dl.UserId == userId && dl.ItemId == definitionId);
+
+				bool hasLiked = (existingLike is not null) ? true : false;
+				
+				return hasLiked;
+
+			}
+
+			return false;
+
+
+		}
+
 	}
 }
