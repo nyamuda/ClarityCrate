@@ -1,6 +1,4 @@
 ﻿@using Clarity_Crate.Models
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@using System.Security.Claims;
 @using Clarity_Crate.Services
 @inject DefinitionService DefinitionService
 <style>
@@ -44,7 +42,12 @@
         <div class="flashcard-front flex-column flashcard-content d-flex justify-content-center align-items-center p-2">
             <MudText Typo="Typo.h4">@Term.Name</MudText>
             <div class="d-flex align-items-center justify-content-center">
-                <MudIconButton Icon="@Icons.Material.Outlined.ThumbUp" Color="Color.Dark" /> <span>20</span>
+
+                <MudToggleIconButton ToggledChanged="ToogleLike" Toggled="hasLiked"
+                    Icon="@Icons.Material.Outlined.ThumbUp" Color="Color.Dark"
+                    ToggledIcon="@Icons.Material.Filled.ThumbUp" ToggledColor="@Color.Primary"
+                    title="@(hasLiked ? "Liked" : "Like")" /> <span>@TotalLikes</span>
+
             </div>
         </div>
         <div class="flashcard-back flashcard-content d-flex flex-column justify-content-between text-start p-4">
@@ -63,7 +66,7 @@
                     }
                 </div>
                 <div class="d-flex justify-content-between align-items-center mt-2">
-                    <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" Color="Color.Primary" />
+                    <MudIconButton OnClick="ToogleLike" Icon="@Icons.Material.Filled.ThumbUp" Color="Color.Primary" />
                     <MudText Typo="Typo.body2"> 20 Likes
                     </MudText>
                 </div>
@@ -82,26 +85,29 @@
 
     private bool isFlipped = false;
 
-    private bool isLiked = false;
+    public bool hasLiked { get; set; } = false;
 
     [Parameter]
-    public int Id { get; set; }
+    public int TotalLikes { get; set; } = 0;
+
+    [Parameter]
+    public int DefinitionId { get; set; }
+
+
+    [Parameter]
+    public string UserId { get; set; }
+
+
+
 
 
     protected async override Task OnInitializedAsync()
     {
 
-        //get the id of the user
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-        var user = authState.User;
-
-        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        if (userId != null)
+        if (UserId is not null)
         {
             //check if user has liked the definition
-            isLiked = await DefinitionService.HasUserLiked(userId: userId, definitionId: Id);
+            // hasLiked = await DefinitionService.HasUserLiked(userId: UserId, definitionId: DefinitionId);
         }
 
 
@@ -112,7 +118,26 @@
     {
         isFlipped = !isFlipped;
 
+    }
 
+    private async Task ToogleLike()
+    {
+        //change the like button
+        hasLiked = !hasLiked;
+
+        //change total likes
+        if (hasLiked)
+        {
+            TotalLikes++;
+        }
+        else
+        {
+            TotalLikes--;
+        }
+
+
+        //make changes to the database
+        //await DefinitionService.ToggleLike(userId: UserId, definitionId: DefinitionId);
     }
 
 }
