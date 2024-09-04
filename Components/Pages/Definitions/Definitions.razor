@@ -9,6 +9,7 @@
 @inject TopicService TopicService
 @inject LevelService LevelService
 @inject TermService TermService
+@inject DefinitionService DefinitionService
 @inject IJSRuntime JSRuntime
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @using System.Security.Claims;
@@ -102,7 +103,7 @@
 
     }
 
-    else if (_hasSearched && terms.Count == 0 && !TermService.isSearching)
+    else if (_hasSearched && definitions.Count == 0 && !TermService.isSearching)
     {
         <div class="mt-4 text-center">
 
@@ -119,17 +120,16 @@
     {
         <div>
             <div class="row">
-                @foreach (var term in terms)
+                @foreach (var definition in definitions)
                 {
                     <div class="col-lg-4">
-                        <FlashcardItem UserId="@(userId)" Definition="@(term.Definition)" Term="@(term)"
-                            TotalLikes="@(term.Definition.Likes.Count)" />
+                        <FlashcardItem UserId="@(userId)" Definition="@(definition)" TotalLikes="@(definition.Likes.Count)" />
                     </div>
                 }
 
             </div>
             <!--Display MudPagination if the is at least one item-->
-            @if (terms.Any())
+            @if (definitions.Any())
             {
                 <div class="mt-5">
                     <MudPagination Size="Size.Medium" Color="Color.Dark" SelectedChanged="GoToPage" Selected="_currentPage"
@@ -157,7 +157,7 @@
     private List<Subject> subjects = new List<Subject>();
     private List<Topic> topics = new List<Topic>();
     private List<Level> levels = new List<Level>();
-    private List<Term> terms = new List<Term>();
+    private List<Definition> definitions = new List<Definition>();
 
     private string userId;
 
@@ -248,10 +248,10 @@
 
 
         //filter the terms
-        var pageInfo = await TermService.FilterTerms(Search, curriculumId, subjectId, topicId, levelId, pageNumber:
+        var pageInfo = await DefinitionService.FilterDefinitions(Search, curriculumId, subjectId, topicId, levelId, pageNumber:
         _currentPage);
 
-        terms = pageInfo.Items;
+        definitions = pageInfo.Items;
         _totalPages = pageInfo.TotalPages;
     }
 

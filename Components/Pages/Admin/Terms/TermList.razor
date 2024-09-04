@@ -18,7 +18,7 @@
     }
     else
     {
-        @if (Terms.Count == 0)
+        @if (Definitions.Count == 0)
         {
             <div class="alert alert-info mt-4" role="alert">
                 <p class="mb-1">No terms found.</p>
@@ -28,23 +28,28 @@
         {
             <!--MudBlazor table that show a list of Terms -->
             <!--Each Term shows its levels,and definition-->
-            <MudTable Items="Terms" Hover="true" Filter="new Func<Term,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1" CanCancelEdit="true"
-                      OnCommitEditClick="@(() =>OnRowEditSave())" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues"
-                      RowEditCommit="ItemHasBeenCommitted" IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition" EditButtonPosition="@editButtonPosition" EditTrigger="@editTrigger">
+            <MudTable Items="Definitions" Hover="true" Filter="new Func<Definition,bool>(FilterFunc1)"
+                @bind-SelectedItem="selectedItem1" CanCancelEdit="true" OnCommitEditClick="@(() =>OnRowEditSave())"
+                RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" RowEditCommit="ItemHasBeenCommitted"
+                IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition"
+                EditButtonPosition="@editButtonPosition" EditTrigger="@editTrigger">
                 <ToolBarContent>
                     <MudText Typo="Typo.h6">Terms and their definitions</MudText>
                     <MudSpacer />
-                    <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start"
+                        AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
                 </ToolBarContent>
 
                 <HeaderContent>
-                    <MudTh><MudTableSortLabel SortBy="new Func<Term, object>(x=>x.Name)">Term</MudTableSortLabel></MudTh>
+                    <MudTh>
+                        <MudTableSortLabel SortBy="new Func<Definition, object>(x=>x.Term.Name)">Term</MudTableSortLabel>
+                    </MudTh>
                     <MudTh>Level</MudTh>
                     <MudTh>Definition</MudTh>
                     <MudTh>Delete</MudTh>
                 </HeaderContent>
                 <RowTemplate>
-                    <MudTd DataLabel="Term">@context.Name</MudTd>
+                    <MudTd DataLabel="Term">@context.Term.Name</MudTd>
                     <MudTd DataLabel="Level">
                         @foreach (var level in context.Levels)
                         {
@@ -52,17 +57,21 @@
                         }
                     </MudTd>
                     <MudTd Class="fst-italic" DataLabel="Definition">
-                        @context.Definition.Content
+                        @context.Content
                     </MudTd>
                     <MudTd DataLabel="Delete">
-                        <MudButton Class="ms-2" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => Delete(context.Id))">Delete</MudButton>
+                        <MudButton Class="ms-2" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete"
+                            Color="Color.Error" OnClick="@(() => Delete(context.Id))">Delete</MudButton>
                     </MudTd>
                 </RowTemplate>
                 <RowEditingTemplate>
-                    <MudTd DataLabel="Term"><MudTextField @bind-Value="@context.Name" Required /></MudTd>
+                    <MudTd DataLabel="Term">
+                        <MudTextField @bind-Value="@context.Term.Name" Required />
+                    </MudTd>
                     <MudTd DataLabel="Level">
                         <!-- The attribute bind-SelectedValues requires an IEnumerable value-->
-                        <MudSelect Required T="Level" Label="Level" ToStringFunc="@levelConverter" MultiSelection="true" @bind-SelectedValues="@context.Levels">
+                        <MudSelect Required T="Level" Label="Level" ToStringFunc="@levelConverter" MultiSelection="true"
+                            @bind-SelectedValues="@context.Levels">
                             @foreach (var level in Levels)
                             {
                                 <MudSelectItem T="Level" Value="@level">@level.Name</MudSelectItem>
@@ -70,7 +79,8 @@
                         </MudSelect>
                     </MudTd>
                     <MudTd DataLabel="Definition">
-                        <MudTextField AutoGrow HelperText="The definition of the term" @bind-Value="@context.Definition.Content" Required />
+                        <MudTextField AutoGrow HelperText="The definition of the term" @bind-Value="@context.Content"
+                            Required />
                     </MudTd>
 
 
@@ -96,13 +106,12 @@
 
 <!--update curriculum dialog-->
 @code {
-    private List<Term> Terms = new List<Term>();
-    
     private List<Definition> Definitions = new List<Definition>();
 
+
     private string searchString1 = "";
-    private Term selectedItem1 = null;
-    private Term elementBeforeEdit;
+    private Definition selectedItem1 = null;
+    private Definition elementBeforeEdit;
     private List<Level> Levels = new List<Level>();
 
     [Inject] private IDialogService DialogService { get; set; }
@@ -123,11 +132,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await TermService.GetTerms();
         await LevelService.GetLevels();
-        await DefinitionService.G
+        await DefinitionService.GetDefinitions();
 
-        Terms = TermService.Terms;
+        Definitions = DefinitionService.Definitions;
         Levels = LevelService.Levels;
 
 
@@ -138,25 +146,26 @@
     private async Task Delete(int id)
     {
         bool? result = await DialogService.ShowMessageBox(
-          "Delete?",
-          "Are you certain you wish to delete this term?",
-          yesText: "Delete", cancelText: "Cancel");
+        "Delete?",
+        "Are you certain you wish to delete this term?",
+        yesText: "Delete", cancelText: "Cancel");
 
         var state = result == null ? "Cancel" : "Delete";
 
         //if result is not null, then its confirmed
         if (state.Equals("Delete"))
         {
-            bool isSuccess = await TermService.DeleteTerm(id);
+            bool isSuccess = await DefinitionService.DeleteDefinition(id);
             if (isSuccess)
             {
                 //show snack bar
                 string message = "Term deleted successfully!";
                 AppService.ShowSnackBar(message, true);
 
-
-                await TermService.GetTerms();
-                Terms = TermService.Terms;
+                //update the state
+                await DefinitionService.GetDefinitions();
+                Definitions = DefinitionService.Definitions;
+                Levels = LevelService.Levels;
 
 
                 StateHasChanged();
@@ -172,22 +181,16 @@
 
 
     }
-    //edit method
-    private void Edit(int id)
-    {
+    
 
-        //redirect to the edit page
-        NavigationManager.NavigateTo($"/Terms/edit/{id}");
-    }
+    private bool FilterFunc1(Definition element) => FilterFunc(element, searchString1);
 
-    private bool FilterFunc1(Term element) => FilterFunc(element, searchString1);
-
-    private bool FilterFunc(Term element, string searchString)
+    private bool FilterFunc(Definition element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
 
-        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.Term.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
         return false;
@@ -195,9 +198,9 @@
 
     private void ResetItemToOriginalValues(object element)
     {
-        ((Term)element).Name = elementBeforeEdit.Name;
-        ((Term)element).Definition = elementBeforeEdit.Definition;
-        ((Term)element).Levels = elementBeforeEdit.Levels;
+        ((Definition)element).Content = elementBeforeEdit.Content;
+        ((Definition)element).Term = elementBeforeEdit.Term;
+        ((Definition)element).Levels = elementBeforeEdit.Levels;
 
     }
 
@@ -206,9 +209,9 @@
         elementBeforeEdit = new()
             {
 
-                Name = ((Term)element).Name,
-                Definition = ((Term)element).Definition,
-                Levels = ((Term)element).Levels
+                Content = ((Definition)element).Content,
+                Term = ((Definition)element).Term,
+                Levels = ((Definition)element).Levels
 
             };
     }
@@ -231,5 +234,3 @@
 
 
 }
-
-

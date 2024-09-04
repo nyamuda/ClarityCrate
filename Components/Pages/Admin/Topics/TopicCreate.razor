@@ -1,5 +1,4 @@
-﻿
-@inject TopicService TopicService
+﻿@inject TopicService TopicService
 @inject SubjectService SubjectService
 @using Clarity_Crate.Services
 @using Clarity_Crate.Dtos
@@ -21,17 +20,16 @@
 
         <div class="mb-3">
 
-            <MudTextField Required @bind-Value="TopicDto.Name" Variant="Variant.Outlined"
-                          For="@(() => TopicDto.Name)"
-                          Immediate="true"
-                          Label="Name" />
+            <MudTextField Required @bind-Value="TopicDto.Name" Variant="Variant.Outlined" For="@(() => TopicDto.Name)"
+                Immediate="true" Label="Name" />
 
 
         </div>
 
-      
 
-        <MudSelect SelectAll="true" Required T="Subject" Label="Subject" ToStringFunc="@converter" MultiSelection="true" @bind-SelectedValues="TopicDto.SelectedSubjects" Variant="Variant.Outlined">
+
+        <MudSelect SelectAll="true" Required T="Subject" Label="Subject" ToStringFunc="@converter" MultiSelection="true"
+            @bind-SelectedValues="TopicDto.SelectedSubjects" Variant="Variant.Outlined">
             @foreach (var subject in subjects)
             {
                 <MudSelectItem T="Subject" Value="@subject">@subject.Name</MudSelectItem>
@@ -42,7 +40,8 @@
 
 
 
-        <MudButton Class="mt-5" Disabled="@TopicService.isCreating" Variant="Variant.Filled" DisableElevation="true" Color="Color.Dark" ButtonType="ButtonType.Submit" Size="Size.Large">
+        <MudButton Class="mt-5" Disabled="@TopicService.isCreating" Variant="Variant.Filled" DisableElevation="true"
+            Color="Color.Dark" ButtonType="ButtonType.Submit" Size="Size.Large">
             @if (TopicService.isCreating)
             {
                 <MudProgressCircular Class="ms-n1 text-dark" Size="Size.Small" Indeterminate="true" />
@@ -56,7 +55,7 @@
     </EditForm>
 
 
-  
+
 
 </div>
 @code {
@@ -68,18 +67,18 @@
     private async Task HandleValidSubmit()
     {
         //check if a subject has been selected
-        if(TopicDto.SelectedSubjects is null || !TopicDto.SelectedSubjects.Any())
+        if (TopicDto.SelectedSubjects is null || !TopicDto.SelectedSubjects.Any())
         {
             AppService.ShowSnackBar("Please select at least one subject.", isSuccess: false);
             return;
         }
         //add the new curriculum to the database
-        Topic topic= new Topic()
-        {
-            Name = TopicDto.Name, 
-            Subjects = TopicDto.SelectedSubjects.ToList()
-        };
-       bool isSuccess= await TopicService.CreateTopic(topic);
+        Topic topic = new Topic()
+            {
+                Name = TopicDto.Name,
+                Subjects = TopicDto.SelectedSubjects.ToList()
+            };
+        bool isSuccess = await TopicService.CreateTopic(topic);
 
         if (isSuccess)
         {
@@ -87,7 +86,7 @@
             string message = "Topic added successfully!";
             AppService.ShowSnackBar(message, isSuccess: true);
             //redirect to the topics page
-            NavigationManager.NavigateTo("/topics");
+            NavigationManager.NavigateTo("/admin/topics");
         }
         else
         {
@@ -101,15 +100,15 @@
     }
     protected override async Task OnInitializedAsync()
     {
-       
+
 
         //get all the subjects
         await SubjectService.GetSubjects();
-        subjects= SubjectService.Subjects;
+        subjects = SubjectService.Subjects;
     }
 
 
     Func<Subject, string> converter = s => s?.Name;
 
-   
+
 }

@@ -12,7 +12,7 @@ namespace Clarity_Crate.Services
 		public bool isCreating = false;
 		public bool isGettingItems = false;
 		public bool isSearching = false;
-		
+
 
 		public TermService(ApplicationDbContext context)
 		{
@@ -27,7 +27,7 @@ namespace Clarity_Crate.Services
 				isCreating = !isCreating;
 
 				//first, check if the term with that name doesn't already exist
-				var termExist = await _context.Term.Where(t => t.Name.Equals(term.Name, StringComparison.OrdinalIgnoreCase)).FirstOrDefaultAsync();
+				var termExist = await _context.Term.Where(t => t.Name.ToLower() == term.Name.ToLower()).FirstOrDefaultAsync();
 
 				//if the term with that name already exists,
 				//then just add the new definition
@@ -125,7 +125,7 @@ namespace Clarity_Crate.Services
 
 		}
 
-		
+
 
 		//Search a term by name
 		/*

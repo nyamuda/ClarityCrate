@@ -52,7 +52,7 @@ namespace Clarity_Crate.Services
             {
                 isUpdatingItem = !isUpdatingItem;
                 itemExists.Name = level.Name;
-                itemExists.Terms = level.Terms;
+                itemExists.Definitions = level.Definitions;
 
                 await _context.SaveChangesAsync();
 

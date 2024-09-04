@@ -40,7 +40,7 @@
 <MudPaper Class="flashcard" Elevation="0" @onclick="ToggleFlip">
     <div class="shadow flashcard-inner @(isFlipped ? "flipped" : "")">
         <div class="flashcard-front flex-column flashcard-content d-flex justify-content-center align-items-center p-2">
-            <MudText Typo="Typo.h4">@Term.Name</MudText>
+            <MudText Typo="Typo.h4">@Definition.Term.Name</MudText>
             <div class="d-flex align-items-center justify-content-center">
 
                 <MudToggleIconButton ToggledChanged="ToogleLike" Toggled="hasLiked"
@@ -52,7 +52,7 @@
         </div>
         <div class="flashcard-back flashcard-content d-flex flex-column justify-content-between text-start p-4">
             <MudTabs Elevation="1" Rounded="true" PanelClass="pa-6">
-                @foreach (var definition in Term.Definitions)
+                @foreach (var definition in Definition.Term.Definitions)
                 {
                     <MudTabPanel Text="@(definition?.Curriculum?.Name)" ToolTip="ToolTip One">
 
@@ -64,7 +64,7 @@
                                 @definition?.Curriculum?.Name
                             </MudText>
                             <div class="d-flex justify-content-start">
-                                @foreach (var level in Term.Levels)
+                                @foreach (var level in definition.Levels)
                                 {
                                     <MudChip T="string" Class="purple darken-3 text-light">@level.Name</MudChip>
                                 }
@@ -93,9 +93,6 @@
 
 @code {
 
-    [Parameter]
-    public Term Term { get; set; }
-
     private bool isFlipped = false;
 
     public bool hasLiked { get; set; } = false;
@@ -104,12 +101,13 @@
     public int TotalLikes { get; set; } = 0;
 
 
+
     [Parameter]
-    public Definition Definition { get; set; }
+    public Definition Definition { get; set; } = new();
 
 
     [Parameter]
-    public string UserId { get; set; }
+    public string UserId { get; set; } = "";
 
 
 

@@ -17,16 +17,14 @@
 
         <div class="mb-3">
 
-            <MudTextField @bind-Value="Level.Name"
-                          For="@(() => Level.Name)"
-                          Immediate="true"
-                          Label="Name" />
+            <MudTextField @bind-Value="Level.Name" For="@(() => Level.Name)" Immediate="true" Label="Name" />
 
 
         </div>
 
 
-        <MudButton Disabled="@LevelService.isAddingItem" Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" ButtonType="ButtonType.Submit">
+        <MudButton Disabled="@LevelService.isAddingItem" Variant="Variant.Filled" DisableElevation="true"
+            Color="Color.Primary" ButtonType="ButtonType.Submit">
             @if (LevelService.isAddingItem)
             {
                 <MudProgressCircular Class="ms-n1 text-light" Size="Size.Small" Indeterminate="true" />
@@ -50,7 +48,7 @@
         await LevelService.AddLevel(Level);
 
         //redirect to the Levels page
-        NavigationManager.NavigateTo("/Levels");
+        NavigationManager.NavigateTo("/admin/levels");
 
     }
     protected override async Task OnInitializedAsync()

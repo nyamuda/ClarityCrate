@@ -22,13 +22,13 @@
         <div class="mb-3">
 
             <MudTextField @bind-Value="SubjectCreateDto.Name" Variant="Variant.Outlined"
-                          For="@(() => SubjectCreateDto.Name)"
-                          Immediate="true"
-                          Label="Name" />
+                For="@(() => SubjectCreateDto.Name)" Immediate="true" Label="Name" />
 
-            
 
-            <MudSelect SelectAll="true" Required Variant="Variant.Outlined" T="Curriculum" Label="Curriculum" ToStringFunc="@converter" MultiSelection="true" @bind-SelectedValues="SubjectCreateDto.SelectedCurriculums">
+
+            <MudSelect SelectAll="true" Required Variant="Variant.Outlined" T="Curriculum" Label="Curriculum"
+                ToStringFunc="@converter" MultiSelection="true"
+                @bind-SelectedValues="SubjectCreateDto.SelectedCurriculums">
                 @foreach (var curriculum in Curriculums)
                 {
                     <MudSelectItem T="Curriculum" Value="@curriculum">@curriculum.Name</MudSelectItem>
@@ -39,7 +39,8 @@
 
         </div>
 
-        <MudButton Disabled="@SubjectService.isCreating" Variant="Variant.Filled" DisableElevation="true" Color="Color.Dark" ButtonType="ButtonType.Submit" Size="Size.Large">
+        <MudButton Disabled="@SubjectService.isCreating" Variant="Variant.Filled" DisableElevation="true"
+            Color="Color.Dark" ButtonType="ButtonType.Submit" Size="Size.Large">
             @if (SubjectService.isCreating)
             {
                 <MudProgressCircular Class="ms-n1 text-dark" Size="Size.Small" Indeterminate="true" />
@@ -71,22 +72,22 @@
         Subject subject = new Subject
             {
                 Name = SubjectCreateDto.Name,
-                Curriculums=SubjectCreateDto.SelectedCurriculums.ToList()
+                Curriculums = SubjectCreateDto.SelectedCurriculums.ToList()
 
             };
 
 
-            //add the subject to the database
-        bool isSuccess=await SubjectService.CreateSubject(subject);
+        //add the subject to the database
+        bool isSuccess = await SubjectService.CreateSubject(subject);
 
 
-        if(isSuccess)
+        if (isSuccess)
         {
             //show snack bar
             string message = "Subject added successfully!";
             AppService.ShowSnackBar(message, isSuccess: true);
             //redirect to the subjects page
-            NavigationManager.NavigateTo("/subjects");
+            NavigationManager.NavigateTo("/admin/subjects");
         }
         else
         {
@@ -95,7 +96,7 @@
             AppService.ShowSnackBar(message, false);
         }
 
-       
+
 
     }
     protected override async Task OnInitializedAsync()
@@ -109,5 +110,5 @@
 
     Func<Curriculum, string> converter = c => c?.Name;
 
-   
+
 }

@@ -16,7 +16,14 @@ public static class SeedRoles
 			await roleManager.CreateAsync(new IdentityRole("Admin"));
 		}
 
-		// Replace with the email or username of the user you want to assign the Admin role to
+		// Check if the User role exists, and create it if it doesn't
+		if (!await roleManager.RoleExistsAsync("User"))
+		{
+			await roleManager.CreateAsync(new IdentityRole("User"));
+		}
+
+
+		//the email or username of the user you want to assign the Admin role to
 		string adminEmail = "ptn1234@gmail.com";
 		var user = await userManager.FindByEmailAsync(adminEmail);
 
