@@ -253,6 +253,10 @@
 
         definitions = pageInfo.Items;
         _totalPages = pageInfo.TotalPages;
+        foreach(var def in pageInfo.Items)
+        {
+            Console.WriteLine($"Def Number and likes: {def.Likes.Count}");
+        }
     }
 
 

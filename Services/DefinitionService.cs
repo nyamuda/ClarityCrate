@@ -100,9 +100,7 @@ namespace Clarity_Crate.Services
             //if the like for that definition does not exist, then create a new one
             if (existingLike == null && hasLiked)
             {
-                Console.WriteLine($"User Has Liked -- ");
-                Console.WriteLine($"User Has Liked -- ");
-                Console.WriteLine($"User Has Liked -- ");
+
                 // Create a new like for the definition
                 var like = new DefinitionLike
                 {
@@ -122,8 +120,7 @@ namespace Clarity_Crate.Services
                 _context.DefinitionLike.Add(like);
                 //save changes
                 await _context.SaveChangesAsync();
-                var newDefinition = await _context.Definition.Include(d => d.Likes).FirstOrDefaultAsync(d => d.Id == definitionId);
-                Console.WriteLine($"AFTER LIKING, TOTAL LIKES ----- {newDefinition.Likes.Count}");
+
 
 
             }
@@ -131,10 +128,6 @@ namespace Clarity_Crate.Services
             //if the like already exists, then remove it
             else
             {
-                Console.WriteLine($"User Has Disliked -- {existingLike.Item.Content}");
-                Console.WriteLine($"User Has Disliked -- {existingLike.Item.Content}");
-                Console.WriteLine($"User Has Disliked -- {existingLike.Item.Content}");
-
 
                 // remove like from the user
                 user.LikedDefinitions.Remove(existingLike);
@@ -171,9 +164,6 @@ namespace Clarity_Crate.Services
         //Check to see if the user has liked the definition or not
         public bool HasUserLiked(string userId, Definition definition)
         {
-            Console.WriteLine($"TOTAL LIKES ----- {definition.Likes.Count}");
-
-
             //check if the user has liked the definition
 
             var existingLike = definition.Likes.FirstOrDefault(dl => dl.UserId == userId);
@@ -202,6 +192,7 @@ namespace Clarity_Crate.Services
             var definitions = await _context.Definition
                 .Include(d => d.Levels)
                 .Include(d => d.Term)
+                .Include(d => d.Likes)
                 .Where(d => d.Term.Name.Contains(searchTerm) || searchTerm == "")
                 .Where(d => d.CurriculumId == curriculumId || curriculumId == 0)
                 .Where(d => d.SubjectId == subjectId || subjectId == 0)
@@ -221,7 +212,7 @@ namespace Clarity_Crate.Services
             var currentPageDefinitions = definitions.Skip((pageNumber - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
 
 
-            isSearching = !isSearching;
+
 
 
             //PAGINATION INFO    
@@ -238,7 +229,7 @@ namespace Clarity_Crate.Services
                 Items = currentPageDefinitions
             };
 
-
+            isSearching = !isSearching;
             return paginationInfo;
 
 
