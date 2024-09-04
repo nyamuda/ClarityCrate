@@ -12,9 +12,7 @@ namespace Clarity_Crate.Services
 		public bool isCreating = false;
 		public bool isGettingItems = false;
 		public bool isSearching = false;
-		//page size for pagination
-		//Pagination Information
-		private const int PAGE_SIZE = 9;
+		
 
 		public TermService(ApplicationDbContext context)
 		{
@@ -43,7 +41,7 @@ namespace Clarity_Crate.Services
 
 				else
 				{
-					
+
 					//save the term and get the id
 					_context.Add(term);
 					await _context.SaveChangesAsync();
@@ -76,7 +74,6 @@ namespace Clarity_Crate.Services
 			//get all terms with their definitions and levels
 			Terms = await _context.Term
 				.Include(t => t.Definitions)
-				.Include(t => t.Levels)
 				.ToListAsync();
 
 			isGettingItems = !isGettingItems;
@@ -128,56 +125,7 @@ namespace Clarity_Crate.Services
 
 		}
 
-		//Search for a term`
-		//for a particular curriculum, subject, topic, and level
-		public async Task<PaginationInfo<Term>> FilterTerms(string searchTerm, int curriculumId, int subjectId, int topicId, int levelId, int pageNumber)
-		{
-
-			isSearching = !isSearching;
-			//get all terms with their definitions and levels
-			//that match the search term, curriculum, subject, topic, and level
-			// while keeping in mind that the search term can be empty
-			var terms = await _context.Term
-				.Include(t => t.Definitions)
-				.Include(t => t.Levels)
-				.Where(t => t.Name.Contains(searchTerm) || searchTerm == "")
-				.Where(t => t.Definitions.Any(d => d.CurriculumId == curriculumId || curriculumId == 0))
-				.Where(t => t.Definitions.Any(s => s.SubjectId == subjectId || subjectId == 0))
-				.Where(t => t.Definitions.Any(t => t.TopicId == topicId || topicId == 0))
-				.Where(t => t.Levels.Any(l => l.Id == levelId) || levelId == 0)
-				.ToListAsync();
-
-
-			//total filtered items
-			int totalItems = terms.Count();
-
-
-			// Get the terms for the current page
-			var currentPageTerms = terms.Skip((pageNumber - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
-
-
-			isSearching = !isSearching;
-
-
-			//PAGINATION INFO    
-
-			//calculate the total number of pages
-			int totalPages = (int)Math.Ceiling((double)totalItems / PAGE_SIZE);
-
-			//return pagination information including the terms
-			var paginationInfo = new PaginationInfo<Term>
-			{
-				PageSize = PAGE_SIZE,
-				PageNumber = pageNumber,
-				TotalPages = totalPages,
-				Items = currentPageTerms
-			};
-
-
-			return paginationInfo;
-
-
-		}
+		
 
 		//Search a term by name
 		/*

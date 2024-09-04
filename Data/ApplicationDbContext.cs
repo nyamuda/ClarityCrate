@@ -78,11 +78,11 @@ namespace Clarity_Crate.Data
 				.OnDelete(DeleteBehavior.Cascade);
 
 
-			//there is a many-to-many relationship between term and level
-			builder.Entity<Term>()
-				.HasMany(t => t.Levels)
-				.WithMany(l => l.Terms)
-				.UsingEntity(j => j.ToTable("TermLevel"));
+			//there is a many-to-many relationship between definition and level
+			builder.Entity<Definition>()
+				.HasMany(d => d.Levels)
+				.WithMany(l => l.Definitions)
+				.UsingEntity(j => j.ToTable("DefinitionLevel"));
 
 
 			//there is a one-to-many relationship between DefinitionLike and ApplicationUser

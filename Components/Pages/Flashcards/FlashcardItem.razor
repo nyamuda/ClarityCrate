@@ -51,27 +51,40 @@
             </div>
         </div>
         <div class="flashcard-back flashcard-content d-flex flex-column justify-content-between text-start p-4">
-            <MudText>@Term.Definition.Content</MudText>
+            <MudTabs Elevation="1" Rounded="true" PanelClass="pa-6">
+                @foreach (var definition in Term.Definitions)
+                {
+                    <MudTabPanel Text="@(definition?.Curriculum?.Name)" ToolTip="ToolTip One">
+
+                        <MudText>@definition?.Content</MudText>
+                        <div class="pt-2">
+                            <MudDivider />
+                            <MudText>
+                                <MudIcon Icon="@Icons.Material.Filled.School" Title="Favorite" />
+                                @definition?.Curriculum?.Name
+                            </MudText>
+                            <div class="d-flex justify-content-start">
+                                @foreach (var level in Term.Levels)
+                                {
+                                    <MudChip T="string" Class="purple darken-3 text-light">@level.Name</MudChip>
+                                }
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <MudIconButton OnClick="ToogleLike" Icon="@Icons.Material.Filled.ThumbUp"
+                                    Color="Color.Primary" />
+                                <MudText Typo="Typo.body2"> 20 Likes
+                                </MudText>
+                            </div>
+
+                        </div>
+                    </MudTabPanel>
+
+                }
+            </MudTabs>
 
 
-            <div class="pt-2">
-                <MudDivider />
-                <MudText>
-                    <MudIcon Icon="@Icons.Material.Filled.School" Title="Favorite" /> @Term.Definition.Curriculum.Name
-                </MudText>
-                <div class="d-flex justify-content-start">
-                    @foreach (var level in Term.Levels)
-                    {
-                        <MudChip T="string" Class="purple darken-3 text-light">@level.Name</MudChip>
-                    }
-                </div>
-                <div class="d-flex justify-content-between align-items-center mt-2">
-                    <MudIconButton OnClick="ToogleLike" Icon="@Icons.Material.Filled.ThumbUp" Color="Color.Primary" />
-                    <MudText Typo="Typo.body2"> 20 Likes
-                    </MudText>
-                </div>
 
-            </div>
+
 
         </div>
     </div>

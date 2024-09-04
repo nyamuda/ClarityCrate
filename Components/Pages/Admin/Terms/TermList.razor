@@ -4,6 +4,7 @@
 @inject AppService AppService
 @inject TermService TermService
 @inject LevelService LevelService
+@inject DefinitionService DefinitionService
 @inject NavigationManager NavigationManager
 
 
@@ -96,6 +97,9 @@
 <!--update curriculum dialog-->
 @code {
     private List<Term> Terms = new List<Term>();
+    
+    private List<Definition> Definitions = new List<Definition>();
+
     private string searchString1 = "";
     private Term selectedItem1 = null;
     private Term elementBeforeEdit;
@@ -121,6 +125,7 @@
     {
         await TermService.GetTerms();
         await LevelService.GetLevels();
+        await DefinitionService.G
 
         Terms = TermService.Terms;
         Levels = LevelService.Levels;

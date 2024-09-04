@@ -32,6 +32,8 @@ namespace Clarity_Crate.Models
 		public List<DefinitionLike> Likes { get; set; } = new List<DefinitionLike>();
 
 		public List<DefinitionFavorite> Favorites { get; set; } = new List<DefinitionFavorite>();
+		
+		public IEnumerable<Level> Levels { get; set; } = new List<Level>();
 	}
 
 
