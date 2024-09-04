@@ -70,11 +70,11 @@ namespace Clarity_Crate.Data
 
 
 
-			//there is a one-one relationship between definition and term
+			//there is a many-one relationship between definition and term
 			builder.Entity<Definition>()
 				.HasOne(d => d.Term)
-				.WithOne(t => t.Definition)
-				.HasForeignKey<Definition>(d => d.TermId)
+				.WithMany(t => t.Definitions)
+				.HasForeignKey(d => d.TermId)
 				.OnDelete(DeleteBehavior.Cascade);
 
 

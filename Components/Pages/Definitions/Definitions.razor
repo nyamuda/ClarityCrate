@@ -122,7 +122,8 @@
                 @foreach (var term in terms)
                 {
                     <div class="col-lg-4">
-                        <FlashcardItem UserId="@(userId)" DefinitionId="@(term.Id)" Term="@(term)" TotalLikes="@(term.Definition.Likes.Count)" />
+                        <FlashcardItem UserId="@(userId)" Definition="@(term.Definition)" Term="@(term)"
+                            TotalLikes="@(term.Definition.Likes.Count)" />
                     </div>
                 }
 

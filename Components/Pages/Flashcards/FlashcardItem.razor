@@ -90,8 +90,9 @@
     [Parameter]
     public int TotalLikes { get; set; } = 0;
 
+
     [Parameter]
-    public int DefinitionId { get; set; }
+    public Definition Definition { get; set; }
 
 
     [Parameter]
@@ -107,7 +108,9 @@
         if (UserId is not null)
         {
             //check if user has liked the definition
-            // hasLiked = await DefinitionService.HasUserLiked(userId: UserId, definitionId: DefinitionId);
+            hasLiked = DefinitionService.HasUserLiked(userId: UserId, definition: Definition);
+
+            Console.WriteLine($"{Definition.Likes.Count} - has user liked -- {hasLiked}");
         }
 
 
@@ -137,7 +140,7 @@
 
 
         //make changes to the database
-        //await DefinitionService.ToggleLike(userId: UserId, definitionId: DefinitionId);
+        await DefinitionService.ToggleLike(userId: UserId, definitionId: Definition.Id, hasLiked);
     }
 
 }
