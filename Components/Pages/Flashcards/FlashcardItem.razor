@@ -18,9 +18,9 @@
         transform-style: preserve-3d;
     }
 
-    .flashcard-inner.flipped {
-        transform: rotateY(180deg);
-    }
+        .flashcard-inner.flipped {
+            transform: rotateY(180deg);
+        }
 
     .flashcard-content {
         position: absolute;
@@ -41,50 +41,49 @@
     <div class="shadow flashcard-inner @(isFlipped ? "flipped" : "")">
         <div class="flashcard-front flex-column flashcard-content d-flex justify-content-center align-items-center p-2">
             <MudText Typo="Typo.h4">@Definition.Term.Name</MudText>
-            <div class="d-flex align-items-center justify-content-center">
-
-                <MudToggleIconButton ToggledChanged="ToogleLike" Toggled="hasLiked"
-                    Icon="@Icons.Material.Outlined.ThumbUp" Color="Color.Dark"
-                    ToggledIcon="@Icons.Material.Filled.ThumbUp" ToggledColor="@Color.Primary"
-                    title="@(hasLiked ? "Liked" : "Like")" /> <span>@TotalLikes</span>
-
+            <div class="d-flex justify-content-between px-5">
+                <div class="d-flex align-items-center justify-content-center">
+                    <MudToggleIconButton ToggledChanged="ToggleFavorite" Toggled="hasFavorited"
+                                         Icon="@Icons.Material.Outlined.Favorite" Color="Color.Dark"
+                                         ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="@Color.Error"
+                                         title="@(hasFavorited ? "Favorite" : "Add to favorites")" /> 
+                </div>
+                <div class="d-flex align-items-center justify-content-center">
+                    <MudToggleIconButton ToggledChanged="ToggleLike" Toggled="hasLiked"
+                                         Icon="@Icons.Material.Outlined.ThumbUp" Color="Color.Dark"
+                                         ToggledIcon="@Icons.Material.Filled.ThumbUp" ToggledColor="@Color.Primary"
+                                         title="@(hasLiked ? "Liked" : "Like")" /> <span>@TotalLikes</span>
+                </div>
             </div>
         </div>
         <div class="flashcard-back flashcard-content d-flex flex-column justify-content-between text-start p-4">
-            <MudTabs Elevation="1" Rounded="true" PanelClass="pa-6">
-                @foreach (var definition in Definition.Term.Definitions)
-                {
-                    <MudTabPanel Text="@(definition?.Curriculum?.Name)" ToolTip="ToolTip One">
 
-                        <MudText>@definition?.Content</MudText>
-                        <div class="pt-2">
-                            <MudDivider />
-                            <MudText>
-                                <MudIcon Icon="@Icons.Material.Filled.School" Title="Favorite" />
-                                @definition?.Curriculum?.Name
-                            </MudText>
-                            <div class="d-flex justify-content-start">
-                                @foreach (var level in definition.Levels)
-                                {
-                                    <MudChip T="string" Class="purple darken-3 text-light">@level.Name</MudChip>
-                                }
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                <MudIconButton OnClick="ToogleLike" Icon="@Icons.Material.Filled.ThumbUp"
-                                    Color="Color.Primary" />
-                                <MudText Typo="Typo.body2"> 20 Likes
-                                </MudText>
-                            </div>
+            @foreach (var definition in Definition.Term.Definitions)
+            {
 
-                        </div>
-                    </MudTabPanel>
+                <div class="d-flex flex-column justify-content-center align-items-start">
+                    <MudText>
+                        <MudIcon Icon="@Icons.Material.Filled.School" Title="Curriculum" />
+                        @definition?.Curriculum?.Name
+                    </MudText>
+                    <div class="d-flex justify-content-start">
+                        @foreach (var level in definition.Levels)
+                        {
+                            <MudChip T="string" Class="purple darken-3 text-light">@level.Name</MudChip>
+                        }
 
-                }
-            </MudTabs>
+                    </div>
+                </div>
+
+                <div>
+                    
+                    <MudText>@definition?.Content</MudText>
+                </div>
 
 
 
 
+            }
 
         </div>
     </div>
@@ -96,6 +95,7 @@
     private bool isFlipped = false;
 
     public bool hasLiked { get; set; } = false;
+    public bool hasFavorited { get; set; } = false;
 
     [Parameter]
     public int TotalLikes { get; set; } = 0;
@@ -121,6 +121,9 @@
             //check if user has liked the definition
             hasLiked = DefinitionService.HasUserLiked(userId: UserId, definition: Definition);
 
+            //check if user has favored the definition
+            hasFavorited = DefinitionService.HasUserFavorited(userId: UserId, definition: Definition);
+
         }
 
 
@@ -133,7 +136,7 @@
 
     }
 
-    private async Task ToogleLike()
+    private async Task ToggleLike()
     {
         //change the like button
         hasLiked = !hasLiked;
@@ -151,6 +154,16 @@
 
         //make changes to the database
         await DefinitionService.ToggleLike(userId: UserId, definitionId: Definition.Id, hasLiked);
+    }
+
+    private async Task ToggleFavorite()
+    {
+        //change the like button
+        hasFavorited = !hasFavorited;
+
+
+        //make changes to the database
+        await DefinitionService.ToggleFavorite(userId: UserId, definitionId: Definition.Id, hasFavorited);
     }
 
 }

@@ -77,13 +77,6 @@ namespace Clarity_Crate.Services
 
         public async Task ToggleLike(string userId, int definitionId, bool hasLiked)
         {
-            Console.WriteLine("Like toggle executed");
-            Console.WriteLine("Like toggle executed");
-            Console.WriteLine("Like toggle executed");
-            Console.WriteLine("Like toggle executed");
-            Console.WriteLine("Like toggle executed");
-            Console.WriteLine("Like toggle executed");
-            Console.WriteLine("Like toggle executed");
             //first, get the user who made the like
             var user = await _context.Users.Include(u => u.LikedDefinitions).FirstOrDefaultAsync(u => u.Id == userId);
 
@@ -142,11 +135,71 @@ namespace Clarity_Crate.Services
                 await _context.SaveChangesAsync();
             }
 
+        }
+
+        public async Task ToggleFavorite(string userId, int definitionId, bool hasFavorited)
+        {
+            //first, get the user who made the favorite
+            var user = await _context.Users.Include(u => u.LikedDefinitions).FirstOrDefaultAsync(u => u.Id == userId);
+
+            //second,get the favored definition
+            var definition = await _context.Definition.Include(d => d.Favorites).FirstOrDefaultAsync(d => d.Id == definitionId);
+
+            if (user == null || definition == null)
+                throw new InvalidOperationException("User or Definition not found.");
+
+            //third, check if the favorite for that definition already exists
+            var existingFavorite = await _context.DefinitionFavorite.FirstOrDefaultAsync(dl => dl.UserId == userId && dl.ItemId == definitionId);
 
 
+            //if the favorite for that definition does not exist, then create a new one
+            if (existingFavorite == null && hasFavorited)
+            {
+
+                // Create a new favorite for the definition
+                var favorite = new DefinitionFavorite
+                {
+                    UserId = userId,
+                    User = user,
+                    ItemId = definitionId,
+                    Item = definition
+                };
+
+                //add that favorite to the user
+                user.FavoriteDefinitions.Add(favorite);
+
+                //add that favorite to the definition favorites list
+                definition.Favorites.Add(favorite);
+
+                //save that favorite
+                _context.DefinitionFavorite.Add(favorite);
+                //save changes
+                await _context.SaveChangesAsync();
+
+
+
+            }
+
+            //if the favorite already exists, then remove it
+            else
+            {
+
+                // remove like from the user
+                user.FavoriteDefinitions.Remove(existingFavorite);
+
+                //remove favorite from the definition favorites list
+                definition.Favorites.Remove(existingFavorite);
+
+                //delete favorite	
+                _context.DefinitionFavorite.Remove(existingFavorite);
+
+                //save changes
+                await _context.SaveChangesAsync();
+            }
 
 
         }
+
 
 
         //Get the total number of likes for a definition
@@ -168,10 +221,6 @@ namespace Clarity_Crate.Services
 
             var existingLike = definition.Likes.FirstOrDefault(dl => dl.UserId == userId);
 
-            foreach (var like in definition.Likes)
-            {
-                Console.WriteLine($"{like.UserId}");
-            }
 
             bool hasLiked = (existingLike is not null) ? true : false;
 
@@ -179,6 +228,19 @@ namespace Clarity_Crate.Services
 
 
         }
+
+        //Check to see if the user has favored the definition or not
+        public bool HasUserFavorited(string userId, Definition definition)
+        {
+            //check if the user has favored the definition
+            var existingFavorite = definition.Favorites.FirstOrDefault(dl => dl.UserId == userId);
+            bool hasFavorited = (existingFavorite is not null) ? true : false;
+
+            return hasFavorited;
+
+
+        }
+
 
         //Search for a term`
         //for a particular curriculum, subject, topic, and level
@@ -193,6 +255,7 @@ namespace Clarity_Crate.Services
                 .Include(d => d.Levels)
                 .Include(d => d.Term)
                 .Include(d => d.Likes)
+                .Include(d => d.Favorites)
                 .Where(d => d.Term.Name.Contains(searchTerm) || searchTerm == "")
                 .Where(d => d.CurriculumId == curriculumId || curriculumId == 0)
                 .Where(d => d.SubjectId == subjectId || subjectId == 0)
