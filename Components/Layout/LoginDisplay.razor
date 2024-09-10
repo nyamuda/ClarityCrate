@@ -7,21 +7,36 @@
     <AuthorizeView>
         <Authorized>
             <div class="">
+
                 <div class="dropdown">
                     <MudChip Class="cursor-pointer" Color="Color.Dark" Icon="@Icons.Material.Filled.Person"
-                        id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        Account</MudChip>
+                             id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        Profile
+                    </MudChip>
 
-                    <ul class="dropdown-menu dropdown-menu-start dropdown-menu-lg-end"
+                    <ul class="dropdown-menu dropdown-menu-start dropdown-menu-lg-end px-3"
                         aria-labelledby="dropdownMenuButton1">
-                        <MudButton FullWidth="true" Href="Account/Manage" Variant="Variant.Text" Color="Color.Dark">
-                            Manage</MudButton>
+                        <li>
+                            <MudButton Class="text-capitalize" Href="definitions/favorites" FullWidth="true" Variant="Variant.Text"
+                                       Color="Color.Dark">Favorites</MudButton>
+                        </li>
+
+                        <li>
+                            <MudButton Class="text-capitalize" Href="definitions/practice" FullWidth="true" Variant="Variant.Text"
+                                       Color="Color.Dark">Practice</MudButton>
+                        </li>
+
+                        <li>
+                            <MudButton Class="text-capitalize" Href="Account/Manage" FullWidth="true" Variant="Variant.Text"
+                                       Color="Color.Dark">Account Settings</MudButton>
+                        </li>
                         <form method="post" action="Account/Logout">
                             <AntiforgeryToken />
                             <input type="hidden" name="ReturnUrl" value="@currentUrl" />
 
-                            <MudButton FullWidth="true" ButtonType="ButtonType.Submit" Variant="Variant.Text"
-                                Color="Color.Dark">Log out</MudButton>
+                            <MudButton Class="text-capitalize" FullWidth="true" ButtonType="ButtonType.Submit" Variant="Variant.Text"
+                                       Color="Color.Dark">Log out</MudButton>
+
                         </form>
                     </ul>
                 </div>

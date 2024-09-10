@@ -1,0 +1,74 @@
+﻿@page "/definitions/favorites"
+@using Clarity_Crate.Services
+@using Clarity_Crate.Models
+@using Clarity_Crate.Components.Pages.Flashcards
+<PageTitle>Favorite Definitions</PageTitle>
+@inject DefinitionService DefinitionService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+
+
+
+<div id="favorite-definitions" class="container text-center bg-light p-4">
+    <p class="h1">Favorite definitions</p>
+    @if (DefinitionService.isSearching)
+    {
+        <MudProgressLinear Size="Size.Large" Color="Color.Primary" Indeterminate="true" Class="my-7 mt-12" />
+
+    }
+    else if(!definitions.Any() && !DefinitionService.isSearching)
+    {
+        <p>You currently do not have favorite definitions</p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var definition in definitions)
+            {
+                <div class="col-lg-4">
+                    <FlashcardItem UserId="@(userId)" Definition="@(definition)" TotalLikes="@(definition.Likes.Count)" />
+                </div>
+            }
+
+        </div>
+    }
+
+</div>
+
+
+@code {
+
+    private List<Definition> definitions = new List<Definition>();
+
+    private string userId;
+
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        //get the id of the user
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+
+        userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if(userId is not null)
+        {
+            definitions = await DefinitionService.GetFavorites(userId);
+        }
+
+    }
+
+
+    
+
+
+
+}

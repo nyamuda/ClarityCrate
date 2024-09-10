@@ -241,6 +241,18 @@ namespace Clarity_Crate.Services
 
         }
 
+        //get user favorite definitions
+        public async Task<List<Definition>> GetFavorites(string userId)
+        {
+            var definitions = await _context.Definition
+            .Include(d => d.Levels)
+                .Include(d => d.Term)
+                .Include(d => d.Favorites)
+                .Where(d => d.Favorites.Any(f => f.UserId == userId)).ToListAsync();
+            return definitions;
+
+        }
+
 
         //Search for a term`
         //for a particular curriculum, subject, topic, and level
