@@ -11,9 +11,8 @@
 
 
 
-
 <div id="favorite-definitions" class="container text-center bg-light p-4">
-    <p class="h1">Favorite definitions</p>
+    <p class="h1 text-center">Favorite definitions</p>
     @if (DefinitionService.isSearching)
     {
         <MudProgressLinear Size="Size.Large" Color="Color.Primary" Indeterminate="true" Class="my-7 mt-12" />
@@ -21,7 +20,7 @@
     }
     else if(!definitions.Any() && !DefinitionService.isSearching)
     {
-        <p>You currently do not have favorite definitions</p>
+        <p>Your favorites list is currently empty.</p>
     }
     else
     {
@@ -61,7 +60,9 @@
 
         if(userId is not null)
         {
-            definitions = await DefinitionService.GetFavorites(userId);
+            await DefinitionService.GetFavorites(userId);
+
+            definitions = DefinitionService.FavoriteDefinitions;
         }
 
     }

@@ -10,6 +10,8 @@ namespace Clarity_Crate.Services
         private readonly ApplicationDbContext _context;
 
         public List<Definition> Definitions { get; set; } = new List<Definition>();
+        public List<Definition> FavoriteDefinitions { get; set; } = new List<Definition>();
+
 
         public bool isSearching = false;
         public bool isCreating = false;
@@ -242,15 +244,18 @@ namespace Clarity_Crate.Services
         }
 
         //get user favorite definitions
-        public async Task<List<Definition>> GetFavorites(string userId)
+        public async Task GetFavorites(string userId)
         {
+            isSearching = !isSearching;
             var definitions = await _context.Definition
             .Include(d => d.Levels)
                 .Include(d => d.Term)
                 .Include(d => d.Favorites)
+                .Include(d => d.Likes)
                 .Where(d => d.Favorites.Any(f => f.UserId == userId)).ToListAsync();
-            return definitions;
 
+            FavoriteDefinitions = definitions;
+            isSearching = !isSearching;
         }
 
 

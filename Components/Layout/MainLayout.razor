@@ -10,6 +10,8 @@
 <MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
+@inject IJSRuntime JS
+
 
 <style>
     .nav-link.active {
@@ -72,11 +74,10 @@
                 </MudContainer>
 
                 <MudContainer>
-                    <Footer/>
+                    <Footer />
                 </MudContainer>
 
             </MudMainContent>
-
 
         }
 
@@ -114,6 +115,14 @@
 
 
 
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initializeNavMenu");
+        }
     }
 
     void ToggleDrawer()

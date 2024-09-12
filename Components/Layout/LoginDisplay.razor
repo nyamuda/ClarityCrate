@@ -11,30 +11,20 @@
                 <div class="dropdown">
                     <MudChip Class="cursor-pointer" Color="Color.Dark" Icon="@Icons.Material.Filled.Person"
                              id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        Profile
+                        Account
                     </MudChip>
 
                     <ul class="dropdown-menu dropdown-menu-start dropdown-menu-lg-end px-3"
                         aria-labelledby="dropdownMenuButton1">
-                        <li>
-                            <MudButton Class="text-capitalize" Href="definitions/favorites" FullWidth="true" Variant="Variant.Text"
-                                       Color="Color.Dark">Favorites</MudButton>
+                        <li class="py-1">
+                            <MudButton Class="text-capitalize" Href="Account/Manage" FullWidth="true" Variant="Variant.Outlined"
+                                       Color="Color.Dark">Settings</MudButton>
                         </li>
-
-                        <li>
-                            <MudButton Class="text-capitalize" Href="definitions/practice" FullWidth="true" Variant="Variant.Text"
-                                       Color="Color.Dark">Practice</MudButton>
-                        </li>
-
-                        <li>
-                            <MudButton Class="text-capitalize" Href="Account/Manage" FullWidth="true" Variant="Variant.Text"
-                                       Color="Color.Dark">Account Settings</MudButton>
-                        </li>
-                        <form method="post" action="Account/Logout">
+                        <form class="py-1" method="post" action="Account/Logout">
                             <AntiforgeryToken />
                             <input type="hidden" name="ReturnUrl" value="@currentUrl" />
 
-                            <MudButton Class="text-capitalize" FullWidth="true" ButtonType="ButtonType.Submit" Variant="Variant.Text"
+                            <MudButton Class="text-capitalize" FullWidth="true" ButtonType="ButtonType.Submit" Variant="Variant.Outlined"
                                        Color="Color.Dark">Log out</MudButton>
 
                         </form>
