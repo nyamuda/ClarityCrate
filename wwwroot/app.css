@@ -1,35 +1,28 @@
-
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
+.valid.modified:not([type="checkbox"]) {
+  outline: 1px solid #26b050;
 }
 
 .invalid {
-    outline: 1px solid #e50000;
+  outline: 1px solid #e50000;
 }
 
 .validation-message {
-    color: #e50000;
+  color: #e50000;
 }
-
-
-
 
 /* Disable the outline for all form controls */
 .form-control:focus {
-    outline: none;
-    box-shadow: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .btn:active {
-    box-shadow: none !important;
+  box-shadow: none !important;
 }
 
 .navbar-toggler:focus,
 .navbar-toggler:active,
 .navbar-toggler-icon:focus {
-    outline: none !important;
-    box-shadow: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
-
-
-

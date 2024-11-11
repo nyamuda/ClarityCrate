@@ -38,24 +38,26 @@
     </MudIconButton>
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <div class="navbar-nav ms-auto p-4 p-lg-0">
-            <a href="/" class="nav-item nav-link active">Home</a>
-            <a href="/about" class="nav-item nav-link">About</a>
-            <a href="contact.html" class="nav-item nav-link">Contact</a>
-            <a href="/definitions" class="nav-item nav-link">Definitions</a>
+            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">Home</NavLink>
+            <NavLink class="nav-link" href="/definitions" Match="NavLinkMatch.All">Definitions</NavLink>
+            <NavLink class="nav-link" href="/summarizer" Match="NavLinkMatch.All">Summarizer</NavLink>
+            <NavLink class="nav-link" href="/about" Match="NavLinkMatch.All">About</NavLink>
+            <NavLink class="nav-link" href="/contact" Match="NavLinkMatch.All">Contact</NavLink>
+
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">My Learning</a>
                 <div class="dropdown-menu fade-down m-0 mb-2">
                     <a href="definitions/favorites" class="dropdown-item">Favorites</a>
-                    <a href="definitions/practice" class="dropdown-item">Practice Definition</a>
+                    <a href="definitions/" class="dropdown-item">Practice Definition</a>
                     <a href="404.html" class="dropdown-item">Quiz</a>
                 </div>
             </div>
-           
+
             <div class="d-lg-flex align-items-lg-center pe-lg-2">
                 <LoginDisplay />
             </div>
         </div>
-        
+
     </div>
 </nav>
 <!-- Navbar End -->

@@ -1,0 +1,108 @@
+@page "/summarizer"
+@using Clarity_Crate.Services
+@using Clarity_Crate.Models
+@using Clarity_Crate.Components.Pages.Flashcards
+<PageTitle>Summarizer</PageTitle>
+@inject NavigationManager NavigationManager
+@inject CurriculumService CurriculumService
+@inject SubjectService SubjectService
+@inject TopicService TopicService
+@inject LevelService LevelService
+@inject TermService TermService
+
+
+<style>
+
+</style>
+
+<div class="container-md">
+
+    <div>
+        <MudTabs ActivePanelIndex="1" HideSlider="true" Border="true" Elevation="2" Rounded="true"
+            ApplyEffectsToContainer="true" PanelClass="pa-6">
+            <MudTabPanel Disabled="true">
+                <TabContent>
+                    <MudText Class="grey-text text-darken-4 cursor-text">Modes:</MudText>
+                </TabContent>
+
+            </MudTabPanel>
+            <MudTabPanel>
+                <ChildContent>
+                    <div class="row" style="height:24rem">
+                        <div class="col d-flex flex-column justify-content-between">
+                             <div>
+                                <MudSlider Variant="Variant.Filled" Size="Size.Medium" Min="100" Max="300" TickMarks="true" Step="50" Value="@value">Summary Length</MudSlider>
+                            </div>
+                            <MudTextField T="string" Label="Enter your text" Variant="Variant.Text" Text="@sampleText"
+                                Lines="12" />
+                        
+                            <!-- Slider & Bottom Buttons -->
+                           
+                            <MudGrid>
+                                <MudItem xs="6">
+                                    <MudButton Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
+                                        Upload doc
+                                    </MudButton>
+                                </MudItem>
+                                <MudItem xs="6" Style="text-align: right;">
+                                    <MudButton Class="purple darken-4 text-light" Variant="Variant.Filled">
+                                        Summarize
+                                    </MudButton>
+                                </MudItem>
+                            </MudGrid>
+                        </div>
+                        <div class="col border-start">
+
+                        </div>
+                    </div>
+                </ChildContent>
+                <TabWrapperContent>
+                    <MudTooltip Text="Summarizes the content in a single cohesive paragraph.">
+                        @context
+                    </MudTooltip>
+                </TabWrapperContent>
+                <TabContent>
+                    <MudText class="">Paragraph</MudText>
+                </TabContent>
+
+            </MudTabPanel>
+            <MudTabPanel>
+                <ChildContent>the bullet content</ChildContent>
+                <TabWrapperContent>
+                    <MudTooltip
+                        Text="Summarizes the content in a list format, with each point highlighting a key idea.">
+                        @context
+                    </MudTooltip>
+                </TabWrapperContent>
+                <TabContent>
+                    <MudText class="">Bullet Points</MudText>
+                </TabContent>
+
+            </MudTabPanel>
+            <MudTabPanel>
+                <ChildContent>the custom content</ChildContent>
+                <TabWrapperContent>
+                    <MudTooltip Text="Enter specific custom instructions on how you want the text to be summarized.">
+                        @context
+                    </MudTooltip>
+                </TabWrapperContent>
+                <TabContent>
+                    <MudText class="">Custom</MudText>
+                </TabContent>
+
+            </MudTabPanel>
+
+        </MudTabs>
+    </div>
+</div>
+<div class="container-fluid">
+
+</div>
+
+
+@code
+{
+    int value = 200;
+    string[] labels = new string[] { "Short", "Medium", "Long"};
+    string sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+}
