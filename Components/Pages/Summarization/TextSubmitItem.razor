@@ -1,0 +1,36 @@
+<style>
+    .summarization-text-submit {
+
+    }
+</style>
+
+<div class="summarization-text-submit">
+    <div class="d-none d-md-block">
+        <MudTextField T="string" Label="Enter your text" Variant="Variant.Text" Text="@TextToSummarize" Lines="12" />
+    </div>
+    <div class="d-block d-md-none">
+        <MudTextField T="string" Label="Enter your text" Variant="Variant.Text" Text="@TextToSummarize" Lines="9" />
+    </div>
+
+    <!-- Slider & Bottom Buttons -->
+    <MudGrid Class="mt-1">
+        <MudItem xs="6">
+            <MudButton Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
+                Upload doc
+            </MudButton>
+        </MudItem>
+        <MudItem xs="6" Style="text-align: right;">
+            <MudButton Class="purple darken-4 text-light" Variant="Variant.Filled">
+                Summarize
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+</div>
+
+
+@code {
+    [Parameter]
+    public string TextToSummarize {get; set;} = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+    [Parameter]
+    public string Mode { get; set; } = "paragraph";
+}

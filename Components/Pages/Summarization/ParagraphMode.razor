@@ -1,0 +1,51 @@
+<style>
+    .summarization-mode {
+        height: 24rem
+    }
+</style>
+
+<div class="summarization-mode">
+    <!--Desktop View-->
+    <div class="d-none d-md-flex row">
+        <div class="col d-flex flex-column justify-content-between">
+            <div>
+                <MudSlider Variant="Variant.Filled" Size="Size.Small" Min="100" Max="300" TickMarks="true" Step="100"
+                           Value="@value">Summary Length</MudSlider>
+            </div>
+            <TextSubmitItem Mode="paragraph" />
+        </div>
+        <!--Summary Block-->
+        <div class="col border-start">
+            <p>@summary</p>
+        </div>
+    </div>
+
+    <!--Mobile View-->
+    <div class="d-block d-md-none">
+        <MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+            <MudTabPanel Text="Original">
+                <div>
+                    <MudSlider Variant="Variant.Filled" Size="Size.Small" Min="100" Max="300" TickMarks="true" Step="100"
+                               Value="@value">Summary Length</MudSlider>
+                </div>
+                <TextSubmitItem Mode="paragraph" />
+            </MudTabPanel>
+            <MudTabPanel Text="Summarized">
+                <MudText>@summary</MudText>
+            </MudTabPanel>
+
+        </MudTabs>
+
+    </div>
+
+</div>
+
+
+
+@code
+{
+    int value = 100;
+    string[] labels = new string[] { "Short", "Medium", "Long" };
+    private string summary = "";
+
+}

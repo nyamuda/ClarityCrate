@@ -1,0 +1,10 @@
+{
+  "overrides": [
+    {
+      "files": "*.razor",
+      "options": {
+        "parser": "html"
+      }
+    }
+  ]
+}
