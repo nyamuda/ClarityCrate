@@ -6,10 +6,10 @@
 
 <div class="summarization-text-submit">
     <div class="d-none d-md-block">
-        <MudTextField T="string" Label="Enter your text" Variant="Variant.Text" Text="@TextToSummarize" Lines="13" />
+        <MudTextField T="string" Label="Enter your text" Variant="Variant.Text" Text="@textToSummarize" Lines="13" />
     </div>
     <div class="d-block d-md-none">
-        <MudTextField T="string" Label="Enter your text" Variant="Variant.Text" Text="@TextToSummarize" Lines="9" />
+        <MudTextField T="string" Label="Enter your text" Variant="Variant.Text" Text="@textToSummarize" Lines="9" />
     </div>
 
     <!-- Slider & Bottom Buttons -->
@@ -33,8 +33,8 @@
 
 
 @code {
-    [Parameter]
-    public string TextToSummarize {get; set;} = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+    
+    private string textToSummarize {get; set;} = "";
     [Parameter]
     public string Mode { get; set; } = "paragraph";
 
@@ -50,11 +50,11 @@
             // Create a memory stream and read the file asynchronously
             using (var memoryStream = new MemoryStream())
             {
-                await file.OpenReadStream(maxAllowedSize: long.MaxValue).CopyToAsync(memoryStream); // 10 MB limit
+                await file.OpenReadStream(maxAllowedSize: long.MaxValue).CopyToAsync(memoryStream);
                 memoryStream.Position = 0; // Reset position to the beginning
 
                 // Extract text from PDF using the memory stream
-                TextToSummarize = FileService.ExtractTextFromPdf(memoryStream);
+                textToSummarize = FileService.ExtractTextFromPdf(memoryStream);
               
             }
         }

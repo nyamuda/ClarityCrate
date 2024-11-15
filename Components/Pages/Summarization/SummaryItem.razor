@@ -1,0 +1,149 @@
+@using Clarity_Crate.Services
+@inject FileService FileService
+
+
+<div class="summarization-mode">
+    <!--Desktop View-->
+    <div class="d-none d-md-flex row">
+        <div class="col d-flex flex-column justify-content-between">
+            @if(ShowSlider)
+            {
+                <div>
+                    <MudSlider Variant="Variant.Filled" Size="Size.Small" Min="100" Max="300" TickMarks="true" Step="100"
+                               Value="@value">Summary Length</MudSlider>
+                </div>
+            }
+            <div class="summarization-text-submit">
+                <div class="d-none d-md-block">
+                    <MudTextField T="string" Label="Enter your text" Variant="Variant.Text" Text="@textToSummarize" Lines="13" />
+                </div>
+
+                <!-- Bottom Buttons -->
+                <MudGrid Class="mt-1">
+                    <MudItem xs="6">
+                        <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFile" MaximumFileCount="100">
+                            <ButtonTemplate>
+                                <MudButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
+                                    Upload
+                                </MudButton>
+                            </ButtonTemplate>
+                        </MudFileUpload>
+                    </MudItem>
+                    <MudItem xs="6" Style="text-align: right;">
+                        <MudButton Class="purple darken-4 text-light" Variant="Variant.Filled">
+                            Summarize
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </div>
+        </div>
+        <!--Summary Block-->
+        <div class="col border-start">
+            <p>@summary</p>
+        </div>
+    </div>
+
+    <!--Mobile View-->
+    <div class="d-block d-md-none container-fluid">
+        <MudTabs Centered="true" Elevation="0" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+            <MudTabPanel Text="Original">
+                @if(ShowSlider)
+                {
+                    <div>
+                        <MudSlider Variant="Variant.Filled" Size="Size.Small" Min="100" Max="300" TickMarks="true" Step="100"
+                                   Value="@value">Summary Length</MudSlider>
+                    </div>
+                }
+                <div class="summarization-text-submit">
+                    <div class="d-block d-md-none">
+                        <MudTextField T="string" Label="Enter your text" Variant="Variant.Text" Text="@textToSummarize" Lines="9" />
+                    </div>
+
+                    <!-- Slider & Bottom Buttons -->
+                    <MudGrid Class="mt-1">
+                        <MudItem xs="6">
+                            <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFile" MaximumFileCount="100">
+                                <ButtonTemplate>
+                                    <MudButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
+                                        Upload
+                                    </MudButton>
+                                </ButtonTemplate>
+                            </MudFileUpload>
+                        </MudItem>
+                        <MudItem xs="6" Style="text-align: right;">
+                            <MudButton Class="purple darken-4 text-light" Variant="Variant.Filled">
+                                Summarize
+                            </MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </div>
+            </MudTabPanel>
+            <MudTabPanel Text="Summarized">
+                <MudText>@summary</MudText>
+            </MudTabPanel>
+
+        </MudTabs>
+
+    </div>
+
+</div>
+
+
+
+@code
+{
+    int value = 100;
+    string[] labels = new string[] { "Short", "Medium", "Long" };
+
+    public string summary = string.Empty;
+    [Parameter]
+    public bool ShowSlider { get; set; } = false;
+
+    private string textToSummarize { get; set; } = "";
+    [Parameter]
+    public string Mode { get; set; } = "paragraph";
+
+    IBrowserFile file;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(Mode.Equals("paragraph"))
+        {
+            summary = "Its paragraph mode";
+        }  
+
+        if (Mode.Equals("bullet"))
+        {
+            summary = "Its bullet mode";
+        }
+
+    }
+
+
+    private async Task UploadFile(IBrowserFile uploadedFile)
+    {
+        file = uploadedFile;
+
+        try
+        {
+            // Create a memory stream and read the file asynchronously
+            using (var memoryStream = new MemoryStream())
+            {
+                await file.OpenReadStream(maxAllowedSize: long.MaxValue).CopyToAsync(memoryStream);
+                memoryStream.Position = 0; // Reset position to the beginning
+
+                // Extract text from PDF using the memory stream
+                textToSummarize = FileService.ExtractTextFromPdf(memoryStream);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+    }
+
+
+
+}

@@ -29,7 +29,7 @@
             </MudTabPanel>
             <MudTabPanel>
                 <ChildContent >
-                  <ParagraphMode/>
+                  <SummaryItem ShowSlider="true" Mode="paragraph"/>
                 </ChildContent>
                 <TabWrapperContent>
                     <MudTooltip Text="Summarizes the content in a single cohesive paragraph.">
@@ -42,7 +42,9 @@
 
             </MudTabPanel>
             <MudTabPanel>
-                <ChildContent>the bullet content</ChildContent>
+                <ChildContent>
+                    <SummaryItem ShowSlider="false" Mode="bullet" />
+                </ChildContent>
                 <TabWrapperContent>
                     <MudTooltip
                         Text="Summarizes the content in a list format, with each point highlighting a key idea.">
@@ -55,7 +57,9 @@
 
             </MudTabPanel>
             <MudTabPanel>
-                <ChildContent>the custom content</ChildContent>
+                <ChildContent>
+                    <SummaryItem ShowSlider="false" Mode="custom" />
+                </ChildContent>
                 <TabWrapperContent>
                     <MudTooltip Text="Enter specific custom instructions on how you want the text to be summarized.">
                         @context
