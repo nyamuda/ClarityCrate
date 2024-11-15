@@ -65,6 +65,8 @@ builder.Services.AddScoped<TemplateService>();
 builder.Services.AddScoped<AppService>();
 builder.Services.AddScoped<DefinitionService>();
 builder.Services.AddScoped<FileService>();
+builder.Services.AddScoped<SummarizationService>();
+
 // Register OpenAIService
 builder.Services.AddHttpClient<OpenAIService>();
 
