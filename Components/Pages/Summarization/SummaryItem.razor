@@ -8,14 +8,16 @@
         <div class="col d-flex flex-column justify-content-between">
             @if(ShowSlider)
             {
-                <div>
-                    <MudSlider Variant="Variant.Filled" Size="Size.Small" Min="100" Max="300" TickMarks="true" Step="100"
-                               Value="@value">Summary Length</MudSlider>
+                <p>Summary Length</p>
+                <div class="d-flex justify-content-between align-items-center text-lowercase">
+                    <span>Short</span>
+                    <MudSlider Class="mx-2" Variant="Variant.Filled" Size="Size.Small" Min="50" Max="400" Value="150" />
+                    <span>Long</span>
                 </div>
             }
             <div class="summarization-text-submit">
                 <div class="d-none d-md-block">
-                    <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="textToSummarize" TextChanged="OnTextChanged" Lines="13"/>
+                    <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="textToSummarize" TextChanged="OnTextChanged" Lines="@(ShowSlider? 11 :14)" Clearable="true"/>
                 </div>
 
                 <!-- Bottom Buttons -->
@@ -28,16 +30,25 @@
                         else
                         {
                             <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFile" MaximumFileCount="100">
-                                <ButtonTemplate>
-                                    <MudButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
-                                        Upload
-                                    </MudButton>
+                                 <ButtonTemplate>
+                                    @if(_isExtractingText)
+                                    {
+                                        <MudButton class="gray darken-4 cursor-progress" Variant="Variant.Outlined">
+                                            Extracting...
+                                        </MudButton>
+                                    }
+                                    else
+                                    {
+                                        <MudButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
+                                            Upload
+                                        </MudButton>
+                                    }
                                 </ButtonTemplate>
                             </MudFileUpload>
                         }
                     </MudItem>
                     <MudItem xs="6" Style="text-align: right;">
-                        <MudButton Class="purple darken-4 text-light" Variant="Variant.Filled">
+                        <MudButton Disabled="@string.IsNullOrEmpty(textToSummarize)" Class="grey darken-4 text-light" Variant="Variant.Filled">
                             Summarize
                         </MudButton>
                     </MudItem>
@@ -46,7 +57,7 @@
         </div>
         <!--Summary Block-->
         <div class="col border-start">
-            <p>@textToSummarize</p>
+            <p>@_summary</p>
         </div>
     </div>
 
@@ -56,24 +67,36 @@
             <MudTabPanel Text="Original">
                 @if(ShowSlider)
                 {
-                    <div>
-                        <MudSlider Variant="Variant.Filled" Size="Size.Small" Min="100" Max="300" TickMarks="true" Step="100"
-                                   Value="@value">Summary Length</MudSlider>
+                    <p>Summary Length</p>
+                    <div class="d-flex justify-content-between align-items-center text-lowercase">
+                        <span>Short</span>
+                        <MudSlider Class="mx-2" Variant="Variant.Filled" Size="Size.Small" Min="50" Max="400" Value="150" />
+                        <span>Long</span>
                     </div>
                 }
                 <div class="summarization-text-submit">
                     <div class="d-block d-md-none">
-                        <MudTextField T="string" Label="Enter your text" Variant="Variant.Text" Text="@textToSummarize" Lines="9" />
+                        <MudTextField T="string" Label="Enter your text" Variant="Variant.Text" Text="@textToSummarize" Lines="@(ShowSlider?7:10)" />
                     </div>
 
                     <!-- Slider & Bottom Buttons -->
                     <MudGrid Class="mt-1">
                         <MudItem xs="6">
                             <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFile" MaximumFileCount="100">
+
                                 <ButtonTemplate>
-                                    <MudButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
-                                        Upload
-                                    </MudButton>
+                                    @if(_isExtractingText)
+                                    {
+                                        <MudButton class="gray darken-4 cursor-progress" Variant="Variant.Outlined">
+                                            Extracting...
+                                        </MudButton>
+                                    }
+                                    else
+                                    {
+                                        <MudButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
+                                            Upload
+                                        </MudButton>
+                                    }
                                 </ButtonTemplate>
                             </MudFileUpload>
                         </MudItem>
@@ -86,7 +109,7 @@
                 </div>
             </MudTabPanel>
             <MudTabPanel Text="Summarized">
-                <MudText>@summary</MudText>
+                <MudText>@_summary</MudText>
             </MudTabPanel>
 
         </MudTabs>
@@ -102,28 +125,27 @@
     int value = 100;
     string[] labels = new string[] { "Short", "Medium", "Long" };
 
-    public string summary = string.Empty;
+    public string _summary = string.Empty;
     [Parameter]
     public bool ShowSlider { get; set; } = false;
-
     private string textToSummarize = string.Empty;
     private int numOfWords = 0;
     [Parameter]
     public string Mode { get; set; } = "paragraph";
-   
     IBrowserFile file;
+    private bool _isExtractingText = true;
 
 
     protected override async Task OnInitializedAsync()
     {
         if(Mode.Equals("paragraph"))
         {
-            summary = "Its paragraph mode";
+            _summary = "Its paragraph mode";
         }  
 
         if (Mode.Equals("bullet"))
         {
-            summary = "Its bullet mode";
+            _summary = "Its bullet mode";
         }
 
     }
@@ -132,6 +154,7 @@
     private async Task UploadFile(IBrowserFile uploadedFile)
     {
         file = uploadedFile;
+        _isExtractingText = true;
 
         try
         {
@@ -143,6 +166,7 @@
 
                 // Extract text from PDF using the memory stream
                 textToSummarize = FileService.ExtractTextFromPdf(memoryStream);
+                _isExtractingText = false;
 
             }
         }
