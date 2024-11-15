@@ -15,19 +15,26 @@
             }
             <div class="summarization-text-submit">
                 <div class="d-none d-md-block">
-                    <MudTextField T="string" Label="Enter your text" Variant="Variant.Text" Text="@textToSummarize" Lines="13" />
+                    <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="textToSummarize" TextChanged="OnTextChanged" Lines="13"/>
                 </div>
 
                 <!-- Bottom Buttons -->
                 <MudGrid Class="mt-1">
                     <MudItem xs="6">
-                        <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFile" MaximumFileCount="100">
-                            <ButtonTemplate>
-                                <MudButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
-                                    Upload
-                                </MudButton>
-                            </ButtonTemplate>
-                        </MudFileUpload>
+                        @if(textToSummarize.Length>0)
+                        {
+                            <MudText>@numOfWords Words</MudText>
+                        }
+                        else
+                        {
+                            <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFile" MaximumFileCount="100">
+                                <ButtonTemplate>
+                                    <MudButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
+                                        Upload
+                                    </MudButton>
+                                </ButtonTemplate>
+                            </MudFileUpload>
+                        }
                     </MudItem>
                     <MudItem xs="6" Style="text-align: right;">
                         <MudButton Class="purple darken-4 text-light" Variant="Variant.Filled">
@@ -39,7 +46,7 @@
         </div>
         <!--Summary Block-->
         <div class="col border-start">
-            <p>@summary</p>
+            <p>@textToSummarize</p>
         </div>
     </div>
 
@@ -99,10 +106,11 @@
     [Parameter]
     public bool ShowSlider { get; set; } = false;
 
-    private string textToSummarize { get; set; } = "";
+    private string textToSummarize = string.Empty;
+    private int numOfWords = 0;
     [Parameter]
     public string Mode { get; set; } = "paragraph";
-
+   
     IBrowserFile file;
 
 
@@ -144,6 +152,17 @@
         }
     }
 
+    private int WordCount(string text)
+    {
+        return string.IsNullOrWhiteSpace(text) ? 0 : text.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
+    }
 
+    private void OnTextChanged(string newText)
+    {
+       textToSummarize = newText;
+        numOfWords = WordCount(textToSummarize);
+    }
+
+   
 
 }
