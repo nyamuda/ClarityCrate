@@ -26,7 +26,7 @@
                     <div>
                         @if (SummarizationService.Text.Length > 0)
                         {
-                            <MudText>@numOfWords Words</MudText>
+                            <MudText>@numOfWords words</MudText>
                         }
                         else
                         {
@@ -49,9 +49,19 @@
                         }
                     </div>
                     <div>
-                        <MudButton Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="grey darken-4 text-light mt-1" Variant="Variant.Filled">
-                            Summarize
-                        </MudButton>
+                        @if (SummarizationService.IsSummarizing)
+                        {
+                            <MudButton class="grey darken-4 cursor-progress text-light" Variant="Variant.Filled">
+                                Summarizing
+                            </MudButton>
+
+                        }
+                        else
+                        {
+                            <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="grey darken-4 text-light mt-1" Variant="Variant.Filled">
+                                Summarize
+                            </MudButton>
+                        }
                     </div>
                 </div>
             </div>
@@ -86,7 +96,7 @@
                         <div>
                             @if (SummarizationService.Text.Length > 0)
                             {
-                                <MudText>@numOfWords Words</MudText>
+                                <MudText>@numOfWords words</MudText>
                             }
                             else
                             {
@@ -109,9 +119,19 @@
                             }
                         </div>
                         <div>
-                            <MudButton Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="grey darken-4 text-light mt-1" Variant="Variant.Filled">
-                                Summarize
-                            </MudButton>
+                            @if(SummarizationService.IsSummarizing)
+                            {
+                                <MudButton class="grey darken-4 cursor-progress text-light" Variant="Variant.Filled">
+                                    Summarizing
+                                </MudButton>
+
+                            }
+                            else
+                            {
+                                <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="grey darken-4 text-light mt-1" Variant="Variant.Filled">
+                                    Summarize
+                                </MudButton>
+                            }
                         </div>
                     </div>
                 </div>
@@ -136,12 +156,12 @@
     public string _summary = string.Empty;
     [Parameter]
     public bool ShowSlider { get; set; } = false;
-    
+
     private int numOfWords = 0;
     [Parameter]
     public string Mode { get; set; } = "paragraph";
     IBrowserFile file;
-    private bool _isExtractingText = true;
+    private bool _isExtractingText = false;
 
 
     protected override async Task OnInitializedAsync()
@@ -191,9 +211,25 @@
 
     private void OnTextChanged(string newText)
     {
-       SummarizationService.Text = newText;
+        SummarizationService.Text = newText;
         numOfWords = WordCount(SummarizationService.Text);
     }
+
+
+    private async Task SummarizeText()
+    {
+        string textToSummarize = SummarizationService.Text;
+        int maxLength=value;
+        int minLength = 50;
+
+        await SummarizationService.GetParagraphSummary(textToSummarize, maxLength, minLength);
+
+        _summary = SummarizationService.Summary;
+
+    }
+
+
+
 
    
 
