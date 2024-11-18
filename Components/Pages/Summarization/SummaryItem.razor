@@ -12,7 +12,7 @@
                 <p>Summary Length</p>
                 <div class="d-flex justify-content-between align-items-center text-lowercase">
                     <span>Short</span>
-                    <MudSlider Class="mx-2" Variant="Variant.Filled" Size="Size.Small" Min="50" Max="400" Value="150" />
+                    <MudSlider Class="mx-2" Variant="Variant.Filled" Size="Size.Small" Min="50" Max="400" @bind-Value="@summaryLength" />
                     <span>Long</span>
                 </div>
             }
@@ -51,8 +51,8 @@
                     <div>
                         @if (SummarizationService.IsSummarizing)
                         {
-                            <MudButton class="grey darken-4 cursor-progress text-light" Variant="Variant.Filled">
-                                Summarizing
+                            <MudButton class="grey darken-4 cursor-progress text-light mt-1" Variant="Variant.Filled">
+                                Summarizing...
                             </MudButton>
 
                         }
@@ -121,8 +121,8 @@
                         <div>
                             @if(SummarizationService.IsSummarizing)
                             {
-                                <MudButton class="grey darken-4 cursor-progress text-light" Variant="Variant.Filled">
-                                    Summarizing
+                                <MudButton class="grey darken-4 cursor-progress text-light mt-1" Variant="Variant.Filled">
+                                    Summarizing...
                                 </MudButton>
 
                             }
@@ -147,10 +147,9 @@
 </div>
 
 
-
 @code
 {
-    int value = 100;
+    int summaryLength = 100;
     string[] labels = new string[] { "Short", "Medium", "Long" };
 
     public string _summary = string.Empty;
@@ -219,8 +218,8 @@
     private async Task SummarizeText()
     {
         string textToSummarize = SummarizationService.Text;
-        int maxLength=value;
-        int minLength = 50;
+        int maxLength=400;
+        int minLength =summaryLength;
 
         await SummarizationService.GetParagraphSummary(textToSummarize, maxLength, minLength);
 

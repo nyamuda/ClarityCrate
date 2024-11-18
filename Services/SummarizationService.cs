@@ -1,6 +1,8 @@
 ﻿using Clarity_Crate.Dtos;
+using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.RegularExpressions;
 
 namespace Clarity_Crate.Services
 
@@ -40,7 +42,11 @@ namespace Clarity_Crate.Services
             if (response.IsSuccessStatusCode)
             {
                 var body = await response.Content.ReadFromJsonAsync<SummaryDto>();
-                Summary = body.summary;
+                //the text is in lowercase
+                //converting it to sentence case
+                string summaryText = body.summary;
+                var sentenceRegex = new Regex(@"(^[a-z])|[?!.:,;]\s+(.)", RegexOptions.ExplicitCapture);
+                Summary = sentenceRegex.Replace(summaryText.ToLower(), s => s.Value.ToUpper());
                 IsSummarizing = false;
             }
 
