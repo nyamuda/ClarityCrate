@@ -1,6 +1,7 @@
-@using Clarity_Crate.Services
+﻿@using Clarity_Crate.Services
 @inject FileService FileService
 @inject SummarizationService SummarizationService
+
 
 <div class="summarization-mode">
     <!--Desktop View-->
@@ -9,9 +10,9 @@
             @if(ShowSlider)
             {
                 <p>Summary Length</p>
-                <div class="d-flex justify-content-between align-items-center text-lowercase">
+                <div class="d-flex justify-content-between align-items-center">
                     <span>Short</span>
-                    <MudSlider Class="mx-2" Variant="Variant.Filled" Size="Size.Small" Min="50" Max="400" @bind-Value="@summaryLength" />
+                    <MudSlider Class="mx-2" Variant="Variant.Filled" Size="Size.Small" Min="25" Max="75" Step="5" @bind-Value="@_summaryPercentage"/>
                     <span>Long</span>
                 </div>
             }
@@ -86,9 +87,9 @@
                 @if(ShowSlider)
                 {
                     <p>Summary Length</p>
-                    <div class="d-flex justify-content-between align-items-center text-lowercase">
+                    <div class="d-flex justify-content-between align-items-center">
                         <span>Short</span>
-                        <MudSlider Class="mx-2" Variant="Variant.Filled" Size="Size.Small" Min="50" Max="400" Value="150" />
+                        <MudSlider Class="mx-2" Variant="Variant.Filled" Size="Size.Small" Min="25" Max="75" Step="5" @bind-Value="@_summaryPercentage" />
                         <span>Long</span>
                     </div>
                 }
@@ -144,15 +145,16 @@
                 </div>
             </MudTabPanel>
             <MudTabPanel Text="Summarized">
-                <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="_summary" TextChanged="OnSummaryChanged" Lines="@(ShowSlider?11:14)"/>
+                <MudTextField T="string" Immediate="true" Label="" Variant="Variant.Text" @bind-Value="_summary" TextChanged="OnSummaryChanged" Lines="15" DisableUnderLine />
                 <div class="mt-1 d-flex justify-content-between align-items-center">
                     <MudText>@summaryNumOfWords words</MudText>
                     @if (_summary.Length > 0)
                     {
-                        <MudButton>Export</MudButton>
+                        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Download">Export</MudButton>
                     }
-                   
+
                 </div>
+
             </MudTabPanel>
 
         </MudTabs>
@@ -164,9 +166,8 @@
 
 @code
 {
-    int summaryLength = 100;
-    string[] labels = new string[] { "Short", "Medium", "Long" };
-
+    private int _summaryPercentage = 50;
+    
     public string _summary = string.Empty;
     [Parameter]
     public bool ShowSlider { get; set; } = false;
@@ -224,12 +225,14 @@
         return string.IsNullOrWhiteSpace(text) ? 0 : text.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
     }
 
+    //Count the number of words of the text to be summarized
     private void OnTextChanged(string newText)
     {
         SummarizationService.Text = newText;
         numOfWords = WordCount(SummarizationService.Text);
     }
 
+    //Count the number of words of the summary
     private void OnSummaryChanged(string newText)
     {
         _summary = newText;
@@ -240,18 +243,34 @@
     private async Task SummarizeText()
     {
         string textToSummarize = SummarizationService.Text;
-        int maxLength=400;
-        int minLength =summaryLength;
 
-        await SummarizationService.GetParagraphSummary(textToSummarize, maxLength, minLength);
+        //maximum summary length is 75% of the original words
+        int maximumNumWords = (int)(numOfWords * 0.75);
+        //minimum number of words is >=25% of the original words
+        int minimumNumWords = (int)(numOfWords * _summaryPercentage/100);
+
+
+        //convert minimum and maximum number of words into tokens
+        var (maxTokens, minTokens) = CalculateTokens(maximumNumWords, minimumNumWords);
+
+       
+        await SummarizationService.GetParagraphSummary(textToSummarize, maxTokens, minTokens);
 
         _summary = SummarizationService.Summary;
 
     }
 
+    //Calculate tokens from words
+    private (int maxTokens, int minTokens) CalculateTokens(int maxWords, int minWords)
+    {
+        //1 word ≈ 1.33 tokens
+        int maximumTokens = (int)(maxWords * 1.33);
+        int minimumTokens = (int)(minWords * 1.33);
 
+        return (maximumTokens, minimumTokens);
+    }
 
-
+   
    
 
 }
