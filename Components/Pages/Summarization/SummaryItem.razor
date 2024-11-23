@@ -2,7 +2,6 @@
 @inject FileService FileService
 @inject SummarizationService SummarizationService
 
-
 <div class="summarization-mode">
     <!--Desktop View-->
     <div class="d-none d-md-flex row">
@@ -51,14 +50,14 @@
                     <div>
                         @if (SummarizationService.IsSummarizing)
                         {
-                            <MudButton class="grey darken-4 cursor-progress text-light mt-1" Variant="Variant.Filled">
+                            <MudButton class="purple darken-4 cursor-progress text-light mt-1" Variant="Variant.Filled">
                                 Summarizing...
                             </MudButton>
 
                         }
                         else
                         {
-                            <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="grey darken-4 text-light mt-1" Variant="Variant.Filled">
+                            <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="purple darken-4 text-light mt-1" Variant="Variant.Filled">
                                 Summarize
                             </MudButton>
                         }
@@ -68,7 +67,15 @@
         </div>
         <!--Summary Block-->
         <div class="col border-start">
-            <p>@_summary</p>
+            <MudTextField T="string" Immediate="true" Label="" Variant="Variant.Text" @bind-Value="_summary" TextChanged="OnSummaryChanged" Lines="15" DisableUnderLine />
+            <div class="mt-1 d-flex justify-content-between align-items-center">
+                <MudText>@summaryNumOfWords words</MudText>
+                @if (_summary.Length > 0)
+                {
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Download">Export</MudButton>
+                }
+
+            </div>
         </div>
     </div>
 
@@ -121,14 +128,14 @@
                         <div>
                             @if(SummarizationService.IsSummarizing)
                             {
-                                <MudButton class="grey darken-4 cursor-progress text-light mt-1" Variant="Variant.Filled">
+                                <MudButton class="purple darken-4 cursor-progress text-light mt-1" Variant="Variant.Filled">
                                     Summarizing...
                                 </MudButton>
 
                             }
                             else
                             {
-                                <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="grey darken-4 text-light mt-1" Variant="Variant.Filled">
+                                <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="purple darken-4 text-light mt-1" Variant="Variant.Filled">
                                     Summarize
                                 </MudButton>
                             }
@@ -137,7 +144,15 @@
                 </div>
             </MudTabPanel>
             <MudTabPanel Text="Summarized">
-                <MudText>@_summary</MudText>
+                <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="_summary" TextChanged="OnSummaryChanged" Lines="@(ShowSlider?8:11)"/>
+                <div class="mt-1 d-flex justify-content-between align-items-center">
+                    <MudText>@summaryNumOfWords words</MudText>
+                    @if (_summary.Length > 0)
+                    {
+                        <MudButton>Export</MudButton>
+                    }
+                   
+                </div>
             </MudTabPanel>
 
         </MudTabs>
@@ -157,6 +172,7 @@
     public bool ShowSlider { get; set; } = false;
 
     private int numOfWords = 0;
+    private int summaryNumOfWords = 0;
     [Parameter]
     public string Mode { get; set; } = "paragraph";
     IBrowserFile file;
@@ -212,6 +228,12 @@
     {
         SummarizationService.Text = newText;
         numOfWords = WordCount(SummarizationService.Text);
+    }
+
+    private void OnSummaryChanged(string newText)
+    {
+        _summary = newText;
+        summaryNumOfWords = WordCount(_summary);
     }
 
 
