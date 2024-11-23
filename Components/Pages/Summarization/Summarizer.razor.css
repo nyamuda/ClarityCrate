@@ -1,0 +1,10 @@
+﻿.summarizer {
+    height: 25rem;
+    border:1px solid red;
+}
+
+@media (min-width:768px) {
+    .summarizer {
+        min-height: 28.3rem;
+    }
+}

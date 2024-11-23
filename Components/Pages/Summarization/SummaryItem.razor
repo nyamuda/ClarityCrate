@@ -94,7 +94,7 @@
                 }
                 <div class="summarization-text-submit">
                     <div class="d-block d-md-none">
-                        <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="SummarizationService.Text" TextChanged="OnTextChanged" Lines="@(ShowSlider?8:11)" Clearable="true" />
+                        <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="SummarizationService.Text" TextChanged="OnTextChanged" Lines="@(ShowSlider?11:14)" Clearable="true" />
                     </div>
 
                     <!-- Slider & Bottom Buttons -->
@@ -144,7 +144,7 @@
                 </div>
             </MudTabPanel>
             <MudTabPanel Text="Summarized">
-                <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="_summary" TextChanged="OnSummaryChanged" Lines="@(ShowSlider?8:11)"/>
+                <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="_summary" TextChanged="OnSummaryChanged" Lines="@(ShowSlider?11:14)"/>
                 <div class="mt-1 d-flex justify-content-between align-items-center">
                     <MudText>@summaryNumOfWords words</MudText>
                     @if (_summary.Length > 0)
