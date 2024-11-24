@@ -1,6 +1,8 @@
 ﻿@using Clarity_Crate.Services
 @inject FileService FileService
 @inject SummarizationService SummarizationService
+@inject IJSRuntime JSRuntime
+@inject AppService AppService
 
 
 <div class="summarization-mode">
@@ -40,9 +42,12 @@
                                     }
                                     else
                                     {
+                                        <MudTooltip Text = "Upload a document to summarize" Arrow = "true" >
                                         <MudButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
                                             Upload
                                         </MudButton>
+                                        </MudTooltip>
+
                                     }
                                 </ButtonTemplate>
                             </MudFileUpload>
@@ -73,7 +78,14 @@
                 <MudText>@summaryNumOfWords words</MudText>
                 @if (_summary.Length > 0)
                 {
-                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Download">Export</MudButton>
+                   <div>
+                        <MudTooltip Text="Export summary as a file" Arrow="true">
+                        <MudIconButton OnClick="DownloadPdf" Icon="@Icons.Material.Filled.Download" aria-label="Download text" />
+                        </MudTooltip>
+                        <MudTooltip Text="Copy summarized text" Arrow="true">
+                        <MudIconButton OnClick="CopySummary" Icon="@Icons.Material.Filled.ContentCopy" aria-label="Copy text " />
+                        </MudTooltip>
+                   </div>
                 }
 
             </div>
@@ -167,7 +179,7 @@
 @code
 {
     private int _summaryPercentage = 50;
-    
+
     public string _summary = string.Empty;
     [Parameter]
     public bool ShowSlider { get; set; } = false;
@@ -253,7 +265,7 @@
         //convert minimum and maximum number of words into tokens
         var (maxTokens, minTokens) = CalculateTokens(maximumNumWords, minimumNumWords);
 
-       
+
         await SummarizationService.GetParagraphSummary(textToSummarize, maxTokens, minTokens);
 
         _summary = SummarizationService.Summary;
@@ -268,6 +280,39 @@
         int minimumTokens = (int)(minWords * 1.33);
 
         return (maximumTokens, minimumTokens);
+    }
+
+    //Download summary as PDF
+    private async Task DownloadPdf()
+    {
+        // Generate the PDF
+        var pdfBytes = FileService.GeneratePdf(_summary);
+
+        // Use JS Interop to trigger a download
+        await TriggerDownload(pdfBytes, "Article.pdf");
+    }
+
+    private async Task TriggerDownload(byte[] fileBytes, string fileName)
+    {
+        var base64Data = Convert.ToBase64String(fileBytes);
+        var fileUrl = $"data:application/pdf;base64,{base64Data}";
+        await JSRuntime.InvokeVoidAsync("downloadFile", fileUrl, fileName);
+    }
+
+
+    //Copy Summary
+    private async Task CopySummary()
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("copyToClipboard", _summary);
+            AppService.ShowSnackBar(message: "Text copied to clipboard!", isSuccess: true);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Error {ex}");
+            AppService.ShowSnackBar(message: "Failed to copy text", isSuccess: false);
+        }
     }
 
    
