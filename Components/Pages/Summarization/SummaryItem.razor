@@ -14,7 +14,7 @@
                 <p>Summary Length</p>
                 <div class="d-flex justify-content-between align-items-center">
                     <span>Short</span>
-                    <MudSlider Class="mx-2" Variant="Variant.Filled" Size="Size.Small" Min="25" Max="75" Step="5" @bind-Value="@_summaryPercentage"/>
+                    <MudSlider Class="mx-2" Variant="Variant.Outlined" Size="Size.Small" Min="25" Max="75" Step="5" @bind-Value="@_summaryPercentage"/>
                     <span>Long</span>
                 </div>
             }
@@ -101,13 +101,13 @@
                     <p>Summary Length</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <span>Short</span>
-                        <MudSlider Class="mx-2" Variant="Variant.Filled" Size="Size.Small" Min="25" Max="75" Step="5" @bind-Value="@_summaryPercentage" />
+                        <MudSlider Class="mx-2" Variant="Variant.Outlined" Size="Size.Small" Min="25" Max="75" Step="5" @bind-Value="@_summaryPercentage" />
                         <span>Long</span>
                     </div>
                 }
                 <div class="summarization-text-submit">
                     <div class="d-block d-md-none">
-                        <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="SummarizationService.Text" TextChanged="OnTextChanged" Lines="@(ShowSlider?11:14)" Clearable="true" />
+                        <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="SummarizationService.Text" TextChanged="OnTextChanged" Lines="@(ShowSlider?19:22)" Clearable="true" />
                     </div>
 
                     <!-- Slider & Bottom Buttons -->
