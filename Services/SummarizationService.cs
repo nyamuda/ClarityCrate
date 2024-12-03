@@ -10,6 +10,8 @@ namespace Clarity_Crate.Services
         public string Text { get; set; } = string.Empty;
         public string Summary { get; set; } = string.Empty;
 
+        public string Prompt { get; set; } = string.Empty;
+
         public bool IsSummarizing { get; set; } = false;
 
         private readonly RestClient _restClient;
