@@ -16,9 +16,18 @@
    
 }
 
+.desk-slider {
+    margin-left:60%;
+    margin-top:0.9rem;
+    position:absolute;
+    z-index:5;
+}
+
     .mobile-summarizer {
-        min-height: 40rem;
+        min-height: 35rem;
     }
+    
+ 
 </style>
 
 
@@ -26,18 +35,27 @@
 
 <!--Desktop Tabs Start-->
 <div class="w-100 d-none d-md-block">
-    <div>
-        <MudTabs Class="desktop-summarizer" ActivePanelIndex="1" HideSlider="true" Border="true" Elevation="2" Rounded="true"
-            ApplyEffectsToContainer="true" PanelClass="pa-0 pa-md-6">
-            <MudTabPanel Disabled="true" Class="d-none d-md-flex">
+    <MudPaper Class="" Elevation="4">
+        <MudPaper Class="desk-slider" Elevation="0">
+            <div class="d-flex justify-content-start align-items-center">
+
+                <span>Short</span>
+                <MudSlider Class="mx-2 z-10" Variant="Variant.Outlined" Size="Size.Small" Min="25" Max="75" Step="5" @bind-Value="@_summaryPercentage" />
+                <span>Long</span>
+            </div>
+        </MudPaper>
+
+        <MudTabs Class="desktop-summarizer" ActivePanelIndex="1" HideSlider="true" Border="true" Elevation="0" Rounded="true"
+                 ApplyEffectsToContainer="true" PanelClass="pa-0 pa-md-6">
+            <MudTabPanel Disabled="true" Class="d-none d-lg-flex">
                 <TabContent>
                     <MudText Class="grey-text text-darken-4">Modes:</MudText>
                 </TabContent>
 
             </MudTabPanel>
             <MudTabPanel>
-                <ChildContent >
-                  <SummaryItem ShowSlider="true" Mode="paragraph"/>
+                <ChildContent>
+                    <SummaryItem SummaryPercentage="_summaryPercentage"  Mode="paragraph" />
                 </ChildContent>
                 <TabWrapperContent>
                     <MudTooltip Text="Summarizes the content in a single cohesive paragraph.">
@@ -45,17 +63,16 @@
                     </MudTooltip>
                 </TabWrapperContent>
                 <TabContent>
-                    <MudText>Paragraph</MudText>    
+                    <MudText>Paragraph</MudText>
                 </TabContent>
 
             </MudTabPanel>
             <MudTabPanel>
                 <ChildContent>
-                    <SummaryItem ShowSlider="false" Mode="bullet" />
+                    <SummaryItem SummaryPercentage="_summaryPercentage" Mode="bullet" />
                 </ChildContent>
                 <TabWrapperContent>
-                    <MudTooltip
-                        Text="Summarizes the content in a list format, with each point highlighting a key idea.">
+                    <MudTooltip Text="Summarizes the content in a list format, with each point highlighting a key idea.">
                         @context
                     </MudTooltip>
                 </TabWrapperContent>
@@ -66,7 +83,7 @@
             </MudTabPanel>
             <MudTabPanel>
                 <ChildContent>
-                    <SummaryItem ShowSlider="false" Mode="custom" />
+                    <SummaryItem SummaryPercentage="_summaryPercentage" Mode="custom" />
                 </ChildContent>
                 <TabWrapperContent>
                     <MudTooltip Text="Enter specific custom instructions on how you want the text to be summarized.">
@@ -77,27 +94,31 @@
                     <MudText class="">Custom</MudText>
                 </TabContent>
             </MudTabPanel>
-            
+
 
         </MudTabs>
-    </div>
+    </MudPaper>
 </div>
 <!--Desktop Tabs End-->
 
 <!--Mobile Tabs Start-->
 <div class="w-100 d-block d-md-none">
     <div>
-        <MudTabs MinimumTabWidth="2rem" Centered="true" Class="mobile-summarizer" ActivePanelIndex="1" HideSlider="true" Border="true" Elevation="2" Rounded="false"
+        <MudPaper Class="w-75 pa-3 m-auto mb-1" Elevation="3">
+            <div class="d-flex justify-content-start align-items-center">
+
+                <span>short</span>
+                <MudSlider Class="mx-2" Variant="Variant.Outlined" Size="Size.Small" Min="25" Max="75" Step="5" @bind-Value="@_summaryPercentage" />
+                <span>long</span>
+            </div>
+        </MudPaper>
+        <MudTabs MinimumTabWidth="2rem" Centered="true" Class="mobile-summarizer" ActivePanelIndex="1" HideSlider="true" Border="true" Elevation="2" Rounded="false" 
                  ApplyEffectsToContainer="true" PanelClass="pa-0 pa-md-6">
             <MudTabPanel>
                 <ChildContent>
-                    <SummaryItem ShowSlider="true" Mode="paragraph" />
+                    <SummaryItem SummaryPercentage="_summaryPercentage" Mode="paragraph" />
                 </ChildContent>
-                <TabWrapperContent>
-                    <MudTooltip Text="Summarizes the content in a single cohesive paragraph.">
-                        @context
-                    </MudTooltip>
-                </TabWrapperContent>
+               
                 <TabContent>
                     <MudIcon Icon="fas fa-align-left" Color="Color.Primary" />
                     <MudText class="ml-1">Paragraph</MudText>
@@ -106,13 +127,9 @@
             </MudTabPanel>
             <MudTabPanel>
                 <ChildContent>
-                    <SummaryItem ShowSlider="false" Mode="bullet" />
+                    <SummaryItem SummaryPercentage="_summaryPercentage" Mode="bullet" />
                 </ChildContent>
-                <TabWrapperContent>
-                    <MudTooltip Text="Summarizes the content in a list format, with each point highlighting a key idea.">
-                        @context
-                    </MudTooltip>
-                </TabWrapperContent>
+                
                 <TabContent>
                     <MudIcon Icon="fas fa-list-ul" Color="Color.Secondary" />
                     <MudText class="ml-1">Bullet Points</MudText>
@@ -121,13 +138,9 @@
             </MudTabPanel>
             <MudTabPanel>
                 <ChildContent>
-                    <SummaryItem ShowSlider="false" Mode="custom" />
+                    <SummaryItem SummaryPercentage="_summaryPercentage" Mode="custom" />
                 </ChildContent>
-                <TabWrapperContent>
-                    <MudTooltip Text="Enter specific custom instructions on how you want the text to be summarized.">
-                        @context
-                    </MudTooltip>
-                </TabWrapperContent>
+                
                 <TabContent>
                     <MudIcon Icon="fas fa-sliders-h" Color="Color.Tertiary" />
                     <MudText class="ml-1">Custom</MudText>
@@ -138,12 +151,10 @@
         </MudTabs>
     </div>
 </div>
-
-
 <!--Mobile Tabs End-->
 
 
 @code {
-    
+    private int _summaryPercentage = 50;
 }
 
