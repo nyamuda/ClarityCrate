@@ -24,7 +24,7 @@
 }
 
     .mobile-summarizer {
-        min-height: 35rem;
+        min-height: 32rem;
     }
     
  
@@ -104,7 +104,7 @@
 <!--Mobile Tabs Start-->
 <div class="w-100 d-block d-md-none">
     <MudPaper Class="pt-5">
-        <MudPaper Class="m-auto w-75" Elevation="0">
+        <MudPaper Class="m-auto pb-2 w-75" Elevation="0">
             <div class="d-flex justify-content-start align-items-center">
 
                 <span>Short</span>
@@ -112,7 +112,7 @@
                 <span>Long</span>
             </div>
         </MudPaper>
-        <MudTabs MinimumTabWidth="2rem" Centered="true" Class="mobile-summarizer" ActivePanelIndex="0" HideSlider="false" Border="true" Elevation="0" Rounded="false" 
+        <MudTabs MinimumTabWidth="2rem" Centered="true" Class="mobile-summarizer" ActivePanelIndex="0" HideSlider="true" Border="true" Elevation="0" Rounded="false" 
                  ApplyEffectsToContainer="true" PanelClass="pa-0 pa-md-6">
             <MudTabPanel>
                 <ChildContent>
@@ -120,7 +120,7 @@
                 </ChildContent>
                
                 <TabContent>
-                    <MudIcon Icon="fas fa-align-left" Color="Color.Primary" />
+                    <MudIcon Icon="fas fa-align-left" />
                     <MudText class="ml-1">Paragraph</MudText>
                 </TabContent>
 
@@ -131,7 +131,7 @@
                 </ChildContent>
                 
                 <TabContent>
-                    <MudIcon Icon="fas fa-list-ul" Color="Color.Secondary" />
+                    <MudIcon Icon="fas fa-list-ul"/>
                     <MudText class="ml-1">Bullet Points</MudText>
                 </TabContent>
 
@@ -142,7 +142,7 @@
                 </ChildContent>
                 
                 <TabContent>
-                    <MudIcon Icon="fas fa-sliders-h" Color="Color.Tertiary" />
+                    <MudIcon Icon="fas fa-sliders-h"/>
                     <MudText class="ml-1">Custom</MudText>
                 </TabContent>
             </MudTabPanel>
