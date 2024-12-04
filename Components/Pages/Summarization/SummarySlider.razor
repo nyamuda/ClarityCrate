@@ -1,0 +1,8 @@
+@inject SummarizationService SummarizationService
+@using Clarity_Crate.Services
+
+<div class="d-flex justify-content-start align-items-center">
+    <span>Short</span>
+    <MudSlider Class="mx-2 z-10" Variant="Variant.Outlined" Size="Size.Small" Min="25" Max="75" Step="5" @bind-Value="@SummarizationService.SummaryPercentage" />
+    <span>Long</span>
+</div>

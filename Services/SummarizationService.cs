@@ -14,6 +14,7 @@ namespace Clarity_Crate.Services
 
         public bool IsSummarizing { get; set; } = false;
 
+        public int SummaryPercentage { get; set; } = 40;
         private readonly RestClient _restClient;
 
         public SummarizationService()
@@ -21,7 +22,7 @@ namespace Clarity_Crate.Services
             _restClient = new RestClient("https://any-jumbo-stone-curlew.anvil.app"); // Base URL
         }
 
-        public async Task GetParagraphSummary(string text, int maxLength, int minLength)
+        public async Task GetSummary(string text, int maxLength, int minLength)
         {
             var request = new RestRequest("summarize", Method.Post) // Endpoint
                 .AddHeader("Content-Type", "application/json") // Headers
@@ -29,6 +30,7 @@ namespace Clarity_Crate.Services
 
             try
             {
+               
                 IsSummarizing = true;
 
                 var response = await _restClient.ExecuteAsync<SummaryDto>(request);

@@ -4,7 +4,6 @@
 @inject IJSRuntime JSRuntime
 @inject AppService AppService
 
-
 <div class="summarization-mode">
     <!--Desktop View-->
     <div class="d-none d-md-flex row">
@@ -12,7 +11,7 @@
            
             <div class="summarization-text-submit">
                 <div class="d-none d-md-block">
-                    <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="SummarizationService.Text" TextChanged="OnTextChanged" Lines="@(Mode.Equals("custom")?9:14)" Clearable="true" DisableUnderLine />
+                    <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="SummarizationService.Text" TextChanged="OnTextChanged" Lines="@(Mode.Equals("custom")?10:14)" Clearable="true" DisableUnderLine />
                 </div>
 
                 <!--If summarization mode is custom-->
@@ -66,12 +65,13 @@
                             </MudButton>
                         }
                     </div>
+                    
                 </div>
             </div>
         </div>
         <!--Summary Block-->
         <div class="col border-start">
-            <MudTextField T="string" Immediate="true" Label="" Variant="Variant.Text" @bind-Value="_summary" TextChanged="OnSummaryChanged" Lines="14" DisableUnderLine />
+            <MudTextField T="string" Immediate="true" Label="" Variant="Variant.Text" @bind-Value="_summary" TextChanged="OnSummaryChanged" Lines="@(Mode.Equals("custom")?15:14)" DisableUnderLine />
             <div class="mt-1 d-flex justify-content-between align-items-center">
                 <MudText>@summaryNumOfWords words</MudText>
                 @if (_summary.Length > 0)
@@ -182,8 +182,7 @@
 
 @code
 {
-    [Parameter]
-    public int SummaryPercentage { get; set; } 
+   
 
     public string _summary = string.Empty;
 
@@ -260,19 +259,20 @@
 
     private async Task SummarizeText()
     {
+        
         string textToSummarize = SummarizationService.Text;
 
         //maximum summary length is 75% of the original words
         int maximumNumWords = (int)(numOfWords * 0.75);
         //minimum number of words is >=25% of the original words
-        int minimumNumWords = (int)(numOfWords * SummaryPercentage/100);
+        int minimumNumWords = (int)(numOfWords * SummarizationService.SummaryPercentage / 100);
 
 
         //convert minimum and maximum number of words into tokens
         var (maxTokens, minTokens) = CalculateTokens(maximumNumWords, minimumNumWords);
 
 
-        await SummarizationService.GetParagraphSummary(textToSummarize, maxTokens, minTokens);
+        await SummarizationService.GetSummary(textToSummarize, maxTokens, minTokens);
 
         _summary = SummarizationService.Summary;
 
