@@ -10,6 +10,12 @@ namespace Clarity_Crate.Services
         public string Text { get; set; } = string.Empty;
         public string Summary { get; set; } = string.Empty;
 
+        public string CustomPrompt { get; set; } = string.Empty;
+
+        public string ParagraphPrompt { get; set; } = "Provide a clear and comprehensive summary of the following document, emphasizing its key information: ";
+
+        public string BulletPointsPrompt { get; set; } = "Provide a structured summary of the following content, listing the key points in bullet point format: ";
+
         public string Prompt { get; set; } = string.Empty;
 
         public bool IsSummarizing { get; set; } = false;
@@ -32,6 +38,7 @@ namespace Clarity_Crate.Services
             {
                
                 IsSummarizing = true;
+
 
                 var response = await _restClient.ExecuteAsync<SummaryDto>(request);
 
