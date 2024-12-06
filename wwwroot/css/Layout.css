@@ -6,7 +6,7 @@
 }
 
 
-/*** Navbar ***/
+/*** Navbar Start***/
 .navbar .dropdown-toggle::after {
     border: none;
     content: "\f107";
@@ -27,7 +27,8 @@
 
     .navbar-light .navbar-nav .nav-link:hover,
     .navbar-light .navbar-nav .nav-link.active {
-        color: var(--primary);
+        /*color: var(--primary);*/
+
     }
 
 @media (max-width: 991.98px) {
@@ -79,5 +80,6 @@
         opacity: 1;
     }
 }
+/*** Navbar End***/
 
 

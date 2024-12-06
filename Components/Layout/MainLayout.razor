@@ -62,6 +62,11 @@
         {
             <NavBar />
 
+            @if(IsHomePage)
+            {
+                <HeroSection/>
+            }
+
             <MudMainContent Class="vh-100 page d-flex flex-column justify-content-between">
 
                 <MudContainer>
@@ -100,6 +105,12 @@
     //Is it an Admin page or not
     private bool IsAdminPage => Navigation.Uri != null &&
     Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith("admin", StringComparison.OrdinalIgnoreCase);
+
+    //Is it a Homepage or not
+    private bool IsHomePage => Navigation.Uri != null &&
+    string.IsNullOrEmpty(Navigation.ToBaseRelativePath(Navigation.Uri));
+
+
     protected async override Task OnInitializedAsync()
     {
 
@@ -130,12 +141,12 @@
 
     private readonly MudTheme _currentTheme = new()
     {
-        /*
+        
         Palette = new PaletteLight
         {
 
-        Primary = "#007bff", // Blue
-        Secondary = "#6c757d", // Gray
+        Primary = "#E65100", // Blue
+                Secondary = "#00897B", // Gray
         Info = "#17a2b8", // Cyan
         Success = "#28a745", // Green
         Warning = "#ffc107", // Yellow
@@ -151,6 +162,6 @@
         FontFamily = new[] { "Poppins", "Helvetica", "Arial", "sans-serif" }
         }
         }
-        */
+        
     };
 }
