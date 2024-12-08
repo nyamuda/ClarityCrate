@@ -3,7 +3,15 @@
     --primary: #06BBCC;
     --light: #F0FBFC;
     --dark: #181d38;
+    --default-color: #444444; /* Default color used for the majority of the text content across the entire website */
+    --accent-color: #ef6603; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
 }
+:root {
+    --default-font: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --heading-font: "Raleway", sans-serif;
+    --nav-font: "Poppins", sans-serif;
+}
+
 
 
 /*** Navbar Start***/
@@ -83,3 +91,90 @@
 /*** Navbar End***/
 
 
+/*Section Title Start*/
+.section-title {
+    
+    position: relative;
+}
+
+    .section-title h2 {
+        font-size: 14px;
+        font-weight: 500;
+        padding: 0;
+        line-height: 1px;
+        margin: 0;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--default-color), transparent 50%);
+        position: relative;
+    }
+
+        .section-title h2::after {
+            content: "";
+            width: 120px;
+            height: 1px;
+            display: inline-block;
+            background: var(--accent-color);
+            margin: 4px 10px;
+        }
+
+    .section-title p {
+        color: var(--heading-color);
+        margin: 0;
+        font-size: 28px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-family: var(--heading-font);
+    }
+
+/*Section Title End*/
+
+
+/*--------------------------------------------------------------
+# Services Section
+--------------------------------------------------------------*/
+.services .service-item {
+    background-color: var(--surface-color);
+    box-shadow: 0 5px 30px 0 rgba(0, 0, 0, 0.1);
+    padding: 60px 30px 60px 70px;
+    transition: all ease-in-out 0.3s;
+    border-radius: 18px;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+    .services .service-item .icon {
+        position: absolute;
+        left: -20px;
+        top: calc(50% - 30px);
+    }
+
+        .services .service-item .icon i {
+            font-size: 64px;
+            line-height: 1;
+            transition: 0.5s;
+        }
+
+    .services .service-item h3 {
+        font-weight: 700;
+        margin: 10px 0 15px 0;
+        font-size: 22px;
+        transition: ease-in-out 0.3s;
+    }
+
+    .services .service-item p {
+        line-height: 24px;
+        font-size: 14px;
+        margin-bottom: 0;
+    }
+
+@media (min-width: 1365px) {
+    .services .service-item:hover {
+        transform: translateY(-10px);
+    }
+
+        .services .service-item:hover h3 {
+            color: var(--accent-color);
+        }
+}
