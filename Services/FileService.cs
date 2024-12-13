@@ -4,7 +4,7 @@ using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Layout.Element;
 using iText.Layout;
-
+using iText.Pdfocr;
 
 
 namespace Clarity_Crate.Services
