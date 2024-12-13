@@ -12,7 +12,7 @@
 
 
 <div class="mt-5 container py-5">
-    <MudCard Style="max-width: 500px;" Class="py-4 m-auto">
+    <MudCard Elevation="2" Style="max-width: 500px;" Class="py-4 m-auto">
         <MudCardContent Class="text-center">
            
             <h2 class="card-title mb-5">Confirm your email</h2>
@@ -29,14 +29,7 @@
             }
         </MudCardContent>
         <MudCardActions class="d-flex justify-content-center">
-            @if(isSuccess)
-            {
-                <MudButton Href="Account/Login" Variant="Variant.Filled" Color="Color.Dark">Login</MudButton>
-            }
-            else
-            {
-                <MudButton Href="/"  Variant="Variant.Filled" Color="Color.Dark">Go to Home Page</MudButton>
-            }
+            
         </MudCardActions>
     </MudCard>
 </div>

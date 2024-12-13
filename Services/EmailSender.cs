@@ -9,14 +9,13 @@ namespace Clarity_Crate.Services
     {
 
 
-
         public async Task SendEmailAsync(string email, string subject, string message)
         {
             try
             {
                 var messageToSend = new MimeMessage();
-                messageToSend.From.Add(new MailboxAddress("Clarity Crate", "ptnrlab@gmail.com"));
-                messageToSend.To.Add(new MailboxAddress(email, "ptnmath@gmail.com"));
+                messageToSend.From.Add(new MailboxAddress("Clarity Crate", "cratecrarity@gmail.com"));
+                messageToSend.To.Add(new MailboxAddress(email, "ptnrlab@gmail.com"));
                 messageToSend.Subject = subject;
 
 
@@ -26,48 +25,72 @@ namespace Clarity_Crate.Services
                 {
                     Text = message
                 };
-                /*
-                messageToSend.Body = new TextPart("plain")
-                {
-                    Text = "Hey there my friend"
-                };*/
+
 
                 using (var client = new SmtpClient())
                 {
                     client.Connect("smtp.gmail.com", 587, false);
 
                     // Note: only needed if the SMTP server requires authentication
-                    client.Authenticate("ptnrlab@gmail.com", "vghw owdn uncx lnoq");
+                    client.Authenticate("crateclarity@gmail.com", "ltqi asfs apgj nuax");
 
                     client.Send(messageToSend);
                     client.Disconnect(true);
                 }
             }
             catch (Exception ex)
-            { }
-        }
-
-
-        //function will return HTML Code
-        /*
-        private string GetEmailTemplate()
-        {
-            string body = string.Empty;
-            //using streamreader for reading my htmltemplate   
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "EmailTemplates", "ConfirmationEmail.html");
-            using (StreamReader reader = new StreamReader(path))
             {
-                body = reader.ReadToEnd();
+                Console.WriteLine(ex);
+            
             }
-
-
-            return body;
         }
-        */
+
+
+        /*
+      public async Task SendEmailAsync(string email, string subject, string message)
+      {
+          try
+          {
+              var mimeMessage = new MimeMessage();
+              mimeMessage.From.Add(new MailboxAddress("Clarity Crate", "nya20002@byui.edu")); // Use your verified email
+              mimeMessage.To.Add(new MailboxAddress("Recipient", email));  // User's email
+              mimeMessage.Subject = subject;
+
+              mimeMessage.Body = new TextPart("html")
+              {
+                  Text = message
+              };
+
+              using (var client = new SmtpClient())
+              {
+                  // Connect to SMTP2GO's SMTP server
+                  await client.ConnectAsync("mail.smtp2go.com", 2525, false);
+
+                  // Authenticate with your username and password
+                  await client.AuthenticateAsync("byui.edu", "9uUGRpC4muWKRpUK");
+
+                  // Send the email
+                  await client.SendAsync(mimeMessage);
+
+                  // Disconnect after sending
+                  await client.DisconnectAsync(true);
+
+                  Console.WriteLine("Finished sending");
+              }
+
+
+          }
+          catch (Exception ex)
+          {
+
+              Console.WriteLine(ex);
+          }
+      }
+
+      */
+
+
 
 
     }
-
-
-
 }
