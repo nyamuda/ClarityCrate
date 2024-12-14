@@ -30,9 +30,17 @@ namespace Clarity_Crate.Services
 
         public async Task GetSummary(string text, int maxLength, int minLength)
         {
+            var requestBody = new
+            {
+                text = text,
+                prompt="summarize",
+                max_length=maxLength,
+                min_length=minLength
+            };
+
             var request = new RestRequest("summarize", Method.Post) // Endpoint
                 .AddHeader("Content-Type", "application/json") // Headers
-                .AddJsonBody(new { text = text }); // Request body
+                .AddJsonBody(requestBody); // Request body
 
             try
             {

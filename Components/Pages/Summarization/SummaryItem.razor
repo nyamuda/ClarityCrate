@@ -29,7 +29,7 @@
                         }
                         else
                         {
-                            <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFile" MaximumFileCount="100">
+                            <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf, .docx" FilesChanged="UploadFile" MaximumFileCount="100">
                                 <ButtonTemplate>
                                     @if (_isExtractingText)
                                     {

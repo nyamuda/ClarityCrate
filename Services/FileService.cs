@@ -2,40 +2,85 @@
 using System.IO;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
-using iText.Layout.Element;
-using iText.Layout;
-using iText.Pdfocr;
-
+using IronOcr;
 
 namespace Clarity_Crate.Services
 {
-
     public class FileService
     {
-        private SummarizationService _summarizationService;
+       
 
-        public FileService(SummarizationService summarizationService)
+        public FileService(IConfiguration configuration)
         {
-            _summarizationService = summarizationService;
+            string licenseKey = configuration["Authentication:IronOcr:LicenseKey"];
+            Console.WriteLine(licenseKey);
+            IronOcr.License.LicenseKey = licenseKey;
         }
 
+        // Method to extract text from PDFs (normal and scanned)
         public string ExtractTextFromPdf(Stream pdfStream)
         {
             string extractedText = string.Empty;
-            using (PdfReader reader = new PdfReader(pdfStream))
-            using (PdfDocument pdfDoc = new PdfDocument(reader))
+
+            try
             {
-                for (int page = 1; page <= pdfDoc.GetNumberOfPages(); page++)
+                // Attempt to extract text using iText
+                using (PdfReader reader = new PdfReader(pdfStream))
+                using (PdfDocument pdfDoc = new PdfDocument(reader))
                 {
-                    extractedText += PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(page));
+                    for (int page = 1; page <= pdfDoc.GetNumberOfPages(); page++)
+                    {
+                        extractedText += PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(page));
+                    }
+                }
+
+                // If text is not extracted, fallback to OCR
+                if (string.IsNullOrWhiteSpace(extractedText))
+                {
+                    extractedText = PerformOcrOnPdf(pdfStream);
                 }
             }
-
+            catch (Exception ex)
+            {
+                // Log and handle errors
+                extractedText = $"Error during text extraction: {ex.Message}";
+            }
 
             return extractedText;
-
         }
 
+        // Fallback method: Perform OCR using IronOCR
+        private string PerformOcrOnPdf(Stream pdfStream)
+        {
+            string ocrText = string.Empty;
+
+            try
+            {
+                var ocrTesseract = new IronTesseract();
+
+                using (var ocrInput = new OcrInput())
+                {
+                    // Reload the PDF stream because it may have been consumed
+                    pdfStream.Position = 0;
+
+                    // Load the PDF into the OCR input
+                    ocrInput.LoadPdf(pdfStream);
+
+                    // Perform OCR and extract text
+                    var ocrResult = ocrTesseract.Read(ocrInput);
+                    ocrText = ocrResult.Text;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle OCR errors
+                ocrText = $"Error during OCR: {ex.Message}";
+            }
+
+            return ocrText;
+        }
+
+        // Method to generate a PDF from text
         public byte[] GeneratePdf(string text)
         {
             using (var memoryStream = new MemoryStream())
@@ -45,8 +90,8 @@ namespace Clarity_Crate.Services
                 {
                     using (var pdf = new PdfDocument(writer))
                     {
-                        var document = new Document(pdf);
-                        document.Add(new Paragraph(text));
+                        var document = new iText.Layout.Document(pdf);
+                        document.Add(new iText.Layout.Element.Paragraph(text));
                         document.Close();
                     }
                 }
