@@ -1,9 +1,14 @@
 ﻿@page "/"
 @inject NavigationManager NavigationManager
 @using Clarity_Crate.Data
+@using Clarity_Crate.Services
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<ApplicationUser> SignInManager
+@inject SummarizationService SummarizationService
+
+
+
 
 
 <style>
@@ -19,6 +24,7 @@
 
 /*About End*/
 </style>
+
 <!-- About Clarity Crate Start -->
 <div class="container-fluid text-dark feature pt-5">
     <!-- Start Section Title -->
@@ -129,7 +135,7 @@
                         <div class="d-flex rounded p-3" style="background: #26A69A">
                             <i class="fa fa-file-pdf fa-3x text-white"></i>
                             <div class="ms-3">
-                                <h2 class="text-white mb-0" data-toggle="counter-up">20+</h2>
+                                <h2 class="text-white mb-0" data-toggle="counter-up">@_totalDocumentsSummarized+</h2>
                                 <p class="text-white mb-0">Documents Summarized</p>
                             </div>
                         </div>
@@ -307,5 +313,24 @@
 
 @code {
 
+    private string _totalDocumentsSummarized = "0";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //get summary info
+        await SummarizationService.GetSummaryInfo();
+        //the total number of documents summarized so far
+        var totalDocuments = SummarizationService.TotalDocumentsSummarized;
+
+        //to display the total words with +1
+        //e.g +10 Words Summarized -- if the total number of words summarized is 11
+        int numDocs = totalDocuments - 1;
+
+        //format the number
+        _totalDocumentsSummarized = SummarizationService.FormatNumber(numDocs);
+    }
+
+   
 
 }

@@ -7,6 +7,7 @@ namespace Clarity_Crate.Services
     {
 
         public ISnackbar Snackbar;
+       
 
 
         public AppService(ISnackbar snackbar)

@@ -3,18 +3,24 @@ using System.IO;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using IronOcr;
+using Clarity_Crate.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Clarity_Crate.Services
 {
     public class FileService
     {
-       
 
-        public FileService(IConfiguration configuration)
+        private readonly ApplicationDbContext _context;
+
+
+        public FileService(IConfiguration configuration, ApplicationDbContext context)
         {
             string licenseKey = configuration["Authentication:IronOcr:LicenseKey"];
-            Console.WriteLine(licenseKey);
+            
             IronOcr.License.LicenseKey = licenseKey;
+
+            _context = context;
         }
 
         // Method to extract text from PDFs (normal and scanned)
@@ -98,6 +104,22 @@ namespace Clarity_Crate.Services
 
                 return memoryStream.ToArray();
             }
+        }
+        //Increment the number of documents summarized
+        public async Task IncrementDocumentCount()
+        {
+            
+
+            var summary = await _context.Summary.FirstOrDefaultAsync();
+            if (summary != null)
+            {
+                summary.NumDocumentsSummarized+=1;
+
+                _context.Summary.Update(summary);
+                await _context.SaveChangesAsync();
+            }
+            
+
         }
     }
 }

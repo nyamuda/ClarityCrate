@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
+using Syncfusion.Blazor;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,6 +70,12 @@ builder.Services.AddScoped<SummarizationService>();
 
 // Register OpenAIService
 builder.Services.AddHttpClient<OpenAIService>();
+
+//Register Syncfusion
+builder.Services.AddSyncfusionBlazor();
+var syncfusionLicenseKey = builder.Configuration["Authentication:Syncfusion:LicenseKey"];
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncfusionLicenseKey);
+
 
 
 

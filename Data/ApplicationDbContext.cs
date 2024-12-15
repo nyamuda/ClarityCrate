@@ -26,8 +26,10 @@ namespace Clarity_Crate.Data
 
 		public DbSet<Comment<Definition>> DefinitionComment { get; set; } = default!;
 
+        public DbSet<Summary> Summary { get; set; } = default!;
 
-		protected override void OnModelCreating(ModelBuilder builder)
+
+        protected override void OnModelCreating(ModelBuilder builder)
 		{
 			base.OnModelCreating(builder);
 			//there is a many to many relationship between subject and curriculums

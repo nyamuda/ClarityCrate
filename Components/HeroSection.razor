@@ -1,4 +1,8 @@
-﻿<style>
+﻿@using Clarity_Crate.Services
+@inject SummarizationService SummarizationService
+
+
+<style>
     .secondary-colored-text {
         color: #EF6C00;
     }
@@ -35,7 +39,7 @@
                     <div class="col">
                         <div class="row">
                             <div class="col-auto">
-                                <p class="fs-1 fw-bold lh-sm mb-0">150k+</p>
+                                <p class="fs-1 fw-bold lh-sm mb-0">@_totalWordsSummarized+</p>
                             </div>
                             <div class="col fw-bold">
                                 <p class="text-uppercase lh-sm mb-0">Words Summarized</p>
@@ -123,3 +127,26 @@
 </section>
 
 <!--Hero Section End-->
+@code {
+    private string _totalWordsSummarized = "0";
+   
+
+    protected override async Task OnInitializedAsync()
+    {
+        //get total numbers of words summarized
+        var totalWords = SummarizationService.TotalWordsSummarized;
+       
+
+        //to display the total words with +1
+        //e.g +10 Words Summarized -- if the total number of words summarized is 11
+        int numWords = totalWords - 1;
+        
+
+        //format the number
+        _totalWordsSummarized = SummarizationService.FormatNumber(numWords);
+        
+    }
+
+    
+
+}

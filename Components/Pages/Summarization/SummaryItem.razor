@@ -29,7 +29,7 @@
                         }
                         else
                         {
-                            <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf, .docx" FilesChanged="UploadFile" MaximumFileCount="100">
+                            <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFile" MaximumFileCount="100">
                                 <ButtonTemplate>
                                     @if (_isExtractingText)
                                     {
@@ -113,7 +113,7 @@
 
     <!--Mobile View-->
     <div class="d-block d-md-none w-100 mt-3">
-        <MudTabs Centered="true" Elevation="0" Rounded="true" @ref="tabs" ApplyEffectsToContainer="true" PanelClass="pa-6" HideSlider="false">
+        <MudTabs Centered="true" Rounded="false" @ref="tabs" ApplyEffectsToContainer="true" PanelClass="pa-6" HideSlider="false">
             <MudTabPanel Text="Original">
 
                 <div class="summarization-text-submit">
@@ -145,9 +145,8 @@
                                         }
                                         else
                                         {
-                                            <MudButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
-                                                Upload
-                                            </MudButton>
+                                            <MudIconButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Icon="@Icons.Material.Filled.Upload"/>
+                                              
                                         }
                                     </ButtonTemplate>
                                 </MudFileUpload>
@@ -165,9 +164,30 @@
                             }
                             else
                             {
-                                <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled">
+                                <!--Only Logged in users can use the custom summarization mode-->
+                                if (Mode.Equals("custom"))
+                                {
+                                    <CascadingAuthenticationState>
+                                        <AuthorizeView>
+                                            <Authorized>
+                                                <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled">
+                                                    Summarize
+                                                </MudButton>
+                                            </Authorized>
+                                            <NotAuthorized>
+                                                <MudButton Href="Account/Login" Class="" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Lock">Login</MudButton>
+                                            </NotAuthorized>
+                                        </AuthorizeView>
+                                    </CascadingAuthenticationState>
+
+                                }
+                                else
+                                {
+                                     <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled">
                                     Summarize
                                 </MudButton>
+                                }
+                               
                             }
                         </div>
                     </div>
@@ -250,6 +270,9 @@
                 SummarizationService.Text = FileService.ExtractTextFromPdf(memoryStream);
                 _isExtractingText = false;
 
+                //increment the number of documents summarized
+                await FileService.IncrementDocumentCount();
+
             }
         }
         catch (Exception ex)
@@ -308,8 +331,17 @@
     private (int maxTokens, int minTokens) CalculateTokens(int maxWords, int minWords)
     {
         //1 word ≈ 1.33 tokens
-        int maximumTokens = (int)(maxWords * 1.33);
-        int minimumTokens = (int)(minWords * 1.33);
+        
+        int estimatedMaxTokens = (int)(maxWords * 1.33);
+        int estimatedMinTokens = (int)(minWords * 1.33);
+
+        //maximum number of token cannot exceed 1024
+        int maximumTokens = estimatedMaxTokens > 1024 ? 1024 : estimatedMaxTokens;
+        //minimum number of token cannot exceed 1024
+        int minimumTokens = estimatedMinTokens > 1024 ? 512 : estimatedMinTokens;
+
+        
+        
 
         return (maximumTokens, minimumTokens);
     }
@@ -364,7 +396,7 @@
             //remove spaces from user entered prompt
             string userPrompt = SummarizationService.CustomPrompt.Trim().ToLower();
             //the full custom prompt
-            string customPrompt = promptPrepend + userPrompt + ": ";
+            string customPrompt = promptPrepend + userPrompt;
 
             SummarizationService.Prompt = customPrompt;
         }
