@@ -145,8 +145,8 @@
                                         }
                                         else
                                         {
-                                            <MudIconButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Icon="@Icons.Material.Filled.Upload"/>
-                                              
+                                            <MudIconButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Icon="@Icons.Material.Filled.Upload" />
+
                                         }
                                     </ButtonTemplate>
                                 </MudFileUpload>
@@ -183,11 +183,11 @@
                                 }
                                 else
                                 {
-                                     <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled">
-                                    Summarize
-                                </MudButton>
+                                    <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled">
+                                        Summarize
+                                    </MudButton>
                                 }
-                               
+
                             }
                         </div>
                     </div>
@@ -240,14 +240,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (Mode.Equals("paragraph"))
+        //show the summary if its there
+        var summaryText = SummarizationService.Summary;
+        if (!string.IsNullOrEmpty(summaryText))
         {
 
-        }
-
-        if (Mode.Equals("bullet"))
-        {
-
+            ShowSummary(summaryText);
         }
 
     }
@@ -320,7 +318,10 @@
 
         await SummarizationService.SummarizeAsync(textToSummarize);
 
-        _summary = SummarizationService.Summary;
+        var summaryText = SummarizationService.Summary;
+
+        //show the summary
+        ShowSummary(summaryText);
 
         //activate the summary tab on mobile devices
         ActivateTab(1);
@@ -331,7 +332,7 @@
     private (int maxTokens, int minTokens) CalculateTokens(int maxWords, int minWords)
     {
         //1 word ≈ 1.33 tokens
-        
+
         int estimatedMaxTokens = (int)(maxWords * 1.33);
         int estimatedMinTokens = (int)(minWords * 1.33);
 
@@ -340,8 +341,8 @@
         //minimum number of token cannot exceed 1024
         int minimumTokens = estimatedMinTokens > 1024 ? 512 : estimatedMinTokens;
 
-        
-        
+
+
 
         return (maximumTokens, minimumTokens);
     }
@@ -412,6 +413,28 @@
             SummarizationService.Prompt = SummarizationService.ParagraphPrompt;
         }
 
+
+    }
+    //Show the summary in paragraph form or bullet point form
+    private void ShowSummary(string text)
+    {
+
+        // If the summarize mode is bullet points, format the text
+        if (Mode == "bullet")
+        {
+            // Split the summary text into sentences and add bullet points
+            var bulletPoints = text
+            .Split(new[] { '.', '!', '?' }, StringSplitOptions.RemoveEmptyEntries) // Split by sentence-ending punctuation
+            .Select(sentence => "- " + sentence.Trim() + ".") // Add "-" and a period to each sentence
+            .ToList();
+
+            // Join the bullet points into a single string with newlines
+            _summary = string.Join(Environment.NewLine, bulletPoints);
+        }
+        else
+        {
+            _summary = text; // Use plain text for other modes
+        }
 
     }
 
