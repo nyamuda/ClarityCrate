@@ -39,7 +39,7 @@
                     Clarity Crate is a powerful AI-driven summarization tool that helps you process and understand vast amounts of text in seconds. Whether you're working with reports, academic papers, podcasts, or meeting notes, we provide accurate and concise summaries, saving you hours of reading time.
                 </p>
                 <p class="mb-4">
-                    Our platform leverages advanced machine learning models and automatic OCR technology to extract and summarize text from scanned PDFs. It's quick, efficient, and customizable to your needs—allowing you to choose between paragraph summaries, bullet points, or even custom formats.
+                    Our platform leverages an advanced machine learning model and automatic OCR technology to extract and summarize text from scanned PDFs. It's quick, efficient, and customizable to your needs—allowing you to choose between paragraph summaries, bullet points, or even custom formats.
                 </p>
                 <div class="mb-4">
                     <div class="d-flex align-items-start">
@@ -88,11 +88,11 @@
                 <div class="mb-4">
                     <div class="d-flex align-items-start">
                         <div class="me-3">
-                            <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.Download" Title="File Support" />
+                            <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.Speed" Title="Efficiency" />
                         </div>
                         <div>
-                            <span class="fw-bold d-block">Supports Multiple File Types</span>
-                            <span class="">Summarize PDFs, Word documents, and plain text files without any hassle.</span>
+                            <span class="fw-bold d-block">Fast and Reliable</span>
+                            <span class="">Generate summaries quickly, even for lengthy and complex documents.</span>
                         </div>
                     </div>
                 </div>
@@ -135,7 +135,7 @@
                         <div class="d-flex rounded p-3" style="background: #26A69A">
                             <i class="fa fa-file-pdf fa-3x text-white"></i>
                             <div class="ms-3">
-                                <h2 class="text-white mb-0" data-toggle="counter-up">@_totalDocumentsSummarized+</h2>
+                                <h2 class="text-white mb-0" data-toggle="counter-up">@SummarizationService.TotalDocumentsSummarized</h2>
                                 <p class="text-white mb-0">Documents Summarized</p>
                             </div>
                         </div>
@@ -312,22 +312,13 @@
 
 @code {
 
-    private string _totalDocumentsSummarized = "0";
+   
 
 
     protected override async Task OnInitializedAsync()
     {
-        //get summary info
-        await SummarizationService.GetSummaryInfo();
-        //the total number of documents summarized so far
-        var totalDocuments = SummarizationService.TotalDocumentsSummarized;
-
-        //to display the total words with +1
-        //e.g +10 Words Summarized -- if the total number of words summarized is 11
-        int numDocs = totalDocuments - 1;
-
-        //format the number
-        _totalDocumentsSummarized = SummarizationService.FormatNumber(numDocs);
+        
+       
     }
 
    

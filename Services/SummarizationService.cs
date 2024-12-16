@@ -26,8 +26,8 @@ namespace Clarity_Crate.Services
         public bool IsSummarizing { get; set; } = false;
 
         public int SummaryPercentage { get; set; } = 40;
-        public int TotalDocumentsSummarized { get; set; } = 0;
-        public int TotalWordsSummarized { get; set; } = 0;
+        public string TotalDocumentsSummarized { get; set; } = "0";
+        public string TotalWordsSummarized { get; set; } = ")";
 
         private string? _huggingFaceApiKey;
 
@@ -134,32 +134,55 @@ namespace Clarity_Crate.Services
         //Get the total number of words and documents summarized so far
         public async Task GetSummaryInfo()
         {
+           
             var summary = await _context.Summary.FirstOrDefaultAsync();
             if (summary != null)
             {
-                TotalWordsSummarized = summary.NumWordsSummarized;
-                TotalDocumentsSummarized = summary.NumDocumentsSummarized;
+                
+                var words = summary.NumWordsSummarized;
+                var documents = summary.NumDocumentsSummarized;
 
+                
+
+                //format the numbers
+                TotalWordsSummarized = FormatNumber(words);
+                TotalDocumentsSummarized = FormatNumber(documents);
+                
+
+
+            }
+            else
+            {
+                Console.WriteLine("summary is empty");
             }
         }
 
         //Format summary info
         //such as total number of words or documents summarized
-        public string FormatNumber(int number)
+        public string FormatNumber(int value)
         {
-            if (number >= 1_000_000) // Handle millions
+            //to display the total words/documents with +1
+            //e.g +10 Words Summarized -- if the total number of words summarized is 11
+            int number = value - 1;
+
+
+            // Handle millions
+            if (number >= 1_000_000) 
             {
                 int roundedValue = (number / 100_000) * 100_000; // Round to the nearest 100K
                 return $"{roundedValue / 1_000_000}M";
             }
-            else if (number >= 1_000) // Handle thousands
+            // Handle thousands
+            else if (number >= 1_000) 
             {
                 int roundedValue = (number / 100) * 100; // Round to the nearest 100
-                return roundedValue >= 10_000 ? $"{roundedValue / 1_000}K" : $"{roundedValue / 1_000}+";
+                return roundedValue >= 10_000 ? $"{roundedValue / 1_000}K+" : $"{roundedValue / 1_000}K+";
             }
-            else // Handle smaller numbers
+            // Handle smaller numbers
+            else
             {
-                return number.ToString();
+                var formattedNum = $"{number}+";
+                return formattedNum;
             }
         }
         public async Task SummarizeAsync(string text)
