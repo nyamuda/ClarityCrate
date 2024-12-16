@@ -318,7 +318,7 @@
         var (maxTokens, minTokens) = CalculateTokens(maximumNumWords, minimumNumWords);
 
 
-        await SummarizationService.GetSummary(textToSummarize, maxTokens, minTokens);
+        await SummarizationService.SummarizeAsync(textToSummarize);
 
         _summary = SummarizationService.Summary;
 

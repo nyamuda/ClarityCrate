@@ -4,6 +4,7 @@ namespace Clarity_Crate.Dtos
 {
     public class SummaryDto
 {
+
         public string summary { get; set; }
 }
 
@@ -17,5 +18,11 @@ namespace Clarity_Crate.Dtos
 
         [JsonPropertyName("min_length")]
         public int Min_Length { get; set; }*/
+    }
+
+    public class SummaryResponseDto
+    {
+        [JsonPropertyName("summary_text")]
+        public string Summary { get; set; }
     }
 }
