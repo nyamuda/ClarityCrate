@@ -207,7 +207,6 @@ namespace Clarity_Crate.Services
         {
             const string ApiUrl = "https://api-inference.huggingface.co/models/nyamuda/summasphere"; // Replace with your summarization model URL
 
-
             try
             {
                 IsSummarizing = true;
@@ -229,38 +228,58 @@ namespace Clarity_Crate.Services
 
                 request.AddJsonBody(requestBody);
 
-                // Execute the request
-                var response = await client.ExecutePostAsync<List<SummaryResponseDto>>(request);
+                // Retry logic for model loading
+                const int maxRetries = 5;
+                const int delaySeconds = 5; // Wait for 5 seconds between retries
+                int attempt = 0;
 
+                while (attempt < maxRetries)
+                {
+                    // Execute the request
+                    var response = await client.ExecutePostAsync<List<SummaryResponseDto>>(request);
+
+                    if (response.IsSuccessful && response.Data != null)
+                    {
+                        // Successful response
+                        Summary = response.Data[0].Summary;
+
+                        // Save the number of words summarized to the database
+                        await SaveWordCount(text);
+
+                        IsSummarizing = false;
+                        return;
+                    }
+                    else if (response.Content?.Contains("currently loading") == true)
+                    {
+                        // Model is still loading; wait and retry                      
+                        _appService.ShowSnackBar(message:$"Model is loading. Retrying in {delaySeconds} seconds...",isWarning:true);
+                        await Task.Delay(delaySeconds * 1000);
+                    }
+                    else
+                    {
+                        // Handle other errors
+                        IsSummarizing = false;
+                        _appService.ShowSnackBar(message:"Temporary issue. Please try again later.",isWarning: true);
+
+                        var errorContent = response.Content ?? "No details provided.";
+                        throw new HttpRequestException($"Error: {response.StatusCode}, Details: {errorContent}");
+                    }
+
+                    attempt++;
+                }
+
+                // If retries are exhausted
                 IsSummarizing = false;
-                // Check for success
-                if (response.IsSuccessful && response.Data != null)
-                {
-                    
-                    Summary = response.Data[0].Summary;
-                    //save the number of words summarized to the database
-                    await SaveWordCount(text);
-                }
-                else
-                {
-                    //show error message snack bar
-                    _appService.ShowSnackBar(message:"Temporary issue. Try again now.", isWarning:true);
-
-                    var errorContent = response.Content ?? "No details provided.";
-                    throw new HttpRequestException($"Error: {response.StatusCode}, Details: {errorContent}");
-                }
+                _appService.ShowSnackBar("Model loading took too long. Please try again later.", true);
             }
             catch (Exception ex)
             {
-                
                 IsSummarizing = false;
-                
-                // Handle any exceptions
-                //show error message snack bar
-                _appService.ShowSnackBar("Oops! There was a problem generating the summary. Please try again.", false);
                 throw new Exception($"An error occurred while summarizing: {ex.Message}", ex);
             }
         }
+        
+
 
         public async Task SendFeedback(string feedbackContent)
         {
