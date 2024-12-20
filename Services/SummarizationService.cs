@@ -72,6 +72,7 @@ namespace Clarity_Crate.Services
 
                 if (response.IsSuccessful && response.Data != null)
                 {
+                    
                     //get the summary
                     Summary = response.Data.summary;
                     IsSummarizing = false;
@@ -83,6 +84,7 @@ namespace Clarity_Crate.Services
                 }
                 else
                 {
+                    Console.WriteLine("Didn't get any summary");
                     IsSummarizing = false;
                     //show error message snack bar
                     _appService.ShowSnackBar("An error occurred while summarizing", false);
@@ -137,25 +139,39 @@ namespace Clarity_Crate.Services
         public async Task GetSummaryInfo()
         {
            
-            var summary = await _context.Summary.FirstOrDefaultAsync();
-            if (summary != null)
+          try
             {
-                
-                var words = summary.NumWordsSummarized;
-                var documents = summary.NumDocumentsSummarized;
 
-           
+                var summary = await _context.Summary.FirstOrDefaultAsync();
+                if (summary != null)
+                {
 
-                //format the numbers
-                TotalWordsSummarized = FormatNumber(words);
-                TotalDocumentsSummarized = FormatNumber(documents);
-                
+                    var words = summary.NumWordsSummarized;
+                    var documents = summary.NumDocumentsSummarized;
 
+
+
+                    //format the numbers
+                    TotalWordsSummarized = FormatNumber(words);
+                    TotalDocumentsSummarized = FormatNumber(documents);
+
+
+
+                }
+                else
+                {
+                    Console.WriteLine("summary is empty");
+                }
 
             }
-            else
+            catch(Exception e)
             {
-                Console.WriteLine("summary is empty");
+                Console.WriteLine("Error while getting summary info");
+                Console.WriteLine(e);
+
+                TotalWordsSummarized = FormatNumber(1000);
+                TotalDocumentsSummarized = FormatNumber(50);
+
             }
         }
 
@@ -227,20 +243,22 @@ namespace Clarity_Crate.Services
                 }
                 else
                 {
-                   
-                    // Handle errors
-                    // show error message snack bar
-                    _appService.ShowSnackBar("Oops! There was a problem generating the summary. Please try again.", false);
+                    //show error message snack bar
+                    _appService.ShowSnackBar(message:"Temporary issue. Try again now.", isWarning:true);
+
+                    var errorContent = response.Content ?? "No details provided.";
+                    throw new HttpRequestException($"Error: {response.StatusCode}, Details: {errorContent}");
                 }
             }
             catch (Exception ex)
             {
                 
                 IsSummarizing = false;
+                
                 // Handle any exceptions
                 //show error message snack bar
                 _appService.ShowSnackBar("Oops! There was a problem generating the summary. Please try again.", false);
-
+                throw new Exception($"An error occurred while summarizing: {ex.Message}", ex);
             }
         }
 

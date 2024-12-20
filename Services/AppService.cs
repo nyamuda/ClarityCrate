@@ -18,7 +18,7 @@ namespace Clarity_Crate.Services
 
 
         //show a snack bar
-        public void ShowSnackBar(string message, bool isSuccess, string position = "bottom-center")
+        public void ShowSnackBar(string message, bool isSuccess=false, string position = "bottom-center",bool isWarning =false)
         {
             if (isSuccess)
             {
@@ -42,6 +42,13 @@ namespace Clarity_Crate.Services
 
                 //then show the snack bar
                 Snackbar.Add(message, Severity.Success);
+            }
+            //if its just warning
+            else if(isWarning)
+            {
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
+
+                Snackbar.Add(message, Severity.Warning);
             }
 
             //if the outcome was a failure

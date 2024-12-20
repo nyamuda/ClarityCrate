@@ -30,7 +30,7 @@ namespace Clarity_Crate.Dtos
 
     public class SummaryFeedbackDto
     {
-        [Required(ErrorMessage ="Required")]
+        [Required(ErrorMessage = "Field is required")]
         public string Content { get; set; }
     }
 }
