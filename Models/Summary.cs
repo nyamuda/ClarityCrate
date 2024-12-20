@@ -10,6 +10,10 @@ namespace Clarity_Crate.Models
 
         public int NumDocumentsSummarized { get; set; } = 0;
 
+        public List<string> Feedback { get; set; }= new List<string>();
+
 
     }
+
+   
 }

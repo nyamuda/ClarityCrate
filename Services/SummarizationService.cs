@@ -24,10 +24,11 @@ namespace Clarity_Crate.Services
         public string Prompt { get; set; } = string.Empty;
 
         public bool IsSummarizing { get; set; } = false;
+        public bool IsSendingFeedback { get; set; } = false;
 
         public int SummaryPercentage { get; set; } = 40;
         public string TotalDocumentsSummarized { get; set; } = "0";
-        public string TotalWordsSummarized { get; set; } = ")";
+        public string TotalWordsSummarized { get; set; } = "0";
 
         private string? _huggingFaceApiKey;
 
@@ -43,6 +44,7 @@ namespace Clarity_Crate.Services
             _context = context;
             _appService = appService;
             _huggingFaceApiKey = configuration["Authentication:HuggingFace:ApiKey"];
+
 
         }
 
@@ -142,7 +144,7 @@ namespace Clarity_Crate.Services
                 var words = summary.NumWordsSummarized;
                 var documents = summary.NumDocumentsSummarized;
 
-                
+           
 
                 //format the numbers
                 TotalWordsSummarized = FormatNumber(words);
@@ -240,6 +242,35 @@ namespace Clarity_Crate.Services
                 _appService.ShowSnackBar("Oops! There was a problem generating the summary. Please try again.", false);
 
             }
+        }
+
+        public async Task SendFeedback(string feedbackContent)
+        {
+            IsSendingFeedback = true;
+            // Check if summary exists
+            var summary = await _context.Summary.FirstOrDefaultAsync();
+
+            if (summary != null)
+            {
+                summary.Feedback.Add(feedbackContent);
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+
+                IsSendingFeedback = false;
+
+                // show snack bar
+                _appService.ShowSnackBar("Thank you! Your feedback has been received. We’ll work hard to improve based on your suggestions.", true);
+
+            }
+
+            else
+            {
+                IsSendingFeedback = false;
+                // show snack bar
+                _appService.ShowSnackBar("Sorry, we encountered an issue while processing your feedback. Please try again.", false);
+
+            }
+
         }
     }
 }

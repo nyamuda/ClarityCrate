@@ -47,6 +47,7 @@ namespace Clarity_Crate.Services
             //if the outcome was a failure
             else
             {
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopRight;
 
                 Snackbar.Add(message, Severity.Error);
 

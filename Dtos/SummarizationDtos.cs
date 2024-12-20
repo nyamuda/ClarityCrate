@@ -1,4 +1,6 @@
 ﻿using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace Clarity_Crate.Dtos
 {
@@ -24,5 +26,11 @@ namespace Clarity_Crate.Dtos
     {
         [JsonPropertyName("summary_text")]
         public string Summary { get; set; }
+    }
+
+    public class SummaryFeedbackDto
+    {
+        [Required(ErrorMessage ="Required")]
+        public string Content { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 @page "/summarizer"
 @using Clarity_Crate.Services
 @using Clarity_Crate.Models
+@using Clarity_Crate.Dtos
 @using Clarity_Crate.Components.Pages.Flashcards
 <PageTitle>Summarizer</PageTitle>
 @inject NavigationManager NavigationManager
@@ -12,33 +13,91 @@
 @inject SummarizationService SummarizationService
 
 <style>
-    .desktop-summarizer {
-    min-height: 25rem;
-   
-}
+    .feedback-button-container {
+        background-color: #EF6C00;
+        position: fixed;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1000; /* Ensures it stays on top of other elements */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-.desk-slider {
-    margin-left:50%;
-    margin-top:0.9rem;
-    position:absolute;
-    z-index:5;
-}
+    .vertical-text {
+        writing-mode: vertical-rl; /* Rotates the text to be vertical */
+        transform: rotate(180deg); /* Optional: Adjust the direction */
+        white-space: nowrap; /* Ensures the text stays on a single line */
+    }
+
+
+    .desktop-summarizer {
+        min-height: 25rem;
+    }
+
+    .desk-slider {
+        margin-left: 50%;
+        margin-top: 0.9rem;
+        position: absolute;
+        z-index: 5;
+    }
 
     .mobile-summarizer {
         min-height: 32rem;
     }
-    
- 
 </style>
 
 
 
 
+<MudPaper>
+    <MudDrawerContainer Class="">
+        <MudDrawer Style="height:auto" @bind-Open="@_open" Anchor="Anchor.Start" Elevation="2" Variant="@DrawerVariant.Persistent">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">Feedback</MudText>
+            </MudDrawerHeader>
+            <MudNavMenu>
+
+
+                <EditForm class="py-3 px-4 shadow" Model="@_summaryFeedback" OnValidSubmit="OnValidSubmit">
+                    <DataAnnotationsValidator />
+                    <div class="mb-3">
+
+                        <MudTextField T="string" Immediate="true" Label="Feedback" Lines="5" Variant="Variant.Outlined" @bind-Value="_summaryFeedback.Content" For="@(() => _summaryFeedback.Content)" />
+
+                        <MudButton FullWidth="true" Class="mt-5" Disabled="@SummarizationService.IsSendingFeedback" Variant="Variant.Filled" DisableElevation="true" Color="Color.Dark" ButtonType="ButtonType.Submit" Size="Size.Medium">
+                            @if (@SummarizationService.IsSendingFeedback)
+                            {
+                                <MudProgressCircular Class="ms-n1 text-dark" Size="Size.Small" Indeterminate="true" />
+                                <MudText Class="ms-2 text-dark">Please wait...</MudText>
+                            }
+                            else
+                            {
+                                <MudText>Send</MudText>
+                            }
+                        </MudButton>
+                    </div>
+                </EditForm>
+            </MudNavMenu>
+        </MudDrawer>
+
+        <!--Feedback Start-->
+        <div @onclick="ToggleDrawer" class="feedback-button-container shadow flex-column align-items-center py-1 cursor-pointer text-light rounded-end">
+            <MudText Class="vertical-text vertical-text me-2 ms-2">Feedback</MudText>
+
+            <MudIcon Icon="@Icons.Material.Filled.Message" />
+        </div>
+        <!--Feedback End-->
+    </MudDrawerContainer>
+</MudPaper>
+
 <!--Desktop Tabs Start-->
 <div class="w-100 d-none d-md-block">
+
     <MudPaper Class="" Elevation="4">
         <MudPaper Class="desk-slider" Elevation="0">
-           <SummarySlider/>
+            <SummarySlider />
         </MudPaper>
 
         <MudTabs Class="desktop-summarizer" ActivePanelIndex="1" HideSlider="true" Border="true" Elevation="0" Rounded="true"
@@ -94,22 +153,22 @@
 
         </MudTabs>
     </MudPaper>
+
 </div>
 <!--Desktop Tabs End-->
-
 <!--Mobile Tabs Start-->
 <div class="w-100 d-block d-md-none">
     <MudPaper Class="pt-5">
         <MudPaper Class="m-auto pb-2 w-75" Elevation="0">
             <SummarySlider />
         </MudPaper>
-        <MudTabs MinimumTabWidth="2rem" Centered="true" Class="mobile-summarizer" ActivePanelIndex="0" HideSlider="true" Border="true" Elevation="0" Rounded="false" 
+        <MudTabs MinimumTabWidth="2rem" Centered="true" Class="mobile-summarizer" ActivePanelIndex="0" HideSlider="true" Border="true" Elevation="0" Rounded="false"
                  ApplyEffectsToContainer="true" PanelClass="pa-0 pa-md-6">
             <MudTabPanel>
                 <ChildContent>
                     <SummaryItem Mode="paragraph" />
                 </ChildContent>
-               
+
                 <TabContent>
                     <MudIcon Icon="fas fa-align-left" />
                     <MudText class="ml-1">Paragraph</MudText>
@@ -120,9 +179,9 @@
                 <ChildContent>
                     <SummaryItem Mode="bullet" />
                 </ChildContent>
-                
+
                 <TabContent>
-                    <MudIcon Icon="fas fa-list-ul"/>
+                    <MudIcon Icon="fas fa-list-ul" />
                     <MudText class="ml-1">Bullet Points</MudText>
                 </TabContent>
 
@@ -131,9 +190,9 @@
                 <ChildContent>
                     <SummaryItem Mode="custom" />
                 </ChildContent>
-                
+
                 <TabContent>
-                    <MudIcon Icon="fas fa-sliders-h"/>
+                    <MudIcon Icon="fas fa-sliders-h" />
                     <MudText class="ml-1">Custom</MudText>
                 </TabContent>
             </MudTabPanel>
@@ -143,9 +202,20 @@
     </MudPaper>
 </div>
 <!--Mobile Tabs End-->
-
-
 @code {
     private int _summaryPercentage = 50;
+    private SummaryFeedbackDto _summaryFeedback = new SummaryFeedbackDto();
+
+    private bool _open = false;
+
+    private void ToggleDrawer()
+    {
+        _open = !_open;
+    }
+
+    private async Task OnValidSubmit()
+    {
+        await SummarizationService.SendFeedback(_summaryFeedback.Content);
+    }
 }
 
