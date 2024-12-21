@@ -30,6 +30,10 @@
     <PackageReference Include="OpenAI" Version="1.11.0" />
     <PackageReference Include="RestSharp" Version="112.1.0" />
     <PackageReference Include="Syncfusion.Blazor" Version="28.1.33" />
+    <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="28.1.35" />
+    <PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="28.1.35" />
+    <PackageReference Include="Syncfusion.Presentation.Net.Core" Version="28.1.35" />
+    <PackageReference Include="Syncfusion.PresentationRenderer.Net.Core" Version="28.1.35" />
     <PackageReference Include="Syncfusion.XlsIORenderer.Net.Core" Version="28.1.35" />
   </ItemGroup>
 

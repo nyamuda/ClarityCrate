@@ -7,6 +7,11 @@ using Clarity_Crate.Data;
 using Microsoft.EntityFrameworkCore;
 using Syncfusion.XlsIO;
 using Syncfusion.XlsIORenderer;
+using Syncfusion.Presentation;
+using Syncfusion.PresentationRenderer;
+using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
+using Syncfusion.DocIORenderer;
 
 
 namespace Clarity_Crate.Services
@@ -163,6 +168,74 @@ namespace Clarity_Crate.Services
                 return pdfStream;
             }
         }
+
+        public Stream ConvertPowerPointToPdf(Stream powerPointStream)
+        {
+            // Validate input
+            if (powerPointStream == null)
+                throw new ArgumentNullException(nameof(powerPointStream), "PowerPoint stream cannot be null.");
+
+            // Ensure the stream is at the beginning
+            powerPointStream.Position = 0;
+
+            // Create a memory stream to hold the PDF output
+            MemoryStream pdfStream = new MemoryStream();
+
+            try
+            {
+                // Open the PowerPoint presentation from the input stream
+                using (IPresentation pptxDoc = Presentation.Open(powerPointStream))
+                {
+                    // Convert PowerPoint to PDF
+                    using (Syncfusion.Pdf.PdfDocument pdfDocument = PresentationToPdfConverter.Convert(pptxDoc))
+                    {
+                        // Save the converted PDF into the memory stream
+                        pdfDocument.Save(pdfStream);
+                    }
+                }
+
+                // Reset the position of the output stream to the beginning
+                pdfStream.Position = 0;
+
+                return pdfStream; // Return the PDF stream
+            }
+            catch (Exception ex)
+            {
+                // Clean up the memory stream if an error occurs
+                pdfStream.Dispose();
+                throw new Exception("Error converting PowerPoint to PDF: " + ex.Message, ex);
+            }
+        }
+
+        public MemoryStream ConvertWordToPdf(Stream wordFileStream)
+        {
+            // Ensure the input stream is at the beginning
+            wordFileStream.Position = 0;
+
+            // Create a MemoryStream to hold the PDF
+            MemoryStream pdfStream = new MemoryStream();
+
+            // Process the Word file
+            using (WordDocument wordDocument = new WordDocument(wordFileStream, Syncfusion.DocIO.FormatType.Automatic))
+            {
+                // Create an instance of DocIORenderer
+                using (DocIORenderer renderer = new DocIORenderer())
+                {
+                    // Convert the Word document into a PDF document
+                    using (Syncfusion.Pdf.PdfDocument pdfDocument = renderer.ConvertToPDF(wordDocument))
+                    {
+                        // Save the PDF to the MemoryStream
+                        pdfDocument.Save(pdfStream);
+                    }
+                }
+            }
+
+            // Reset the position of the PDF stream to the beginning
+            pdfStream.Position = 0;
+
+            return pdfStream;
+        }
+
 
     }
 }

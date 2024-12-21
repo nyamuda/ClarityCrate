@@ -29,7 +29,7 @@
                         }
                         else
                         {
-                            <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf, .xlsx, .xls" FilesChanged="UploadFile" MaximumFileCount="100">
+                            <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf, .xlsx, .xls, .pptx, .ppt, .doc, .docx, .xml, .dot, .dotx, .docm, .dotm, .rtf, .txt, .md, .html" FilesChanged="UploadFile" MaximumFileCount="100">
                                 <ButtonTemplate>
                                     @if (_isExtractingText)
                                     {
@@ -233,6 +233,11 @@
     public string Mode { get; set; } = "paragraph";
     IBrowserFile file;
     private bool _isExtractingText = false;
+    private string[] _supportedWordExtensions = new[]
+    {
+    ".doc", ".docx", ".xml", ".dot", ".dotx", ".docm", ".dotm",
+    ".rtf", ".txt", ".md", ".html"
+    };
     MudTabs tabs;
 
 
@@ -240,7 +245,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //show the summary if its there 
+        //show the summary if its there
         /*
         var summaryText = SummarizationService.Summary;
         if (!string.IsNullOrEmpty(summaryText))
@@ -273,6 +278,7 @@
                     // Extract text directly from the PDF
                     SummarizationService.Text = FileService.ExtractTextFromPdf(memoryStream);
                 }
+                //Excel file
                 else if (fileExtension == ".xlsx" || fileExtension == ".xls")
                 {
                     // Convert Excel to PDF and then extract text
@@ -281,6 +287,25 @@
                         SummarizationService.Text = FileService.ExtractTextFromPdf(pdfStream);
                     }
                 }
+                //PowerPoint file
+                else if (fileExtension == ".pptx" || fileExtension == ".ppt")
+                {
+                    // Convert Excel to PDF and then extract text
+                    using (var pdfStream = FileService.ConvertPowerPointToPdf(memoryStream))
+                    {
+                        SummarizationService.Text = FileService.ExtractTextFromPdf(pdfStream);
+                    }
+                }
+                //Word extensions
+                else if (_supportedWordExtensions.Contains(fileExtension))
+                {
+                    // Convert Word to PDF and then extract text
+                    using (var pdfStream = FileService.ConvertWordToPdf(memoryStream))
+                    {
+                        SummarizationService.Text = FileService.ExtractTextFromPdf(pdfStream);
+                    }
+                }
+
                 else
                 {
                     throw new NotSupportedException("Only PDF and Excel files are supported.");
@@ -392,12 +417,12 @@
         try
         {
             await JSRuntime.InvokeVoidAsync("copyToClipboard", _summary);
-            AppService.ShowSnackBar(message: "Text copied to clipboard!", severity:"normal");
+            AppService.ShowSnackBar(message: "Text copied to clipboard!", severity: "normal");
         }
         catch (Exception ex)
         {
-            
-            AppService.ShowSnackBar(message: "Failed to copy text", severity:"error");
+
+            AppService.ShowSnackBar(message: "Failed to copy text", severity: "error");
 
         }
     }
