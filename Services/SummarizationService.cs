@@ -48,63 +48,7 @@ namespace Clarity_Crate.Services
 
         }
 
-        public async Task GetSummary(string text, int maxLength, int minLength)
-        {
-            var requestBody = new
-            {
-                text = text,
-                prompt = Prompt,
-                max_length = maxLength,
-                min_length = minLength
-            };
-
-            var request = new RestRequest("summarize", Method.Post) // Endpoint
-                .AddHeader("Content-Type", "application/json") // Headers
-                .AddJsonBody(requestBody); // Request body
-
-            try
-            {
-
-                IsSummarizing = true;
-
-
-                var response = await _restClient.ExecuteAsync<SummaryDto>(request);
-
-                if (response.IsSuccessful && response.Data != null)
-                {
-                    
-                    //get the summary
-                    Summary = response.Data.summary;
-                    IsSummarizing = false;
-
-                    //save the number of words summarized to the database
-                    await SaveWordCount(text);
-
-
-                }
-                else
-                {
-                    Console.WriteLine("Didn't get any summary");
-                    IsSummarizing = false;
-                    //show error message snack bar
-                    _appService.ShowSnackBar("An error occurred while summarizing", false);
-
-                    var errorContent = response.Content ?? "No details provided.";
-                    throw new HttpRequestException($"Error: {response.StatusCode}, Details: {errorContent}");
-
-
-                }
-            }
-            catch (Exception ex)
-            {
-                IsSummarizing = false;
-                //show error message snack bar
-                _appService.ShowSnackBar("An error occurred while summarizing", false);
-
-                throw new Exception($"An error occurred while summarizing: {ex.Message}", ex);
-            }
-
-        }
+        
         //Count the number of words of text
         private int WordCount(string text)
         {
@@ -252,14 +196,14 @@ namespace Clarity_Crate.Services
                     else if (response.Content?.Contains("currently loading") == true)
                     {
                         // Model is still loading; wait and retry                      
-                        _appService.ShowSnackBar(message:$"Model is loading. Retrying in {delaySeconds} seconds...",isWarning:true);
+                        _appService.ShowSnackBar(message:$"Model is loading. Retrying in {delaySeconds} seconds...",severity:"normal",position:"top-right");
                         await Task.Delay(delaySeconds * 1000);
                     }
                     else
                     {
                         // Handle other errors
                         IsSummarizing = false;
-                        _appService.ShowSnackBar(message:"Temporary issue. Please try again later.",isWarning: true);
+                        _appService.ShowSnackBar(message:"Temporary issue. Please try again later.",severity:"warning");
 
                         var errorContent = response.Content ?? "No details provided.";
                         throw new HttpRequestException($"Error: {response.StatusCode}, Details: {errorContent}");
@@ -270,7 +214,7 @@ namespace Clarity_Crate.Services
 
                 // If retries are exhausted
                 IsSummarizing = false;
-                _appService.ShowSnackBar("Model loading took too long. Please try again later.", true);
+                _appService.ShowSnackBar(message:"Model loading took too long. Please try again later.", severity:"error");
             }
             catch (Exception ex)
             {
@@ -296,7 +240,7 @@ namespace Clarity_Crate.Services
                 IsSendingFeedback = false;
 
                 // show snack bar
-                _appService.ShowSnackBar("Thank you! Your feedback has been received. We’ll work hard to improve based on your suggestions.", true);
+                _appService.ShowSnackBar(message: "Thanks for your feedback! We’ll use it to make improvements.", position:"bottom-left",severity:"normal");
 
             }
 
@@ -304,7 +248,7 @@ namespace Clarity_Crate.Services
             {
                 IsSendingFeedback = false;
                 // show snack bar
-                _appService.ShowSnackBar("Sorry, we encountered an issue while processing your feedback. Please try again.", false);
+                _appService.ShowSnackBar(message:"Sorry, we encountered an issue while processing your feedback. Please try again.", severity:"error");
 
             }
 

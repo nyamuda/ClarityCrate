@@ -5,6 +5,9 @@ using iText.Kernel.Pdf.Canvas.Parser;
 using IronOcr;
 using Clarity_Crate.Data;
 using Microsoft.EntityFrameworkCore;
+using Syncfusion.XlsIO;
+using Syncfusion.XlsIORenderer;
+
 
 namespace Clarity_Crate.Services
 {
@@ -12,15 +15,17 @@ namespace Clarity_Crate.Services
     {
 
         private readonly ApplicationDbContext _context;
+        private readonly AppService _appService;
 
 
-        public FileService(IConfiguration configuration, ApplicationDbContext context)
+        public FileService(IConfiguration configuration, ApplicationDbContext context, AppService appService)
         {
             string licenseKey = configuration["Authentication:IronOcr:LicenseKey"];
-            
+
             IronOcr.License.LicenseKey = licenseKey;
 
             _context = context;
+            _appService = appService;
         }
 
         // Method to extract text from PDFs (normal and scanned)
@@ -32,7 +37,7 @@ namespace Clarity_Crate.Services
             {
                 // Attempt to extract text using iText
                 using (PdfReader reader = new PdfReader(pdfStream))
-                using (PdfDocument pdfDoc = new PdfDocument(reader))
+                using (iText.Kernel.Pdf.PdfDocument pdfDoc = new iText.Kernel.Pdf.PdfDocument(reader))
                 {
                     for (int page = 1; page <= pdfDoc.GetNumberOfPages(); page++)
                     {
@@ -43,13 +48,18 @@ namespace Clarity_Crate.Services
                 // If text is not extracted, fallback to OCR
                 if (string.IsNullOrWhiteSpace(extractedText))
                 {
+                    //show snack bar to notify the user OCR has started
+                    string message = "This appears to be a scanned document. Text extraction might take a little longer. Please wait.";
+                    _appService.ShowSnackBar(message: message, severity: "info");
                     extractedText = PerformOcrOnPdf(pdfStream);
                 }
             }
             catch (Exception ex)
             {
-                // Log and handle errors
-                extractedText = $"Error during text extraction: {ex.Message}";
+                //show snack bar to notify the user OCR has started
+                string message = "Text extraction failed. This document may not be supported.";
+                _appService.ShowSnackBar(message: message, severity: "error");
+                
             }
 
             return extractedText;
@@ -58,6 +68,7 @@ namespace Clarity_Crate.Services
         // Fallback method: Perform OCR using IronOCR
         private string PerformOcrOnPdf(Stream pdfStream)
         {
+
             string ocrText = string.Empty;
 
             try
@@ -94,7 +105,7 @@ namespace Clarity_Crate.Services
                 // Create the PDF
                 using (var writer = new PdfWriter(memoryStream))
                 {
-                    using (var pdf = new PdfDocument(writer))
+                    using (var pdf = new iText.Kernel.Pdf.PdfDocument(writer))
                     {
                         var document = new iText.Layout.Document(pdf);
                         document.Add(new iText.Layout.Element.Paragraph(text));
@@ -108,18 +119,50 @@ namespace Clarity_Crate.Services
         //Increment the number of documents summarized
         public async Task IncrementDocumentCount()
         {
-            
+
 
             var summary = await _context.Summary.FirstOrDefaultAsync();
             if (summary != null)
             {
-                summary.NumDocumentsSummarized+=1;
+                summary.NumDocumentsSummarized += 1;
 
                 _context.Summary.Update(summary);
                 await _context.SaveChangesAsync();
             }
-            
+
 
         }
+        public Stream ConvertExcelToPdf(Stream excelFileStream)
+        {
+            // Ensure the input stream is not null
+            if (excelFileStream == null)
+                throw new ArgumentNullException(nameof(excelFileStream));
+
+            // Initialize the Excel engine
+            using (ExcelEngine excelEngine = new ExcelEngine())
+            {
+                IApplication application = excelEngine.Excel;
+                application.DefaultVersion = ExcelVersion.Xlsx;
+
+                // Open the Excel workbook from the stream
+                IWorkbook workbook = application.Workbooks.Open(excelFileStream);
+
+                // Initialize the XlsIO renderer
+                XlsIORenderer renderer = new XlsIORenderer();
+
+                // Convert the Excel document into a PDF document
+                Syncfusion.Pdf.PdfDocument pdfDocument = renderer.ConvertToPDF(workbook);
+
+                // Save the PDF document into a memory stream
+                MemoryStream pdfStream = new MemoryStream();
+                pdfDocument.Save(pdfStream);
+
+                // Reset the stream position to the beginning
+                pdfStream.Position = 0;
+
+                return pdfStream;
+            }
+        }
+
     }
 }

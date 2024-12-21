@@ -29,7 +29,7 @@
                         }
                         else
                         {
-                            <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFile" MaximumFileCount="100">
+                            <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf, .xlsx, .xls" FilesChanged="UploadFile" MaximumFileCount="100">
                                 <ButtonTemplate>
                                     @if (_isExtractingText)
                                     {
@@ -266,20 +266,39 @@
                 await file.OpenReadStream(maxAllowedSize: long.MaxValue).CopyToAsync(memoryStream);
                 memoryStream.Position = 0; // Reset position to the beginning
 
-                // Extract text from PDF using the memory stream
-                SummarizationService.Text = FileService.ExtractTextFromPdf(memoryStream);
+                string fileExtension = Path.GetExtension(file.Name)?.ToLower();
+
+                if (fileExtension == ".pdf")
+                {
+                    // Extract text directly from the PDF
+                    SummarizationService.Text = FileService.ExtractTextFromPdf(memoryStream);
+                }
+                else if (fileExtension == ".xlsx" || fileExtension == ".xls")
+                {
+                    // Convert Excel to PDF and then extract text
+                    using (var pdfStream = FileService.ConvertExcelToPdf(memoryStream))
+                    {
+                        SummarizationService.Text = FileService.ExtractTextFromPdf(pdfStream);
+                    }
+                }
+                else
+                {
+                    throw new NotSupportedException("Only PDF and Excel files are supported.");
+                }
+
                 _isExtractingText = false;
 
-                //increment the number of documents summarized
+                // Increment the number of documents summarized
                 await FileService.IncrementDocumentCount();
-
             }
         }
         catch (Exception ex)
         {
+            _isExtractingText = false;
             Console.WriteLine($"An error occurred: {ex.Message}");
         }
     }
+
 
     private int WordCount(string text)
     {
@@ -373,12 +392,13 @@
         try
         {
             await JSRuntime.InvokeVoidAsync("copyToClipboard", _summary);
-            AppService.ShowSnackBar(message: "Text copied to clipboard!", isSuccess: true);
+            AppService.ShowSnackBar(message: "Text copied to clipboard!", severity:"normal");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error {ex}");
-            AppService.ShowSnackBar(message: "Failed to copy text", isSuccess: false);
+            
+            AppService.ShowSnackBar(message: "Failed to copy text", severity:"error");
+
         }
     }
 

@@ -64,7 +64,7 @@
     {
         if (SubjectCreateDto.SelectedCurriculums == null || !SubjectCreateDto.SelectedCurriculums.Any())
         {
-            AppService.ShowSnackBar("Please select at least one curriculum.", isSuccess: false);
+            AppService.ShowSnackBar(message:"Please select at least one curriculum.", severity:"error");
             return;
         }
 
@@ -85,7 +85,7 @@
         {
             //show snack bar
             string message = "Subject added successfully!";
-            AppService.ShowSnackBar(message, isSuccess: true);
+            AppService.ShowSnackBar(message:message, severity:"success");
             //redirect to the subjects page
             NavigationManager.NavigateTo("/admin/subjects");
         }
@@ -93,7 +93,7 @@
         {
             //show snack bar
             string message = "An error occurred while creating the subject";
-            AppService.ShowSnackBar(message, false);
+            AppService.ShowSnackBar(message:message, severity:"error");
         }
 
 

@@ -160,7 +160,7 @@
             {
                 //show snack bar
                 string message = "Term deleted successfully!";
-                AppService.ShowSnackBar(message, true);
+                AppService.ShowSnackBar(message: message, severity: "success");
 
                 //update the state
                 await DefinitionService.GetDefinitions();
@@ -174,7 +174,7 @@
             {
                 //show snack bar
                 string message = "An error occurred while deleting the term";
-                AppService.ShowSnackBar(message, false);
+                AppService.ShowSnackBar(message: message, severity: "error");
 
             }
         }
@@ -224,7 +224,7 @@
     private async Task OnRowEditSave()
     {
         string message = "Term updated successfully!";
-        AppService.ShowSnackBar(message, true);
+        AppService.ShowSnackBar(message: message, severity: "success");
     }
 
 

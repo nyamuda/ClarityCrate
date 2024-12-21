@@ -144,7 +144,7 @@
 
                 //show snack bar
                 string message = "Topic deleted successfully!";
-                AppService.ShowSnackBar(message, isSuccess: true);
+                AppService.ShowSnackBar(message: message, severity: "success");
 
                 StateHasChanged();
             }
@@ -152,7 +152,7 @@
             {
                 //show snack bar
                 string message = "An error occurred while deleting the topic";
-                AppService.ShowSnackBar(message, isSuccess: false);
+                AppService.ShowSnackBar(message: message, severity: "error");
 
             }
 
@@ -209,14 +209,14 @@
         {
             //show snack bar
             string message = "Topic updated successfully!";
-            AppService.ShowSnackBar(message, isSuccess: true);
+            AppService.ShowSnackBar(message: message, severity: "success");
          
         }
         else
         {
             //show snack bar
             string message = "An error occurred while updating the topic";
-            AppService.ShowSnackBar(message, false);
+            AppService.ShowSnackBar(message: message, severity: "error");
         }
 
     }

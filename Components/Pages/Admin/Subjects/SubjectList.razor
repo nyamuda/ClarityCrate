@@ -143,15 +143,15 @@
                 Subjects = SubjectService.Subjects;
                 //show snack bar
                 string message = "Subject deleted successfully!";
-                AppService.ShowSnackBar(message, isSuccess: true);
+                AppService.ShowSnackBar(message: message, severity: "success");
 
                 StateHasChanged();
             }
             else
             {
                 //show snack bar
-                string message = "An error occurred while delete the subject";
-                AppService.ShowSnackBar(message, false);
+                string message = "An error occurred while deleting the subject";
+                AppService.ShowSnackBar(message: message, severity: "error");
             }
 
         
@@ -209,7 +209,7 @@
         {
             //show snack bar
             string message = "Subject updated successfully!";
-            AppService.ShowSnackBar(message, isSuccess: true);
+            AppService.ShowSnackBar(message:message, severity:"success");
 
             
             StateHasChanged();
@@ -220,7 +220,7 @@
         {
             //show snack bar
             string message = "An error occurred while updating the subject";
-            AppService.ShowSnackBar(message, false);
+            AppService.ShowSnackBar(message: message, severity: "error");
         }
 
        

@@ -53,7 +53,7 @@
 
         //show snack bar
         string message = "Curriculum added successfully!";
-        AppService.ShowSnackBar(message, isSuccess: true);
+        AppService.ShowSnackBar(message:message, severity:"success");
 
         //redirect to the curriculums page
         NavigationManager.NavigateTo("/admin/curriculums");

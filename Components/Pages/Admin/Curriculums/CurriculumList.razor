@@ -84,7 +84,7 @@
             {
                 //show snack bar
                 string message = "Curriculum deleted successfully!";
-                AppService.ShowSnackBar(message, true);
+                AppService.ShowSnackBar(message:message, severity:"success");
 
                 await CurriculumService.GetCurricula();
                 curriculums = CurriculumService.Curriculums;
@@ -95,7 +95,7 @@
             {
                 //show snack bar
                 string message = "An error occurred while deleting the curriculum";
-                AppService.ShowSnackBar(message, false);
+                AppService.ShowSnackBar(message:message,severity:"error");
             }
 
         }

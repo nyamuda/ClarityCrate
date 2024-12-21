@@ -150,7 +150,7 @@
 
         //show snack bar
         string message = "Term added successfully!";
-        AppService.ShowSnackBar(message, isSuccess: true);
+        AppService.ShowSnackBar(message: message, severity: "success");
 
         //redirect to the terms page
         NavigationManager.NavigateTo("/admin/terms");
