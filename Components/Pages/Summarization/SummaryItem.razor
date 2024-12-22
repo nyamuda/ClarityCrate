@@ -29,7 +29,7 @@
                         }
                         else
                         {
-                            <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf, .xlsx, .xls, .pptx, .ppt, .doc, .docx, .xml, .dot, .dotx, .docm, .dotm, .rtf, .txt, .md, .html" FilesChanged="UploadFile" MaximumFileCount="100">
+                            <MudFileUpload Context="fileInput" T="IBrowserFile" Accept="@_allSupportedFileExtensions" FilesChanged="UploadFile" MaximumFileCount="100">
                                 <ButtonTemplate>
                                     @if (_isExtractingText)
                                     {
@@ -233,11 +233,18 @@
     public string Mode { get; set; } = "paragraph";
     IBrowserFile file;
     private bool _isExtractingText = false;
+    // All supported file extensions
+    private string _allSupportedFileExtensions = ".pdf, .xlsx, .xls, .pptx, .ppt, .doc, .docx, .xml, .dot, .dotx, .docm, .dotm, .rtf, .txt, .md, .html, .jpeg, .jpg, .png, .bmp, .gif, .tiff, .tif, .emf, .ico, .icon";
+    // Supported Word file extensions
     private string[] _supportedWordExtensions = new[]
     {
     ".doc", ".docx", ".xml", ".dot", ".dotx", ".docm", ".dotm",
     ".rtf", ".txt", ".md", ".html"
     };
+    // Supported image file extensions
+    private readonly string[] _supportedImageExtensions =
+        { ".jpeg", ".jpg", ".png", ".bmp", ".gif", ".tiff", ".tif", ".emf", ".ico", ".icon" };
+
     MudTabs tabs;
 
 
@@ -305,6 +312,16 @@
                         SummarizationService.Text = FileService.ExtractTextFromPdf(pdfStream);
                     }
                 }
+                //Image extensions
+                else if (_supportedImageExtensions.Contains(fileExtension))
+                {
+                    // Convert image to PDF and then extract text
+                    using (var pdfStream = FileService.ConvertImageToPdf(memoryStream))
+                    {
+                        SummarizationService.Text = FileService.ExtractTextFromPdf(pdfStream);
+                    }
+                }
+
 
                 else
                 {

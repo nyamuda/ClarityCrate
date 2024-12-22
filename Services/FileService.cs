@@ -12,6 +12,8 @@ using Syncfusion.PresentationRenderer;
 using Syncfusion.DocIO;
 using Syncfusion.DocIO.DLS;
 using Syncfusion.DocIORenderer;
+using Syncfusion.Pdf.Graphics;
+using Syncfusion.Pdf;
 
 
 namespace Clarity_Crate.Services
@@ -233,6 +235,39 @@ namespace Clarity_Crate.Services
             // Reset the position of the PDF stream to the beginning
             pdfStream.Position = 0;
 
+            return pdfStream;
+        }
+        public Stream ConvertImageToPdf(Stream imageStream)
+        {
+            // Ensure the image stream is at the beginning
+            imageStream.Position = 0;
+
+            // Create an instance of the ImageToPdfConverter class
+            var imageToPdfConverter = new ImageToPdfConverter
+            {
+                // Set the page size for the PDF
+                PageSize = PdfPageSize.A4,
+
+                // Set the position of the image in the PDF
+                ImagePosition = PdfImagePosition.TopLeftCornerOfPage
+            };
+
+            // Convert the image stream to a PDF document
+            var pdfDocument = imageToPdfConverter.Convert(imageStream);
+
+            // Create a memory stream to hold the PDF document
+            var pdfStream = new MemoryStream();
+
+            // Save the PDF document to the memory stream
+            pdfDocument.Save(pdfStream);
+
+            // Close the PDF document
+            pdfDocument.Close(true);
+
+            // Reset the position of the memory stream to the beginning
+            pdfStream.Position = 0;
+
+            // Return the PDF stream
             return pdfStream;
         }
 
