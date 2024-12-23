@@ -14,13 +14,16 @@ using Syncfusion.DocIO.DLS;
 using Syncfusion.DocIORenderer;
 using Syncfusion.Pdf.Graphics;
 using Syncfusion.Pdf;
+using Syncfusion.OCRProcessor;
+using Syncfusion.Pdf.Parsing;
+
 
 
 namespace Clarity_Crate.Services
 {
     public class FileService
     {
-
+        
         private readonly ApplicationDbContext _context;
         private readonly AppService _appService;
 
@@ -58,11 +61,15 @@ namespace Clarity_Crate.Services
                     //show snack bar to notify the user OCR has started
                     string message = "This appears to be a scanned document. Text extraction might take a little longer. Please wait.";
                     _appService.ShowSnackBar(message: message, severity: "info");
+                    //perform OCR on the PDF
                     extractedText = PerformOcrOnPdf(pdfStream);
+                    
+                    
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 //show snack bar to notify the user OCR has started
                 string message = "Text extraction failed. This document may not be supported.";
                 _appService.ShowSnackBar(message: message, severity: "error");
@@ -72,7 +79,60 @@ namespace Clarity_Crate.Services
             return extractedText;
         }
 
+
+        /*
+        public string PerformOcrOnPdf(Stream pdfStream)
+        {
+            string extractedText = string.Empty;
+
+            try
+            {
+                // Create a memory stream for the output
+                using (MemoryStream outputStream = new MemoryStream())
+                {
+                    // Initialize the OCR processor
+                    using (OCRProcessor processor = new OCRProcessor())
+                    {
+                        // Load the PDF document from the provided stream
+                        using (PdfLoadedDocument loadedDocument = new PdfLoadedDocument(pdfStream))
+                        {
+                            // Set OCR language to process
+                            processor.Settings.Language = Languages.English;
+
+                            // Perform OCR on the loaded document
+                            processor.PerformOCR(loadedDocument, "tessdata/");
+
+                            // Save the processed document to the output stream
+                            loadedDocument.Save(outputStream);
+                        }
+                    }
+
+                    // Reset the position of the output stream to the beginning for reading
+                    outputStream.Position = 0;
+
+                    // Use iText to extract text from the OCR-processed PDF
+                    using (PdfReader reader = new PdfReader(outputStream))
+                    using (iText.Kernel.Pdf.PdfDocument pdfDoc = new iText.Kernel.Pdf.PdfDocument(reader))
+                    {
+                        for (int page = 1; page <= pdfDoc.GetNumberOfPages(); page++)
+                        {
+                            extractedText += PdfTextExtractor.GetTextFromPage(pdfDoc.GetPage(page));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during OCR or text extraction: {ex.Message}");
+            }
+
+            return extractedText;
+        }
+        */
+
+
         // Fallback method: Perform OCR using IronOCR
+        
         private string PerformOcrOnPdf(Stream pdfStream)
         {
 
@@ -103,6 +163,7 @@ namespace Clarity_Crate.Services
 
             return ocrText;
         }
+        
 
         // Method to generate a PDF from text
         public byte[] GeneratePdf(string text)

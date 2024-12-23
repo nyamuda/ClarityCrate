@@ -1,0 +1,300 @@
+﻿@page "/convert-to-pdf"
+@using Syncfusion.Blazor.Inputs
+
+<style>
+
+    .e-upload.e-control-wrapper, .e-bigger.e-small .e-upload.e-control-wrapper {
+        min-height: 7rem;
+
+    }
+    .primary-bg-color {
+       
+    }
+
+   
+    .primary-text-color {
+        
+    }
+
+
+
+    
+ 
+    /*** Facility ***/
+    .facility-item .facility-icon {
+        position: relative;
+        margin: 0 auto;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .facility-item .facility-icon::before {
+            position: absolute;
+            content: "";
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: rgba(255, 255, 255, .9);
+            transition: .5s;
+            z-index: 1;
+        }
+
+        .facility-item .facility-icon span {
+            display:none;
+            position: absolute;
+            content: "";
+            width: 15px;
+            height: 30px;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+        }
+
+            .facility-item .facility-icon span:last-child {
+                left: auto;
+                right: 0;
+            }
+
+        .facility-item .facility-icon i {
+            position: relative;
+            z-index: 2;
+        }
+
+    .facility-item .facility-text {
+        position: relative;
+        min-height: 250px;
+        padding: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        flex-direction: column;
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .facility-item .facility-text::before {
+            position: absolute;
+            content: "";
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: rgba(255, 255, 255, .9);
+            transition: .5s;
+            z-index: 1;
+        }
+
+        .facility-item .facility-text * {
+            position: relative;
+            z-index: 2;
+        }
+
+    .facility-item:hover .facility-icon::before,
+    .facility-item:hover .facility-text::before {
+        background: transparent;
+    }
+
+    .facility-item * {
+        transition: .5s;
+    }
+
+    .facility-item:hover * {
+        color: #FFFFFF !important;
+    }
+
+
+</style>
+
+<div class="container mt-5">
+    <div class="text-start mb-5">
+        <p class="h1">Convert files to PDF</p>
+        <p>We support various document and image file types for uploading and converting to PDF.</p>
+        <p>Choose your file, and we’ll handle the conversion.</p>
+    </div>
+    <!-- File Upload Section -->
+    <div>
+        <h5>Upload your file</h5>
+        <SfUploader ID="UploadFiles" AllowMultiple="false">
+            <UploaderEvents ValueChange="@OnFileUpload" OnRemove="OnFileRemove"></UploaderEvents>
+        </SfUploader>
+    </div>
+
+    <!-- Convert to PDF Button -->
+    @if (_isFileUploaded)
+    {
+        <div class="d-flex justify-content-start mt-3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PictureAsPdf" OnClick="ConvertToPdf">
+                Convert to PDF
+            </MudButton>
+        </div>
+    }
+    <!-- Supported File Types Start -->
+    <div class="py-5 mt-5">
+        <div class="">
+            
+            
+
+            <div class="row g-4">
+                <!-- PDF -->
+                <!--<div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="facility-item">
+                        <div class="facility-icon bg-danger">
+                            <span class="bg-primary"></span>
+                            <i class="fa fa-file-pdf fa-3x text-danger"></i>
+                            <span class="bg-danger"></span>
+                        </div>
+                        <div class="facility-text bg-danger">
+                            <h3 class="text-danger mb-3">Scanned Files</h3>
+                            <p class="mb-0">Easily convert scanned PDF files into a more editable or shareable format.</p>
+                        </div>
+                    </div>
+                </div>-->
+                <!-- Images -->
+                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.7s">
+                    <div class="facility-item">
+                        <div class="facility-icon orange darken-3">
+                            <span class="orange darken-3"></span>
+                            <i class="fa fa-file-image fa-3x orange-text text-darken-3"></i>
+                            <span class="orange darken-3"></span>
+                        </div>
+                        <div class="facility-text orange darken-3">
+                            <h3 class="orange-text text-darken-3 mb-3">Image Files</h3>
+                            <p class="mb-0">Convert common image formats such as .jpg, .png, .gif, .bmp, etc. into PDF documents.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Excel -->
+                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="facility-item">
+                        <div class="facility-icon teal darken-1">
+                            <span class="teal darken-1"></span>
+                            <i class="fa fa-file-excel fa-3x teal-text text-darken-1"></i>
+                            <span class="teal darken-1"></span>
+                        </div>
+                        <div class="facility-text teal darken-1">
+                            <h3 class="teal-text text-darken-1 mb-3">Excel Files</h3>
+                            <p class="mb-0">Convert your Excel sheets to PDF with ease, preserving all your data and formatting (.xlsx, .xls).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!--PowerPoint-->
+                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="facility-item">
+                        <div class="facility-icon orange darken-3">
+                            <span class="orange darken-3"></span>
+                            <i class="fa fa-file-powerpoint fa-3x orange-text text-darken-3"></i>
+                            <span class="orange darken-3"></span>
+                        </div>
+                        <div class="facility-text orange darken-3">
+                            <h3 class="orange-text text-darken-3 mb-3">PowerPoint</h3>
+                            <p class="mb-0">Convert your PowerPoint presentations into PDF, making them easily viewable and sharable (.pptx, .ppt).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Word -->
+                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="facility-item">
+                        <div class="facility-icon teal darken-1">
+                            <span class="teal darken-1"></span>
+                            <i class="fa fa-file-word fa-3x teal-text text-darken-1"></i>
+                            <span class="teal darken-1"></span>
+                        </div>
+                        <div class="facility-text teal darken-1">
+                            <h3 class="teal-text text-darken-1 mb-3">Word</h3>
+                            <p class="mb-0">Convert your Word documents into PDFs, making them easier to read, share, and print (.docx, .doc).</p>
+                        </div>
+                    </div>
+                </div>
+
+               
+
+                <!-- Text Files -->
+                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.9s">
+                    <div class="facility-item">
+                        <div class="facility-icon orange darken-3">
+                            <span class="orange darken-3"></span>
+                            <i class="fa fa-file-alt fa-3x orange-text text-darken-3"></i>
+                            <span class="orange darken-3"></span>
+                        </div>
+                        <div class="facility-text orange darken-3">
+                            <h3 class="orange-text text-darken-3 mb-3">Text & Markup</h3>
+                            <p class="mb-0">Easily convert plain text and markup files into PDFs for better accessibility (.txt, .md, .html).</p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <!-- Supported File Types End -->
+
+
+
+</div>
+
+
+
+
+
+
+@code {
+    private string ExtensionAllowed { get; set; } = ".pdf, .txt, .png";
+    private MemoryStream _uploadedFileStream;
+    private bool _isFileUploaded = false;
+
+    private async Task OnFileUpload(UploadChangeEventArgs args)
+    {
+        try
+        {
+            // Reset state before new upload
+            _uploadedFileStream = new MemoryStream();
+            _isFileUploaded = false;
+
+            // Handle file upload
+            var file = args.Files.FirstOrDefault(); // Single file upload
+            if (file != null)
+            {
+                // Save file to memory stream
+                await file.File.OpenReadStream(long.MaxValue).CopyToAsync(_uploadedFileStream);
+                _uploadedFileStream.Position = 0; // Reset stream position for further use
+                _isFileUploaded = true; // Show "Convert to PDF" button
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"File upload failed: {ex.Message}");
+        }
+    }
+
+    private void ConvertToPdf()
+    {
+        if (_uploadedFileStream != null)
+        {
+            // Pass the MemoryStream to your PDF conversion logic
+            HandlePdfConversion(_uploadedFileStream);
+        }
+    }
+
+    private void HandlePdfConversion(Stream fileStream)
+    {
+        // Add your PDF conversion logic here
+        Console.WriteLine("PDF conversion triggered!");
+    }
+
+    public void OnFileRemove(RemovingEventArgs args)
+    {
+        _isFileUploaded = false;
+    }
+}

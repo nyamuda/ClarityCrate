@@ -1,0 +1,165 @@
+﻿
+
+<style>
+/*--------------------------------------------------------------
+# Features 2 Section
+--------------------------------------------------------------*/
+.features-2 .feature-item .feature-icon {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: color-mix(in srgb, var(--accent-color), transparent 92%);
+}
+
+.features-2 .feature-item .feature-icon i {
+  font-size: 2rem;
+  color: var(--accent-color);
+}
+
+.features-2 .feature-item .feature-content h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.features-2 .feature-item .feature-content p {
+  color: color-mix(in srgb, var(--default-color), transparent 25%);
+  font-size: 15px;
+  margin-bottom: 0;
+}
+
+.features-2 .phone-mockup {
+  position: relative;
+  padding: 30px 0;
+}
+
+.features-2 .phone-mockup img {
+  max-width: 300px;
+  height: auto;
+  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
+}
+
+@@media (max-width: 991.98px) {
+  .features-2 .feature-item {
+    text-align: center !important;
+    margin-bottom: 2rem;
+  }
+
+  .features-2 .feature-item .d-flex {
+    flex-direction: column;
+    text-align: center;
+    justify-content: center !important;
+  }
+
+  .features-2 .phone-mockup {
+    margin: 3rem 0;
+  }
+}
+
+
+</style>
+<!-- Features 2 Section -->
+<section id="features-2" class="features-2 section">
+
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-4">
+
+                <div class="feature-item text-end mb-5" data-aos="fade-right" data-aos-delay="200">
+                    <div class="d-flex align-items-center justify-content-end gap-4">
+                        <div class="feature-content">
+                            <h3>Word Documents</h3>
+                            <p>Summarize DOC, DOCX, and other Word formats effortlessly.</p>
+                        </div>
+                        <div class="feature-icon flex-shrink-0">
+                           
+                            <i class="fas fa-file-word fa-2xl"></i>
+                        </div>
+                    </div>
+                </div><!-- End .feature-item -->
+
+                <div class="feature-item text-end mb-5" data-aos="fade-right" data-aos-delay="300">
+                    <div class="d-flex align-items-center justify-content-end gap-4">
+                        <div class="feature-content">
+                            <h3>Excel Files</h3>
+                            <p>Extract and summarize data from XLS and XLSX files.</p>
+                        </div>
+                        <div class="feature-icon flex-shrink-0">
+                            <i class="fas fa-table"></i>
+                        </div>
+                    </div>
+                </div><!-- End .feature-item -->
+
+                <div class="feature-item text-end" data-aos="fade-right" data-aos-delay="400">
+                    <div class="d-flex align-items-center justify-content-end gap-4">
+                        <div class="feature-content">
+                            <h3>PowerPoint</h3>
+                            <p>Summarize slides from PPT and PPTX presentations.</p>
+                        </div>
+                        <div class="feature-icon flex-shrink-0">
+                            <i class="fas fa-file-powerpoint"></i>
+                        </div>
+                    </div>
+                </div><!-- End .feature-item -->
+
+            </div>
+
+            <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="200">
+                <div class="phone-mockup text-center">
+                    <img src="img/file-supported.png" alt="Phone Mockup" class="img-fluid rounded">
+                    
+                </div>
+            </div><!-- End Phone Mockup -->
+
+            <div class="col-lg-4">
+
+                <div class="feature-item mb-5" data-aos="fade-left" data-aos-delay="200">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="feature-icon flex-shrink-0">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Images</h3>
+                            <p>Extract text from images using advanced OCR technology.</p>
+                        </div>
+                    </div>
+                </div><!-- End .feature-item -->
+
+                <div class="feature-item mb-5" data-aos="fade-left" data-aos-delay="300">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="feature-icon flex-shrink-0">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>PDF Files</h3>
+                            <p>Summarize native and scanned PDFs with OCR support.</p>
+                        </div>
+                    </div>
+                </div><!-- End .feature-item -->
+
+                <div class="feature-item" data-aos="fade-left" data-aos-delay="400">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="feature-icon flex-shrink-0">
+                            <i class="fas fa-font"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Plain Text</h3>
+                            <p>Summarize insights from text files instantly.</p>
+                        </div>
+                    </div>
+                </div><!-- End .feature-item -->
+
+            </div>
+        </div>
+
+    </div>
+
+</section><!-- /Features 2 Section -->
+@code {
+
+}

@@ -25,10 +25,18 @@
 /*About End*/
 </style>
 
+<!--Feature Section Start-->
+<!-- Section Title -->
+<div class="container section-title mb-5">
+    <h2>Files</h2>
+    <p>Supported document types</p>
+</div><!-- End Section Title -->
+<FeatureSection/>
+<!--Feature Section End-->
 
 
 <!-- Services Section -->
-<section id="services" class="services section">
+<section id="services" class="services section" style="margin-top:4rem;">
 
     <!-- Section Title -->
     <div class="container section-title mb-5" data-aos="fade-up">
@@ -144,6 +152,14 @@
         <MudExpansionPanels>
             <MudExpansionPanel>
                 <TitleContent>
+                    <MudText Class="fw-bold">What types of documents can be summarized?</MudText>
+                </TitleContent>
+                <ChildContent>
+                    We support summarizing a wide range of documents, including PDFs (both native and scanned using OCR), Word documents (DOC, DOCX), Excel files (XLS, XLSX), PowerPoint presentations (PPT, PPTX), plain text files, images (using OCR), and web content.
+                </ChildContent>
+            </MudExpansionPanel>
+            <MudExpansionPanel>
+                <TitleContent>
                     <MudText Class="fw-bold">Is there a limit on the number of documents I can summarize?</MudText>
                 </TitleContent>
                 <ChildContent>
@@ -166,15 +182,6 @@
                 </TitleContent>
                 <ChildContent>
                     At the moment, Clarity Crate processes one document at a time. However, we’re working on expanding this functionality, so multi-document summarization is coming soon.
-                </ChildContent>
-            </MudExpansionPanel>
-
-            <MudExpansionPanel>
-                <TitleContent>
-                    <MudText Class="fw-bold">What types of documents can be summarized?</MudText>
-                </TitleContent>
-                <ChildContent>
-                    Clarity Crate currently supports summarizing PDF documents, including scanned PDFs, thanks to OCR technology. At this time, other document types like Word documents are not supported.
                 </ChildContent>
             </MudExpansionPanel>
         </MudExpansionPanels>
