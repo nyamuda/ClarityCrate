@@ -1,25 +1,28 @@
 ﻿@page "/convert-to-pdf"
 @using Syncfusion.Blazor.Inputs
+@using Clarity_Crate.Services
+@inject FileService FileService
+@inject AppService AppService
+@inject IJSRuntime JSRuntime
+
 
 <style>
 
     .e-upload.e-control-wrapper, .e-bigger.e-small .e-upload.e-control-wrapper {
         min-height: 7rem;
-
     }
+
     .primary-bg-color {
-       
     }
 
-   
+
     .primary-text-color {
-        
     }
 
 
 
-    
- 
+
+
     /*** Facility ***/
     .facility-item .facility-icon {
         position: relative;
@@ -29,7 +32,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        
         clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
@@ -47,7 +49,7 @@
         }
 
         .facility-item .facility-icon span {
-            display:none;
+            display: none;
             position: absolute;
             content: "";
             width: 15px;
@@ -110,7 +112,6 @@
         color: #FFFFFF !important;
     }
 
-
 </style>
 
 <div class="container mt-5">
@@ -122,7 +123,7 @@
     <!-- File Upload Section -->
     <div>
         <h5>Upload your file</h5>
-        <SfUploader ID="UploadFiles" AllowMultiple="false">
+        <SfUploader ID="UploadFiles" AllowMultiple="false" AllowedExtensions="@_allSupportedFileExtensions">
             <UploaderEvents ValueChange="@OnFileUpload" OnRemove="OnFileRemove"></UploaderEvents>
         </SfUploader>
     </div>
@@ -130,17 +131,47 @@
     <!-- Convert to PDF Button -->
     @if (_isFileUploaded)
     {
-        <div class="d-flex justify-content-start mt-3">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PictureAsPdf" OnClick="ConvertToPdf">
-                Convert to PDF
-            </MudButton>
-        </div>
+
+        @if (FileService.IsConvertingToPdf)
+        {
+            <div class="d-flex justify-content-start mt-3">
+                <MudButton class="blue-grey darken-4 text-light cursor-progress mt-1" Variant="Variant.Filled">
+                    Converting...
+                </MudButton>
+            </div>
+
+
+        }
+        else if (FileService.ConvertedResultingPdf == null)
+        {
+            <div class="d-flex justify-content-start mt-3">
+                <MudButton Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.PictureAsPdf" OnClick="ConvertToPdf">
+                    Convert to PDF
+                </MudButton>
+            </div>
+        }
+        <!--View PDF or download PDF buttons-->
+        else
+        {
+            <div class="d-flex justify-content-start mt-3">
+                <MudButton Class="mr-3" Variant="Variant.Text" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Download" OnClick="() => DownloadPdf(FileService.ConvertedResultingPdf)">
+                    Download PDF
+                </MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Dark" StartIcon="far fa-eye">
+                    View PDF
+                </MudButton>
+            </div>
+        }
     }
+
+
+
+
     <!-- Supported File Types Start -->
     <div class="py-5 mt-5">
         <div class="">
-            
-            
+
+
 
             <div class="row g-4">
                 <!-- PDF -->
@@ -217,7 +248,7 @@
                     </div>
                 </div>
 
-               
+
 
                 <!-- Text Files -->
                 <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.9s">
@@ -250,15 +281,31 @@
 
 
 @code {
-    private string ExtensionAllowed { get; set; } = ".pdf, .txt, .png";
+    // All supported file extensions
+    private string _allSupportedFileExtensions = ".xlsx, .xls, .pptx, .ppt, .doc, .docx, .xml, .dot, .dotx, .docm, .dotm, .rtf, .txt, .md, .html, .jpeg, .jpg, .png, .bmp, .gif, .tiff, .tif, .emf, .ico, .icon";
+    // Supported Word file extensions
+    private string[] _supportedWordExtensions = new[]
+    {
+    ".doc", ".docx", ".xml", ".dot", ".dotx", ".docm", ".dotm",
+    ".rtf", ".txt", ".md", ".html"
+    };
+    // Supported image file extensions
+    private readonly string[] _supportedImageExtensions =
+        { ".jpeg", ".jpg", ".png", ".bmp", ".gif", ".tiff", ".tif", ".emf", ".ico", ".icon" };
+
     private MemoryStream _uploadedFileStream;
+    private string _fileExtension;
+    private string _fileName;
     private bool _isFileUploaded = false;
+    private bool _isConvertingToPdf = false;
+
 
     private async Task OnFileUpload(UploadChangeEventArgs args)
     {
         try
         {
             // Reset state before new upload
+            FileService.ConvertedResultingPdf = null;
             _uploadedFileStream = new MemoryStream();
             _isFileUploaded = false;
 
@@ -266,6 +313,11 @@
             var file = args.Files.FirstOrDefault(); // Single file upload
             if (file != null)
             {
+                // Get file name and without the extension
+                _fileName = Path.GetFileNameWithoutExtension(file.File.Name);
+                
+                // Get file extension
+                _fileExtension = Path.GetExtension(file.File.Name?.ToLower());
                 // Save file to memory stream
                 await file.File.OpenReadStream(long.MaxValue).CopyToAsync(_uploadedFileStream);
                 _uploadedFileStream.Position = 0; // Reset stream position for further use
@@ -289,12 +341,129 @@
 
     private void HandlePdfConversion(Stream fileStream)
     {
-        // Add your PDF conversion logic here
-        Console.WriteLine("PDF conversion triggered!");
+        
+        try
+        {
+            //show loader
+            FileService.IsConvertingToPdf = true;
+
+
+
+
+            //Excel file
+            if (_fileExtension == ".xlsx" || _fileExtension == ".xls")
+            {
+                // Convert Excel to PDF
+                using (var pdfStream = FileService.ConvertExcelToPdf(_uploadedFileStream))
+                {
+                    // Save the PDF as a byte array
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        pdfStream.CopyTo(memoryStream);
+                        memoryStream.Position = 0;
+                        FileService.ConvertedResultingPdf = memoryStream.ToArray();
+                       
+                    }
+
+
+                }
+            }
+            //PowerPoint file
+            else if (_fileExtension == ".pptx" || _fileExtension == ".ppt")
+            {
+                // Convert Excel to PDF and then extract text
+                using (var pdfStream = FileService.ConvertPowerPointToPdf(_uploadedFileStream))
+                {
+                    // Save the PDF as a byte array
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        pdfStream.CopyTo(memoryStream);
+                        memoryStream.Position = 0;
+                        FileService.ConvertedResultingPdf = memoryStream.ToArray();
+                      
+                    }
+                }
+            }
+            //Word extensions
+            else if (_supportedWordExtensions.Contains(_fileExtension))
+            {
+                // Convert Word to PDF and then extract text
+                using (var pdfStream = FileService.ConvertWordToPdf(_uploadedFileStream))
+                {
+                    // Save the PDF as a byte array
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        pdfStream.CopyTo(memoryStream);
+                        memoryStream.Position = 0;
+                        FileService.ConvertedResultingPdf = memoryStream.ToArray();
+                      
+                    }
+                }
+            }
+            //Image extensions
+            else if (_supportedImageExtensions.Contains(_fileExtension))
+            {
+                // Convert image to PDF and then extract text
+                using (var pdfStream = FileService.ConvertImageToPdf(_uploadedFileStream))
+                {
+                    // Save the PDF as a byte array
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        pdfStream.CopyTo(memoryStream);
+                        memoryStream.Position = 0;
+                        FileService.ConvertedResultingPdf = memoryStream.ToArray();
+                        
+                    }
+                }
+            }
+
+
+            else
+            {
+               
+
+                //show error message
+                var message = $"The file type {_fileExtension} is not supported for conversion to PDF.";
+                AppService.ShowSnackBar(message: message, severity: "error");
+
+
+            }
+            //hide loader
+            FileService.IsConvertingToPdf = false;
+
+
+        }
+        catch (Exception ex)
+        {
+            //hide loader
+            _isConvertingToPdf = false;
+            //show error message
+            var message = $"An error occurred: {ex.Message}";
+            AppService.ShowSnackBar(message: message, severity: "error");
+        }
     }
 
     public void OnFileRemove(RemovingEventArgs args)
     {
         _isFileUploaded = false;
+    }
+
+    private async Task DownloadPdf(byte[] pdfBytes)
+    {
+        // Trigger the download with the correct file name
+        await TriggerDownload(pdfBytes, _fileName);
+
+
+    }
+
+    private async Task TriggerDownload(byte[] fileBytes, string fileName)
+    {
+        var base64Data = Convert.ToBase64String(fileBytes);
+        var fileUrl = $"data:application/pdf;base64,{base64Data}";
+        await JSRuntime.InvokeVoidAsync("downloadFile", fileUrl, fileName);
+
+        //show snack bar message
+        //that the file has been downloaded
+        AppService.ShowSnackBar(message: "File downloaded successfully");
     }
 }

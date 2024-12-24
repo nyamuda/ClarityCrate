@@ -26,6 +26,9 @@ namespace Clarity_Crate.Services
         
         private readonly ApplicationDbContext _context;
         private readonly AppService _appService;
+        public bool IsConvertingToPdf { get; set; } = false; 
+        
+        public byte[] ConvertedResultingPdf { get; set; }
 
 
         public FileService(IConfiguration configuration, ApplicationDbContext context, AppService appService)
