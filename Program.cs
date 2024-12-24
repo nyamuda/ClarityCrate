@@ -75,6 +75,9 @@ builder.Services.AddHttpClient<OpenAIService>();
 builder.Services.AddSyncfusionBlazor();
 var syncfusionLicenseKey = builder.Configuration["Authentication:Syncfusion:LicenseKey"];
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncfusionLicenseKey);
+//added for the syncfusion pdf viewer server
+builder.Services.AddMemoryCache(); // If using minimal hosting
+builder.Services.AddServerSideBlazor().AddHubOptions(o => { o.MaximumReceiveMessageSize = 102400000; });
 
 
 
