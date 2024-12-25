@@ -1,7 +1,7 @@
 ﻿function scrollToElement(elementId) {
     const element = document.getElementById(elementId);
     if (element) {
-        element.scrollIntoView({ behavior: 'smooth'});
+        element.scrollIntoView({ behavior: 'smooth' });
     }
 }
 
@@ -21,3 +21,4 @@ function copyToClipboard(text) {
         console.error("Could not copy text: ", err);
     });
 }
+

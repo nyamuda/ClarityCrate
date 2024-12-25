@@ -31,6 +31,9 @@ namespace Clarity_Crate.Services
         public byte[] ConvertedResultingPdf { get; set; }
 
 
+        public string AdobeClientId { get; set; }
+
+
         public FileService(IConfiguration configuration, ApplicationDbContext context, AppService appService)
         {
             string licenseKey = configuration["Authentication:IronOcr:LicenseKey"];
@@ -39,6 +42,9 @@ namespace Clarity_Crate.Services
 
             _context = context;
             _appService = appService;
+
+            //adobe client id
+            AdobeClientId = configuration["Authentication:Adobe:ClientId"];
         }
 
         // Method to extract text from PDFs (normal and scanned)
