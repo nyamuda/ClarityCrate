@@ -121,7 +121,7 @@
 
 
 
-<div class="container mt-5">
+<div class="container">
     <div id="convert-to-pdf" class="text-start mb-5">
         <p class="h1">Convert files to PDF</p>
         <p>We support various document and image file types for uploading and converting to PDF.</p>
@@ -130,21 +130,23 @@
     <!-- File Upload Section -->
     <div>
         <h5>Upload your file</h5>
-        <SfUploader ID="UploadFiles" AllowMultiple="false" AllowedExtensions="@_allSupportedFileExtensions">
-            <Syncfusion.Blazor.Inputs.UploaderEvents ValueChange="@FileUploaded" OnRemove="OnFileRemove"></Syncfusion.Blazor.Inputs.UploaderEvents>
+        <SfUploader ID="fileCoverterUploader" AllowMultiple="false" AllowedExtensions="@_allSupportedFileExtensions">
+            <Syncfusion.Blazor.Inputs.UploaderEvents ValueChange="@FileUploaded" OnRemove="OnFileRemove" Created="OnCreateUploader"></Syncfusion.Blazor.Inputs.UploaderEvents>
         </SfUploader>
     </div>
 
 
     <!--PDF Viewer-->
-    <div id="pdf-viewer" class="">
-        <MudCollapse Expanded="_showPdf">
+
+    <MudCollapse Class="" Expanded="_showPdf">
+        <div id="pdf-viewer" class="mt-3">
             <SfPdfViewer2 @ref="@PdfViewer"
                           Height="100%"
                           Width="100%">
             </SfPdfViewer2>
-        </MudCollapse>
-    </div>
+        </div>
+    </MudCollapse>
+
 
     <!-- Convert to PDF Button -->
     @if (_isFileUploaded)
@@ -277,6 +279,7 @@
 
 
                 <!-- Text Files -->
+                <!--
                 <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.9s">
                     <div class="facility-item">
                         <div class="facility-icon orange darken-3">
@@ -291,7 +294,7 @@
                     </div>
                 </div>
 
-
+                -->
             </div>
         </div>
     </div>
@@ -325,6 +328,8 @@
     private SfPdfViewer2 PdfViewer { get; set; }
     private string _documentPath { get; set; } = "wwwroot/data/pdf1.pdf";
     bool _expanded = true;
+    //file size
+    private long _fileSize = 0;
 
 
 
@@ -337,6 +342,10 @@
             FileService.ConvertedResultingPdf = null;
             _uploadedFileStream = new MemoryStream();
             _isFileUploaded = false;
+            _showPdf = false;
+
+            
+
 
             // Handle file upload
             var file = args.Files.FirstOrDefault(); // Single file upload
@@ -347,6 +356,19 @@
 
                 // Get file extension
                 _fileExtension = Path.GetExtension(file.File.Name?.ToLower());
+
+                // Get file size
+                _fileSize = file.File.Size;
+
+                //maximum file size for files is 1.5MB
+                if (_fileSize > 1.5 * 1024 * 1024)
+                {
+                    var message = "Maximum file size for conversion is 1.5MB";
+
+                    throw new NotSupportedException(message);
+                }
+
+
                 // Save file to memory stream
                 await file.File.OpenReadStream(long.MaxValue).CopyToAsync(_uploadedFileStream);
                 _uploadedFileStream.Position = 0; // Reset stream position for further use
@@ -356,6 +378,9 @@
         catch (Exception ex)
         {
             Console.WriteLine($"File upload failed: {ex.Message}");
+            //show error message
+            var message = $"Error: {ex.Message}";
+            AppService.ShowSnackBar(message: message, severity: "error");
         }
     }
 
@@ -376,11 +401,19 @@
 
         try
         {
+            //maximum file size for files is 1.5MB
+            if (_fileSize > 1.5 * 1024 * 1024)
+            {
+                var message = "Maximum file size for conversion is 1.5MB";
 
+                throw new NotSupportedException(message);
+            }
 
             //Excel file
             if (_fileExtension == ".xlsx" || _fileExtension == ".xls")
             {
+
+
                 // Convert Excel to PDF
                 using (var pdfStream = FileService.ConvertExcelToPdf(_uploadedFileStream))
                 {
@@ -477,7 +510,7 @@
             //hide loader
             _isConvertingToPdf = false;
             //show error message
-            var message = $"An error occurred: {ex.Message}";
+            var message = $"Error: {ex.Message}";
             AppService.ShowSnackBar(message: message, severity: "error");
 
             //hide loader
@@ -536,5 +569,8 @@
         //hide loader
         FileService.IsConvertingToPdf = false;
     }
-
+    public async Task OnCreateUploader()
+    {
+        await JSRuntime.InvokeVoidAsync("create", "fileConverterUploader");
+    }
 }

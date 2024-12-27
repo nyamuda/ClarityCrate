@@ -1,15 +1,27 @@
 ﻿@using Clarity_Crate.Services
+@using Clarity_Crate.Components.Pages.TextEditor
 @inject FileService FileService
 @inject SummarizationService SummarizationService
 @inject IJSRuntime JSRuntime
 @inject AppService AppService
+@using System.Text;
+<style>
+    .sum-editor {
+        margin-left: 49.5%;
+        width:38.5rem;
+        margin-top: -1.5rem;
+        position: absolute;
+        z-index: 5;
+    }
+</style>
+
 
 <div class="summarization-mode">
     <!--Desktop View-->
     <div class="d-none d-md-flex row">
-        <div class="col d-flex flex-column justify-content-between">
+        <div class="col-12 d-flex flex-column justify-content-between">
 
-            <div class="summarization-text-submit">
+            <div class="summarization-text-submit col-6">
                 <div class="d-none d-md-block">
                     <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="SummarizationService.Text" TextChanged="OnTextChanged" Lines="@(Mode.Equals("custom")?10:14)" Clearable="true" DisableUnderLine />
                 </div>
@@ -31,14 +43,14 @@
                         {
                             <MudFileUpload Context="fileInput" T="IBrowserFile" Accept="@_allSupportedFileExtensions" FilesChanged="UploadFile" MaximumFileCount="100">
                                 <ButtonTemplate>
-                                    @if (_isExtractingText)
+                                    @if (_isProcessingFile)
                                     {
                                         <MudButton class="gray darken-4 cursor-progress" Variant="Variant.Outlined">
-                                            Extracting...
+                                            @_fileStatus...
                                         </MudButton>
                                     }
-                                    else
-                                    {
+                                    else                              {
+
                                         <MudTooltip Text="Upload a document to summarize" Arrow="true">
                                             <MudButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
                                                 Upload
@@ -91,24 +103,14 @@
             </div>
         </div>
         <!--Summary Block-->
-        <div class="col border-start">
-            <MudTextField T="string" Immediate="true" Label="" Variant="Variant.Text" @bind-Value="_summary" TextChanged="OnSummaryChanged" Lines="@(Mode.Equals("custom")?15:14)" DisableUnderLine />
-            <div class="mt-1 d-flex justify-content-between align-items-center">
-                <MudText>@summaryNumOfWords words</MudText>
-                @if (_summary.Length > 0)
-                {
-                    <div>
-                        <MudTooltip Text="Export summary as a file" Arrow="true">
-                            <MudIconButton OnClick="DownloadPdf" Icon="@Icons.Material.Filled.Download" aria-label="Download text" />
-                        </MudTooltip>
-                        <MudTooltip Text="Copy summarized text" Arrow="true">
-                            <MudIconButton OnClick="CopySummary" Icon="@Icons.Material.Filled.ContentCopy" aria-label="Copy text " />
-                        </MudTooltip>
-                    </div>
-                }
+       <!--
+        <div class="col-12 mt-5">
+               <TextEditorItem Value="@@_summary" EditorPurpose="Summary" FileName="@@fileName"/>
+               </div>
 
-            </div>
-        </div>
+       -->
+        
+       
     </div>
 
     <!--Mobile View-->
@@ -137,10 +139,10 @@
                             {
                                 <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFile" MaximumFileCount="100">
                                     <ButtonTemplate>
-                                        @if (_isExtractingText)
+                                        @if (_isProcessingFile)
                                         {
                                             <MudButton class="gray darken-4 cursor-progress" Variant="Variant.Outlined">
-                                                Extracting...
+                                                @_fileStatus...
                                             </MudButton>
                                         }
                                         else
@@ -225,14 +227,21 @@
 {
 
 
-    public string _summary = string.Empty;
+    public string _summary = "Your summary will go here";
+    //Transfer the summary to the parent component
+    [Parameter]
+    public EventCallback<string> TransferSummary { get; set; }
 
     private int numOfWords = 0;
     private int summaryNumOfWords = 0;
+    //file size
+    private long fileSize = 0;
+    private string fileName = "";
     [Parameter]
     public string Mode { get; set; } = "paragraph";
     IBrowserFile file;
-    private bool _isExtractingText = false;
+    private bool _isProcessingFile = false;
+    private string _fileStatus = "Processing";
     // All supported file extensions
     private string _allSupportedFileExtensions = ".pdf, .xlsx, .xls, .pptx, .ppt, .doc, .docx, .xml, .dot, .dotx, .docm, .dotm, .rtf, .txt, .md, .html, .jpeg, .jpg, .png, .bmp, .gif, .tiff, .tif, .emf, .ico, .icon";
     // Supported Word file extensions
@@ -256,7 +265,7 @@
         /*
         var summaryText = SummarizationService.Summary;
         if (!string.IsNullOrEmpty(summaryText))
-        {
+            {
 
             ShowSummary(summaryText);
         }
@@ -267,57 +276,94 @@
 
     private async Task UploadFile(IBrowserFile uploadedFile)
     {
+
         file = uploadedFile;
-        _isExtractingText = true;
+        _isProcessingFile = true;
+
 
         try
         {
             // Create a memory stream and read the file asynchronously
             using (var memoryStream = new MemoryStream())
             {
-                await file.OpenReadStream(maxAllowedSize: long.MaxValue).CopyToAsync(memoryStream);
-                memoryStream.Position = 0; // Reset position to the beginning
+
+                //get file size
+                fileSize = file.Size;
+                // Get file name and without the extension
+                fileName = Path.GetFileNameWithoutExtension(file.Name);
 
                 string fileExtension = Path.GetExtension(file.Name)?.ToLower();
 
+
+                //max file size for pdf is 20MB and 1.5MB for other files
+                //if size exceeds 1.5MB, show error message
+                if (fileSize > 1.5 * 1024 * 1024 && fileExtension != ".pdf")
+                {
+                    //maximun file size for non-pdf files is 1.5MB
+                    var message = "Maximum file size for non-PDF files is 1.5MB";
+                    throw new NotSupportedException(message);
+                }
+                //if file is pdf, and size exceeds 20MB, show error message
+                if (fileExtension == ".pdf" && fileSize > 20 * 1024 * 1024)
+                {
+                    var message = "Maximum file size for PDF files is 20MB";
+                    throw new NotSupportedException(message);
+                }
+
+                await file.OpenReadStream(maxAllowedSize: long.MaxValue).CopyToAsync(memoryStream);
+                memoryStream.Position = 0; // Reset position to the beginning
+
+
+
                 if (fileExtension == ".pdf")
                 {
+
                     // Extract text directly from the PDF
                     SummarizationService.Text = FileService.ExtractTextFromPdf(memoryStream);
                 }
                 //Excel file
                 else if (fileExtension == ".xlsx" || fileExtension == ".xls")
                 {
+
+
                     // Convert Excel to PDF and then extract text
                     using (var pdfStream = FileService.ConvertExcelToPdf(memoryStream))
                     {
+
                         SummarizationService.Text = FileService.ExtractTextFromPdf(pdfStream);
                     }
                 }
                 //PowerPoint file
                 else if (fileExtension == ".pptx" || fileExtension == ".ppt")
                 {
+
                     // Convert Excel to PDF and then extract text
                     using (var pdfStream = FileService.ConvertPowerPointToPdf(memoryStream))
                     {
+
+
                         SummarizationService.Text = FileService.ExtractTextFromPdf(pdfStream);
                     }
                 }
                 //Word extensions
                 else if (_supportedWordExtensions.Contains(fileExtension))
                 {
+
                     // Convert Word to PDF and then extract text
                     using (var pdfStream = FileService.ConvertWordToPdf(memoryStream))
                     {
+
                         SummarizationService.Text = FileService.ExtractTextFromPdf(pdfStream);
                     }
                 }
                 //Image extensions
                 else if (_supportedImageExtensions.Contains(fileExtension))
                 {
+
                     // Convert image to PDF and then extract text
                     using (var pdfStream = FileService.ConvertImageToPdf(memoryStream))
                     {
+
                         SummarizationService.Text = FileService.ExtractTextFromPdf(pdfStream);
                     }
                 }
@@ -325,10 +371,10 @@
 
                 else
                 {
-                    throw new NotSupportedException("Only PDF and Excel files are supported.");
+                    throw new NotSupportedException("File type is not supported.");
                 }
 
-                _isExtractingText = false;
+                _isProcessingFile = false;
 
                 // Increment the number of documents summarized
                 await FileService.IncrementDocumentCount();
@@ -336,8 +382,9 @@
         }
         catch (Exception ex)
         {
-            _isExtractingText = false;
-            Console.WriteLine($"An error occurred: {ex.Message}");
+            _isProcessingFile = false;
+            Console.WriteLine($"Error: {ex.Message}");
+            AppService.ShowSnackBar(message: ex.Message, severity: "error");
         }
     }
 
@@ -486,19 +533,42 @@
         // If the summarize mode is bullet points, format the text
         if (Mode == "bullet")
         {
-            // Split the summary text into sentences and add bullet points
-            var bulletPoints = text
-            .Split(new[] { '.', '!', '?' }, StringSplitOptions.RemoveEmptyEntries) // Split by sentence-ending punctuation
-            .Select(sentence => "- " + sentence.Trim() + ".") // Add "-" and a period to each sentence
-            .ToList();
 
-            // Join the bullet points into a single string with newlines
-            _summary = string.Join(Environment.NewLine, bulletPoints);
+            // Split the text into sentences based on common sentence-ending punctuation.
+            var sentences = text.Split(new[] { ". ", "! ", "? " }, StringSplitOptions.RemoveEmptyEntries);
+
+            // Build the HTML list.
+            var stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine("<ul>");
+
+            foreach (var sentence in sentences)
+            {
+                // Ensure the sentence ends with the proper punctuation if trimmed.
+                string trimmedSentence = sentence.Trim();
+                if (!string.IsNullOrEmpty(trimmedSentence))
+                {
+                    stringBuilder.AppendLine($"  <li>{trimmedSentence}.</li>");
+                }
+            }
+
+            stringBuilder.AppendLine("</ul>");
+
+            _summary= stringBuilder.ToString();
+
         }
         else
         {
             _summary = text; // Use plain text for other modes
         }
+
+        // Transfer the summary to the parent component
+        if(TransferSummary.HasDelegate)
+        {
+            TransferSummary.InvokeAsync(_summary);
+        }
+
+        //scroll to the summary
+        JSRuntime.InvokeVoidAsync("scrollToElement", "summaryContainer");
 
     }
 
