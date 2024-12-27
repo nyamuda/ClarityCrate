@@ -8,7 +8,7 @@
 <style>
     .sum-editor {
         margin-left: 49.5%;
-        width:38.5rem;
+        width: 38.5rem;
         margin-top: -1.5rem;
         position: absolute;
         z-index: 5;
@@ -21,7 +21,7 @@
     <div class="d-none d-md-flex row">
         <div class="col-12 d-flex flex-column justify-content-between">
 
-            <div class="summarization-text-submit col-6">
+            <div class="summarization-text-submit">
                 <div class="d-none d-md-block">
                     <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="SummarizationService.Text" TextChanged="OnTextChanged" Lines="@(Mode.Equals("custom")?10:14)" Clearable="true" DisableUnderLine />
                 </div>
@@ -33,14 +33,11 @@
                 }
 
                 <!-- Bottom Buttons -->
-                <div class="mt-1 d-flex justify-content-between align-items-center">
-                    <div>
-                        @if (SummarizationService.Text.Length > 0)
-                        {
-                            <MudText>@numOfWords words</MudText>
-                        }
-                        else
-                        {
+                <div class="mt-1 d-flex justify-content-between align-items-baseline">
+                    <div class="d-flex justify-conten-start align-items-center">
+                        <div class="me-3">
+
+
                             <MudFileUpload Context="fileInput" T="IBrowserFile" Accept="@_allSupportedFileExtensions" FilesChanged="UploadFile" MaximumFileCount="100">
                                 <ButtonTemplate>
                                     @if (_isProcessingFile)
@@ -49,7 +46,18 @@
                                             @_fileStatus...
                                         </MudButton>
                                     }
-                                    else                              {
+                                    else if (SummarizationService.IsSummarizing)
+                                    {
+                                        <!--Disable button until summarization is finished-->
+                                        <MudTooltip Text="Wait until summarization is finished" Arrow="true">
+                                            <MudButton Disabled="true" HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
+                                                Upload
+                                            </MudButton>
+                                        </MudTooltip>
+
+                                    }
+                                    else
+                                    {
 
                                         <MudTooltip Text="Upload a document to summarize" Arrow="true">
                                             <MudButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
@@ -60,57 +68,58 @@
                                     }
                                 </ButtonTemplate>
                             </MudFileUpload>
-                        }
 
-                    </div>
-                    <div>
-                        @if (SummarizationService.IsSummarizing)
-                        {
-                            <MudButton class="blue-grey darken-4 text-light cursor-progress mt-1" Variant="Variant.Filled">
-                                Summarizing...
-                            </MudButton>
 
-                        }
-                        else
-                        {
-                            <!--Only Logged in users can use the custom summarization mode-->
-                            if (Mode.Equals("custom"))
+                        </div>
+                        <div>
+                            @if (SummarizationService.IsSummarizing)
                             {
-                                <CascadingAuthenticationState>
-                                    <AuthorizeView>
-                                        <Authorized>
-                                            <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled">
-                                                Summarize
-                                            </MudButton>
-                                        </Authorized>
-                                        <NotAuthorized>
-                                            <MudButton Href="Account/Login" Class="" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Lock">Login to use custom mode</MudButton>
-                                        </NotAuthorized>
-                                    </AuthorizeView>
-                                </CascadingAuthenticationState>
+                                <MudButton class="blue-grey darken-4 text-light cursor-progress mt-1" Variant="Variant.Filled">
+                                    Summarizing...
+                                </MudButton>
 
                             }
                             else
                             {
-                                <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled">
-                                    Summarize
-                                </MudButton>
-                            }
-                        }
-                    </div>
+                                <!--Only Logged in users can use the custom summarization mode-->
+                                if (Mode.Equals("custom"))
+                                {
+                                    <CascadingAuthenticationState>
+                                        <AuthorizeView>
+                                            <Authorized>
+                                                <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled">
+                                                    Summarize
+                                                </MudButton>
+                                            </Authorized>
+                                            <NotAuthorized>
+                                                <MudButton Href="Account/Login" Class="" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Lock">Login to use custom mode</MudButton>
+                                            </NotAuthorized>
+                                        </AuthorizeView>
+                                    </CascadingAuthenticationState>
 
+                                }
+                                else
+                                {
+                                    <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled">
+                                        Summarize
+                                    </MudButton>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <MudText>@numOfWords words</MudText>
                 </div>
             </div>
         </div>
         <!--Summary Block-->
-       <!--
-        <div class="col-12 mt-5">
-               <TextEditorItem Value="@@_summary" EditorPurpose="Summary" FileName="@@fileName"/>
-               </div>
+        <!--
+         <div class="col-12 mt-5">
+                <TextEditorItem Value="@@_summary" EditorPurpose="Summary" FileName="@@fileName"/>
+                </div>
 
-       -->
-        
-       
+        -->
+
+
     </div>
 
     <!--Mobile View-->
@@ -228,9 +237,10 @@
 
 
     public string _summary = "Your summary will go here";
-    //Transfer the summary to the parent component
+    //Transfer the summary, and file name to the parent component
+    //by passing a tuple
     [Parameter]
-    public EventCallback<string> TransferSummary { get; set; }
+    public EventCallback<(string Summary, string FileName, int SummaryWords)> TransferSummary { get; set; }
 
     private int numOfWords = 0;
     private int summaryNumOfWords = 0;
@@ -553,7 +563,7 @@
 
             stringBuilder.AppendLine("</ul>");
 
-            _summary= stringBuilder.ToString();
+            _summary = stringBuilder.ToString();
 
         }
         else
@@ -562,9 +572,10 @@
         }
 
         // Transfer the summary to the parent component
-        if(TransferSummary.HasDelegate)
+        if (TransferSummary.HasDelegate)
         {
-            TransferSummary.InvokeAsync(_summary);
+            var summaryNumOfWords = WordCount(_summary);
+            TransferSummary.InvokeAsync((_summary, fileName, summaryNumOfWords));
         }
 
         //scroll to the summary
