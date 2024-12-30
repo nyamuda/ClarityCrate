@@ -122,13 +122,13 @@
 
 
 <div class="container">
-    <div id="convert-to-pdf" class="text-start mb-5">
+    <div class="text-start mb-5">
         <p class="h1">Convert files to PDF</p>
         <p>We support various document and image file types for uploading and converting to PDF.</p>
         <p>Choose your file, and we’ll handle the conversion.</p>
     </div>
     <!-- File Upload Section -->
-    <div>
+    <div id="convert-to-pdf">
         <h5>Upload your file</h5>
         <SfUploader ID="fileCoverterUploader" AllowMultiple="false" AllowedExtensions="@_allSupportedFileExtensions">
             <Syncfusion.Blazor.Inputs.UploaderEvents ValueChange="@FileUploaded" OnRemove="OnFileRemove" Created="OnCreateUploader"></Syncfusion.Blazor.Inputs.UploaderEvents>

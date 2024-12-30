@@ -1,5 +1,453 @@
-﻿<h3>ExtractFromImage</h3>
+﻿@page "/extract-from-image"
+
+@using Clarity_Crate.Services
+@using Clarity_Crate.Components.Pages.TextEditor
+@inject FileService FileService
+@inject AppService AppService
+@inject IJSRuntime JSRuntime
+@using Syncfusion.Blazor.Inputs
+@inject NavigationManager NavigationManager
+
+<PageTitle>Extract from Image</PageTitle>
+
+
+<style>
+
+    .e-upload.e-control-wrapper, .e-bigger.e-small .e-upload.e-control-wrapper {
+        min-height: 7rem;
+    }
+
+    .primary-bg-color {
+    }
+
+
+    .primary-text-color {
+    }
+
+
+
+
+
+    /*** Facility ***/
+    .facility-item .facility-icon {
+        position: relative;
+        margin: 0 auto;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .facility-item .facility-icon::before {
+            position: absolute;
+            content: "";
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: rgba(255, 255, 255, .9);
+            transition: .5s;
+            z-index: 1;
+        }
+
+        .facility-item .facility-icon span {
+            display: none;
+            position: absolute;
+            content: "";
+            width: 15px;
+            height: 30px;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+        }
+
+            .facility-item .facility-icon span:last-child {
+                left: auto;
+                right: 0;
+            }
+
+        .facility-item .facility-icon i {
+            position: relative;
+            z-index: 2;
+        }
+
+    .facility-item .facility-text {
+        position: relative;
+        min-height: 250px;
+        padding: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        flex-direction: column;
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .facility-item .facility-text::before {
+            position: absolute;
+            content: "";
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: rgba(255, 255, 255, .9);
+            transition: .5s;
+            z-index: 1;
+        }
+
+        .facility-item .facility-text * {
+            position: relative;
+            z-index: 2;
+        }
+
+    .facility-item:hover .facility-icon::before,
+    .facility-item:hover .facility-text::before {
+        background: transparent;
+    }
+
+    .facility-item * {
+        transition: .5s;
+    }
+
+    .facility-item:hover * {
+        color: #FFFFFF !important;
+    }
+
+</style>
+
+
+
+
+<div class="container">
+    <div class="row mb-n3">
+        <div class="col-md-8">
+            <div id="convert-to-pdf" class="text-start mb-5">
+                <p class="h1">Extract text from images</p>
+                <div class="d-block d-md-none mb-3" data-wow-delay="0.5s">
+                    <img style="width:8rem;" class="img-fluid" src="img/file-extraction.png" alt="file extraction image">
+                </div>
+                <p>Extract text from images, make edits, and export it as a PDF or Word file.</p>
+
+            </div>
+            <!-- File Upload Section -->
+            <div id="extractFromImage">
+
+                <h5 class="mb-3 mb-md-2">Upload your image</h5>
+                <SfUploader ID="imageExtractUploader" AllowMultiple="false" AllowedExtensions="@_allSupportedFileExtensions">
+                    <Syncfusion.Blazor.Inputs.UploaderEvents ValueChange="@FileUploaded" OnRemove="OnFileRemove" Created="OnCreateUploader"></Syncfusion.Blazor.Inputs.UploaderEvents>
+                </SfUploader>
+            </div>
+        </div>
+        <!-- PDF -->
+        <div class="d-none d-md-block col-md-4 align-self-end text-center text-md-end wow fadeIn" data-wow-delay="0.5s">
+            <img style="max-width:18rem;" class="img-fluid" src="img/file-extraction.png" alt="file extraction image">
+        </div>
+    </div>
+
+
+
+
+
+    <!--Extracted Text Editor-->
+
+    <MudCollapse Class="" Expanded="_showExtractedText">
+
+        <MudPaper id="imageConvertedText" Class="mt-3 mb-n3" Elevation="3">
+
+            <TextEditorItem Value="@_extractedText" NumOfWords="@_extractedTextNumWords" EditorPurpose="Extracted_text" FileName="@_fileName" ShowFullPanel="true" />
+
+        </MudPaper>
+    </MudCollapse>
+
+
+    <!-- Extract from PDF Button -->
+    @if (_isFileUploaded)
+    {
+
+        @if (_isExtractingText)
+        {
+            <div class="d-flex justify-content-start mt-3">
+                <MudButton class="blue-grey darken-4 text-light cursor-progress mt-1" Variant="Variant.Filled">
+                    Extracting...
+                </MudButton>
+            </div>
+
+
+        }
+        else if (string.IsNullOrEmpty(_extractedText))
+        {
+            <div class="d-flex justify-content-start mt-3">
+                <MudButton Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled" StartIcon="fas fa-file-alt" OnClick="ExtractTextFromPdf">
+                    Extract from image
+                </MudButton>
+            </div>
+        }
+        <!--View PDF or download PDF buttons-->
+        else
+        {
+            <div class="d-flex justify-content-start mt-3">
+
+                @if (_showExtractedText)
+                {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="far fa-eye-slash" OnClick="() => ToggleView()">
+                        Hide Text
+                    </MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="far fa-eye" OnClick="() => ToggleView()">
+                        View Text
+                    </MudButton>
+                }
+            </div>
+        }
+    }
+</div>
+
+
+
+
 
 @code {
+    // All supported file extensions
+    private string _allSupportedFileExtensions = ".jpeg, .jpg, .png, .bmp, .gif, .tiff, .tif, .emf, .ico, .icon";
+
+
+    private MemoryStream _uploadedFileStream;
+    private string _fileExtension;
+    private string _fileName;
+    private bool _isFileUploaded = false;
+    private bool _showExtractedText = false;
+    private bool _isExtractingText = false;
+    private string _extractedText = string.Empty;
+    private int _extractedTextNumWords = 0;
+    private readonly string[] _supportedImageExtensions =
+        { ".jpeg", ".jpg", ".png", ".bmp", ".gif", ".tiff", ".tif", ".emf", ".ico", ".icon" };
+    bool _expanded = true;
+    //file size
+    private long _fileSize = 0;
+
+    //MudBlazor Dialog
+    [Inject] private IDialogService DialogService { get; set; }
+    private readonly DialogOptions dialogOptions = new DialogOptions() { CloseButton = true };
+
+
+
+
+    private async Task FileUploaded(Syncfusion.Blazor.Inputs.UploadChangeEventArgs args)
+    {
+        try
+        {
+
+            // Reset state before new upload
+            _uploadedFileStream = new MemoryStream();
+            _isFileUploaded = false;
+            _showExtractedText = false;
+            _extractedText = string.Empty;
+            _extractedTextNumWords = 0;
+
+
+
+
+            // Handle file upload
+            var file = args.Files.FirstOrDefault(); // Single file upload
+            if (file != null)
+            {
+                // Get file name and without the extension
+                _fileName = Path.GetFileNameWithoutExtension(file.File.Name);
+
+                // Get file extension
+                _fileExtension = Path.GetExtension(file.File.Name?.ToLower());
+
+                // Get file size
+                _fileSize = file.File.Size;
+
+                //maximum file size for files is 1.5MB
+                if (_fileSize > 5 * 1024 * 1024)
+                {
+                    var message = "Maximum file size for extraction is 5MB";
+
+                    throw new NotSupportedException(message);
+                }
+
+
+                // Save file to memory stream
+                await file.File.OpenReadStream(long.MaxValue).CopyToAsync(_uploadedFileStream);
+                _uploadedFileStream.Position = 0; // Reset stream position for further use
+                _isFileUploaded = true; // Show "Convert to PDF" button
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"File upload failed: {ex.Message}");
+            //show error message
+            var message = $"Error: {ex.Message}";
+            AppService.ShowSnackBar(message: message, severity: "error");
+        }
+    }
+
+    private async Task ExtractTextFromPdf()
+    {
+        if (_uploadedFileStream != null)
+        {
+            //show loader
+            _isExtractingText = true;
+
+            // Pass the MemoryStream to the PDF extraction logic
+            await HandlePdfExtraction(_uploadedFileStream);
+        }
+    }
+
+    private int WordCount(string text)
+    {
+        return string.IsNullOrWhiteSpace(text) ? 0 : text.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
+    }
+
+    private async Task HandlePdfExtraction(Stream fileStream)
+    {
+
+        try
+        {
+
+            //Image file
+            if (_supportedImageExtensions.Contains(_fileExtension))
+            {
+
+
+                //first, convert the image to PDF
+                var pdfStream = FileService.ConvertImageToPdf(fileStream);
+
+
+                //second, perform OCR on the PDF
+                await PerformOcr(pdfStream);
+
+
+
+            }
+
+
+            else
+            {
+
+
+                //show error message
+                var message = $"The file type {_fileExtension} is not supported for text text extraction.";
+                AppService.ShowSnackBar(message: message, severity: "error");
+                //remove uploaded file
+                _uploadedFileStream = null;
+                _isFileUploaded = false;
+                _isExtractingText = false;
+
+            }
+
+
+
+        }
+        catch (Exception ex)
+        {
+            //hide loader
+            _isExtractingText = false;
+            //show error message
+            var message = $"Error: {ex.Message}";
+            AppService.ShowSnackBar(message: message, severity: "error");
+
+        }
+    }
+
+    public void OnFileRemove(RemovingEventArgs args)
+    {
+        _isFileUploaded = false;
+        _showExtractedText = false;
+    }
+
+    private async Task DownloadPdf(byte[] pdfBytes)
+    {
+        // Trigger the download with the correct file name
+        await TriggerDownload(pdfBytes, _fileName);
+
+
+    }
+
+    private async Task TriggerDownload(byte[] fileBytes, string fileName)
+    {
+        var base64Data = Convert.ToBase64String(fileBytes);
+        var fileUrl = $"data:application/pdf;base64,{base64Data}";
+        await JSRuntime.InvokeVoidAsync("downloadFile", fileUrl, fileName);
+
+        //show snack bar message
+        //that the file has been downloaded
+        AppService.ShowSnackBar(message: "File downloaded successfully");
+    }
+    //Toggle view PDF
+    private async Task ToggleView()
+    {
+        _showExtractedText = !_showExtractedText;
+
+        if (_showExtractedText)
+        {
+            await JSRuntime.InvokeVoidAsync("scrollToElement", "imageConvertedText");
+        }
+
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("scrollToElement", "extractFromImage");
+        }
+    }
+
+    public async Task OnCreateUploader()
+    {
+        await JSRuntime.InvokeVoidAsync("create", "imageExtractUploader");
+    }
+
+    //Perform OCR on the image or PDF
+    private async Task PerformOcr(Stream fileStream)
+    {
+        //first ask the user if they want to perform OCR
+        var title = "Perform OCR?";
+        var message = "The uploaded file requires OCR to extract text. This process may take a while. Do you want to continue?";
+        var confirmText = "Continue";
+        var cancelText = "Cancel";
+        bool? result = await DialogService.ShowMessageBox(
+          title,
+          message,
+          yesText: confirmText, cancelText: cancelText, options: dialogOptions);
+
+        var state = result == null ? cancelText : confirmText;
+
+        //close the dialog
+
+        //if result is not null, then its confirmed
+        if (state.Equals(confirmText))
+        {
+            //delay for 2 seconds
+            //to allow the dialog to close
+            await Task.Delay(2000);
+            //Perform OCR
+            var text = await FileService.PerformOcrOnPdf(fileStream);
+
+            //if OCR is successful, set the text
+            if (!string.IsNullOrEmpty(text))
+            {
+                _extractedTextNumWords = WordCount(text);
+                _extractedText = text;
+                //show snack bar
+                var displayMessage = "OCR completed successfully.";
+                AppService.ShowSnackBar(message: displayMessage, severity: "normal");
+            }
+            else
+            {
+                //show snack bar
+                var displayMessage = "OCR failed to extract text from the image.";
+                AppService.ShowSnackBar(message: displayMessage, severity: "error");
+            }
+            _isExtractingText = false;
+
+        }
+    }
+
 
 }

@@ -125,7 +125,7 @@
 <div class="container">
     <div class="row">
        <div class="col-md-8">
-            <div id="convert-to-pdf" class="text-start mb-5">
+            <div class="text-start mb-5">
                 <p class="h1">Extract text from PDF files</p>
                 <div class="d-block d-md-none mb-3" data-wow-delay="0.5s">
                     <img style="width:8rem;" class="img-fluid" src="img/file-extraction.png" alt="file extraction image">
@@ -134,10 +134,9 @@
                 <p>Edit the extracted content in a rich text editor and export it as a PDF or Word document.</p>
             </div>
             <!-- File Upload Section -->
-            <div>
-                
-                <h5 class="mb-3 mb-md-0">Upload your file</h5>
-                <SfUploader ID="fileCoverterUploader" AllowMultiple="false" AllowedExtensions="@_allSupportedFileExtensions">
+            <div id="extractPdf">
+                <h5 class="mb-3 mb-md-1">Upload your file</h5>
+                <SfUploader ID="pdfExtractUploader" AllowMultiple="false" AllowedExtensions="@_allSupportedFileExtensions">
                     <Syncfusion.Blazor.Inputs.UploaderEvents ValueChange="@FileUploaded" OnRemove="OnFileRemove" Created="OnCreateUploader"></Syncfusion.Blazor.Inputs.UploaderEvents>
                 </SfUploader>
             </div>
@@ -154,12 +153,9 @@
 
     <!--Extracted Text Editor-->
 
-    <MudCollapse Class="" Expanded="_showExtractedText">
-       
-        <MudPaper id="pdfConvertedText" Class="mt-3" Elevation="3">
-
-            <TextEditorItem Value="@_extractedText" NumOfWords="@_extractedTextNumWords" EditorPurpose="Extracted_text" FileName="@_fileName" ShowFullPanel="true" />
-
+    <MudCollapse Expanded="_showExtractedText">
+        <MudPaper id="pdfText" Class="mt-3 mb-n3" Elevation="3">
+            <TextEditorItem Value="@_extractedText" NumOfWords="@_extractedTextNumWords" EditorPurpose="Extracted_text" FileName="@_fileName" ShowFullPanel="true" />        
         </MudPaper>
     </MudCollapse>
 
@@ -193,13 +189,13 @@
                
                 @if (_showExtractedText)
                 {
-                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="far fa-eye-slash" OnClick="() => ToggleViewPdf()">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="far fa-eye-slash" OnClick="() => ToggleView()">
                         Hide Text
                     </MudButton>
                 }
                 else
                 {
-                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="far fa-eye" OnClick="() => ToggleViewPdf()">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="far fa-eye" OnClick="() => ToggleView()">
                         View Text
                     </MudButton>
                 }
@@ -399,24 +395,24 @@
         AppService.ShowSnackBar(message: "File downloaded successfully");
     }
     //Toggle view PDF
-    private async Task ToggleViewPdf()
+    private async Task ToggleView()
     {
         _showExtractedText = !_showExtractedText;
 
         if (_showExtractedText)
         {
-            await JSRuntime.InvokeVoidAsync("scrollToElement", "pdfConvertedText");
+            await JSRuntime.InvokeVoidAsync("scrollToElement", "pdfText");
         }
 
         else
         {
-            await JSRuntime.InvokeVoidAsync("scrollToElement", "extractFromPdf");
+            await JSRuntime.InvokeVoidAsync("scrollToElement", "extractPdf");
         }
     }
 
     public async Task OnCreateUploader()
     {
-        await JSRuntime.InvokeVoidAsync("create", "fileConverterUploader");
+        await JSRuntime.InvokeVoidAsync("create", "pdfExtractUploader");
     }
 
     //Perform OCR on the image or PDF
