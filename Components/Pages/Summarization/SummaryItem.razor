@@ -5,15 +5,7 @@
 @inject IJSRuntime JSRuntime
 @inject AppService AppService
 @using System.Text;
-<style>
-    .sum-editor {
-        margin-left: 49.5%;
-        width: 38.5rem;
-        margin-top: -1.5rem;
-        position: absolute;
-        z-index: 5;
-    }
-</style>
+
 
 
 <div class="summarization-mode">
@@ -42,7 +34,7 @@
                                 <ButtonTemplate>
                                     @if (_isProcessingFile)
                                     {
-                                        <MudButton class="gray darken-4 cursor-progress" Variant="Variant.Outlined">
+                                        <MudButton class="gray darken-4 cursor-progress" Variant="Variant.Text">
                                             @_fileStatus...
                                         </MudButton>
                                     }
@@ -50,7 +42,7 @@
                                     {
                                         <!--Disable button until summarization is finished-->
                                         <MudTooltip Text="Wait until summarization is finished" Arrow="true">
-                                            <MudButton Disabled="true" HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
+                                            <MudButton Disabled="true" HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Upload">
                                                 Upload
                                             </MudButton>
                                         </MudTooltip>
@@ -60,7 +52,7 @@
                                     {
 
                                         <MudTooltip Text="Upload a document to summarize" Arrow="true">
-                                            <MudButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">
+                                            <MudButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Upload">
                                                 Upload
                                             </MudButton>
                                         </MudTooltip>
@@ -111,122 +103,88 @@
                 </div>
             </div>
         </div>
-        <!--Summary Block-->
-        <!--
-         <div class="col-12 mt-5">
-                <TextEditorItem Value="@@_summary" EditorPurpose="Summary" FileName="@@fileName"/>
-                </div>
-
-        -->
-
-
     </div>
 
     <!--Mobile View-->
     <div class="d-block d-md-none w-100 mt-3">
-        <MudTabs Centered="true" Rounded="false" @ref="tabs" ApplyEffectsToContainer="true" PanelClass="pa-6" HideSlider="false">
-            <MudTabPanel Text="Original">
 
-                <div class="summarization-text-submit">
-                    <div class="d-block d-md-none">
-                        <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="SummarizationService.Text" TextChanged="OnTextChanged" Lines="@(Mode.Equals("custom")?12:16)" Clearable="true" DisableUnderLine />
-                    </div>
 
-                    <!--If summarization mode is custom-->
-                    @if (Mode.Equals("custom"))
+        <div class="summarization-text-submit">
+            <div class="d-block d-md-none">
+                <MudTextField T="string" Immediate="true" Label="Enter your text" Variant="Variant.Text" @bind-Value="SummarizationService.Text" TextChanged="OnTextChanged" Lines="@(Mode.Equals("custom")?12:16)" Clearable="true" DisableUnderLine />
+            </div>
+
+            <!--If summarization mode is custom-->
+            @if (Mode.Equals("custom"))
+            {
+                <MudTextField T="string" Immediate="true" Label="Enter your instruction" HelperText="E.g., Summarize the following text in a single sentence" Variant="Variant.Filled" @bind-Value="SummarizationService.CustomPrompt" Clearable="true" />
+            }
+            <!-- Bottom Buttons -->
+            <div class="mt-1 d-flex justify-content-between align-items-center">
+                <div>
+                    @if (SummarizationService.Text.Length > 0)
                     {
-                        <MudTextField T="string" Immediate="true" Label="Enter your instruction" HelperText="E.g., Summarize the following text in a single sentence" Variant="Variant.Filled" @bind-Value="SummarizationService.CustomPrompt" Clearable="true" />
+                        <MudText>@numOfWords words</MudText>
                     }
-                    <!-- Bottom Buttons -->
-                    <div class="mt-1 d-flex justify-content-between align-items-center">
-                        <div>
-                            @if (SummarizationService.Text.Length > 0)
-                            {
-                                <MudText>@numOfWords words</MudText>
-                            }
-                            else
-                            {
-                                <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFile" MaximumFileCount="100">
-                                    <ButtonTemplate>
-                                        @if (_isProcessingFile)
-                                        {
-                                            <MudButton class="gray darken-4 cursor-progress" Variant="Variant.Outlined">
-                                                @_fileStatus...
-                                            </MudButton>
-                                        }
-                                        else
-                                        {
-                                            <MudIconButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Icon="@Icons.Material.Filled.Upload" />
-
-                                        }
-                                    </ButtonTemplate>
-                                </MudFileUpload>
-                            }
-                        </div>
-                        <div>
-                            @if (SummarizationService.IsSummarizing)
-                            {
-
-                                <MudButton class="blue-grey darken-4 text-light cursor-progress mt-1" Variant="Variant.Filled">
-                                    Summarizing...
-                                </MudButton>
-
-
-                            }
-                            else
-                            {
-                                <!--Only Logged in users can use the custom summarization mode-->
-                                if (Mode.Equals("custom"))
+                    else
+                    {
+                        <MudFileUpload Context="fileInput" T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFile" MaximumFileCount="100">
+                            <ButtonTemplate>
+                                @if (_isProcessingFile)
                                 {
-                                    <CascadingAuthenticationState>
-                                        <AuthorizeView>
-                                            <Authorized>
-                                                <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled">
-                                                    Summarize
-                                                </MudButton>
-                                            </Authorized>
-                                            <NotAuthorized>
-                                                <MudButton Href="Account/Login" Class="" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Lock">Login</MudButton>
-                                            </NotAuthorized>
-                                        </AuthorizeView>
-                                    </CascadingAuthenticationState>
-
+                                    <MudButton class="gray darken-4 cursor-progress" Variant="Variant.Outlined">
+                                        @_fileStatus...
+                                    </MudButton>
                                 }
                                 else
                                 {
-                                    <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled">
-                                        Summarize
-                                    </MudButton>
+                                    <MudIconButton HtmlTag="label" for="@fileInput" Class="gray darken-4" Icon="@Icons.Material.Filled.Upload" />
+
                                 }
-
-                            }
-                        </div>
-                    </div>
-                </div>
-            </MudTabPanel>
-            <MudTabPanel Text="Summarized">
-                <MudTextField T="string" Immediate="true" Label="" Variant="Variant.Text" @bind-Value="_summary" TextChanged="OnSummaryChanged" Lines="17" DisableUnderLine />
-
-                <div class="mt-1 d-flex justify-content-between align-items-center">
-                    <MudText>@summaryNumOfWords words</MudText>
-                    @if (_summary.Length > 0)
-                    {
-                        <div>
-
-                            <MudIconButton OnClick="DownloadPdf" Icon="@Icons.Material.Filled.Download" aria-label="Download text" />
-
-
-                            <MudIconButton OnClick="CopySummary" Icon="@Icons.Material.Filled.ContentCopy" aria-label="Copy text " />
-
-                        </div>
+                            </ButtonTemplate>
+                        </MudFileUpload>
                     }
-
                 </div>
+                <div>
+                    @if (SummarizationService.IsSummarizing)
+                    {
 
-            </MudTabPanel>
+                        <MudButton class="blue-grey darken-4 text-light cursor-progress mt-1" Variant="Variant.Filled">
+                            Summarizing...
+                        </MudButton>
 
-        </MudTabs>
 
+                    }
+                    else
+                    {
+                        <!--Only Logged in users can use the custom summarization mode-->
+                        if (Mode.Equals("custom"))
+                        {
+                            <CascadingAuthenticationState>
+                                <AuthorizeView>
+                                    <Authorized>
+                                        <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled">
+                                            Summarize
+                                        </MudButton>
+                                    </Authorized>
+                                    <NotAuthorized>
+                                        <MudButton Href="Account/Login" Class="" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Lock">Login</MudButton>
+                                    </NotAuthorized>
+                                </AuthorizeView>
+                            </CascadingAuthenticationState>
+
+                        }
+                        else
+                        {
+                            <MudButton OnClick="SummarizeText" Disabled="@string.IsNullOrEmpty(SummarizationService.Text)" Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled">
+                                Summarize
+                            </MudButton>
+                        }
+
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -251,6 +209,7 @@
     public string Mode { get; set; } = "paragraph";
     IBrowserFile file;
     private bool _isProcessingFile = false;
+
     private string _fileStatus = "Processing";
     // All supported file extensions
     private string _allSupportedFileExtensions = ".pdf, .xlsx, .xls, .pptx, .ppt, .doc, .docx, .xml, .dot, .dotx, .docm, .dotm, .rtf, .txt, .md, .html, .jpeg, .jpg, .png, .bmp, .gif, .tiff, .tif, .emf, .ico, .icon";
@@ -264,7 +223,10 @@
     private readonly string[] _supportedImageExtensions =
         { ".jpeg", ".jpg", ".png", ".bmp", ".gif", ".tiff", ".tif", ".emf", ".ico", ".icon" };
 
-    MudTabs tabs;
+    //MudBlazor Dialog
+    [Inject] private IDialogService DialogService { get; set; }
+    private readonly DialogOptions dialogOptions = new DialogOptions() { CloseButton = true };
+
 
 
 
@@ -329,7 +291,21 @@
                 {
 
                     // Extract text directly from the PDF
-                    SummarizationService.Text = FileService.ExtractTextFromPdf(memoryStream);
+                    var extractedText = FileService.ExtractTextFromPdf(memoryStream);
+
+                    // If text is not extracted, fallback to OCR
+                    if (string.IsNullOrWhiteSpace(extractedText))
+                    {
+
+                        //perform OCR on the PDF
+                        await PerformOcr(memoryStream);
+
+                    }
+
+                    else
+                    {
+                        SummarizationService.Text = extractedText;
+                    }
                 }
                 //Excel file
                 else if (fileExtension == ".xlsx" || fileExtension == ".xls")
@@ -374,7 +350,8 @@
                     using (var pdfStream = FileService.ConvertImageToPdf(memoryStream))
                     {
 
-                        SummarizationService.Text = FileService.ExtractTextFromPdf(pdfStream);
+                        //perform OCR on the image
+                        await PerformOcr(pdfStream);
                     }
                 }
 
@@ -443,8 +420,6 @@
         //show the summary
         ShowSummary(summaryText);
 
-        //activate the summary tab on mobile devices
-        ActivateTab(1);
 
     }
 
@@ -499,12 +474,6 @@
             AppService.ShowSnackBar(message: "Failed to copy text", severity: "error");
 
         }
-    }
-
-    //Activate a tab
-    void ActivateTab(int index)
-    {
-        tabs.ActivatePanel(index);
     }
 
 
@@ -580,6 +549,54 @@
 
         //scroll to the summary
         JSRuntime.InvokeVoidAsync("scrollToElement", "summaryContainer");
+        JSRuntime.InvokeVoidAsync("scrollToElement", "summaryMobileContainer");
+
+    }
+
+
+    //Perform OCR on the image or PDF
+    private async Task PerformOcr(Stream fileStream)
+    {
+        //first ask the user if they want to perform OCR
+        var title = "Perform OCR?";
+        var message = "The file you uploaded is an image or scanned document. Do you want to perform OCR to extract text from the file? This process may take a while.";
+        var confirmText = "Continue";
+        var cancelText = "Cancel";
+        bool? result = await DialogService.ShowMessageBox(
+          title,
+          message,
+          yesText: confirmText, cancelText: cancelText, options:dialogOptions);
+
+        var state = result == null ? cancelText : confirmText;
+
+        //close the dialog
+       
+        //if result is not null, then its confirmed
+        if (state.Equals(confirmText))
+        {
+            //delay for 2 seconds
+            //to allow the dialog to close
+            await Task.Delay(2000);
+           //Perform OCR
+            var text = await FileService.PerformOcrOnPdf(fileStream);
+
+            //if OCR is successful, set the text
+            if (!string.IsNullOrEmpty(text))
+            {
+                SummarizationService.Text = text;
+                //show snack bar
+               var displayMessage = "OCR completed successfully.";
+                AppService.ShowSnackBar(message: displayMessage, severity: "normal");
+            }
+            else
+            {
+                //show snack bar
+                var displayMessage = "OCR failed to extract text from the image or scanned document.";
+                AppService.ShowSnackBar(message: displayMessage, severity: "error");
+            }
+
+        }
+
 
     }
 

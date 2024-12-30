@@ -64,17 +64,7 @@ namespace Clarity_Crate.Services
                     }
                 }
 
-                // If text is not extracted, fallback to OCR
-                if (string.IsNullOrWhiteSpace(extractedText))
-                {
-                    //show snack bar to notify the user OCR has started
-                    string message = "This appears to be a scanned document. Text extraction might take a little longer. Please wait.";
-                    _appService.ShowSnackBar(message: message, severity: "info");
-                    //perform OCR on the PDF
-                    extractedText = PerformOcrOnPdf(pdfStream);
-                    
-                    
-                }
+                
             }
             catch (Exception ex)
             {
@@ -142,35 +132,38 @@ namespace Clarity_Crate.Services
 
         // Fallback method: Perform OCR using IronOCR
         
-        private string PerformOcrOnPdf(Stream pdfStream)
+        public Task<string> PerformOcrOnPdf(Stream pdfStream)
         {
-
-            string ocrText = string.Empty;
-
-            try
+           return Task.Run(() =>
             {
-                var ocrTesseract = new IronTesseract();
+                string ocrText = string.Empty;
 
-                using (var ocrInput = new OcrInput())
+                try
                 {
-                    // Reload the PDF stream because it may have been consumed
-                    pdfStream.Position = 0;
+                    var ocrTesseract = new IronTesseract();
 
-                    // Load the PDF into the OCR input
-                    ocrInput.LoadPdf(pdfStream);
+                    using (var ocrInput = new OcrInput())
+                    {
+                        // Reload the PDF stream because it may have been consumed
+                        pdfStream.Position = 0;
 
-                    // Perform OCR and extract text
-                    var ocrResult = ocrTesseract.Read(ocrInput);
-                    ocrText = ocrResult.Text;
+                        // Load the PDF into the OCR input
+                        ocrInput.LoadPdf(pdfStream);
+
+                        // Perform OCR and extract text
+                        var ocrResult = ocrTesseract.Read(ocrInput);
+                        ocrText = ocrResult.Text;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                // Handle OCR errors
-                ocrText = $"Error during OCR: {ex.Message}";
-            }
+                catch (Exception ex)
+                {
+                    // Handle OCR errors
+                    ocrText = $"Error during OCR: {ex.Message}";
+                }
 
-            return ocrText;
+                return ocrText;
+            });
+
         }
         
 

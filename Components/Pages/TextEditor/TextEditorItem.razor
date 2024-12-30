@@ -4,7 +4,7 @@
     <div class="">
         <SfRichTextEditor @ref="EditorRef" EnableResize="false" ID="RT_Editor" AutoSaveOnIdle="true" SaveInterval="saveInterval" EnableTabKey="true" EnableXhtml="true" @bind-Value="@Value">
 
-            <RichTextEditorToolbarSettings Items="@Tools" Type="ToolbarType.MultiRow"></RichTextEditorToolbarSettings>
+            <RichTextEditorToolbarSettings Items="@Tools" Type="@(ShowFullPanel?ToolbarType.MultiRow:ToolbarType.Expand)"></RichTextEditorToolbarSettings>
             <RichTextEditorExportPdf ServiceUrl="https://blazor.syncfusion.com/services/production/api/RichTextEditor/ExportToPdf" FileName="@GetFileName()" ></RichTextEditorExportPdf>
             <RichTextEditorExportWord ServiceUrl="https://blazor.syncfusion.com/services/production/api/RichTextEditor/ExportToDocx" FileName="@GetFileName()"></RichTextEditorExportWord>
             <RichTextEditorQuickToolbarSettings Table="@TableQuickToolbarItems" ShowOnRightClick="true" />
@@ -12,7 +12,7 @@
             <RichTextEditorIFrameSettings Enable="true" Attributes="@IframeAttributes" />
             <RichTextEditorEvents ValueChange="OnValueChanged" />
         </SfRichTextEditor>
-        <p class="d-flex justify-content-end py-1 me-4 bg-light">@NumOfWords words</p>
+        <p class="d-flex justify-content-end py-2 fw-bold pe-4 bg-light">@NumOfWords words</p>
     </div>
    
 </div>
@@ -41,7 +41,7 @@
 </style>
 @code {
     private SfRichTextEditor EditorRef;
-    private int saveInterval { get; set; } = 100;
+    private int saveInterval { get; set; } = 50;
     
 
     private Dictionary<string, object> IframeAttributes = new Dictionary<string, object>() {
@@ -52,9 +52,13 @@
     [Parameter]
     public string EditorPurpose { get; set; } = "";
     [Parameter]
+    public string PlaceholderText { get; set; } = "";
+    [Parameter]
     public string Value { get; set; } = "";
     [Parameter]
     public int NumOfWords { get; set; } = 0;
+    [Parameter]
+    public bool ShowFullPanel { get; set; } = false;
     private string SaveURL = "https://blazor.syncfusion.com/services/production/api/RichTextEditor/SaveFile";
     private string Path = "https://blazor.syncfusion.com/services/production/RichTextEditor/";
 
@@ -81,7 +85,7 @@
     //when the value changes
     public void OnValueChanged()
     {
-       
+       Console.WriteLine("Value Changed");
         NumOfWords = WordCount(Value);
     }
     private List<ToolbarItemModel> Tools = new List<ToolbarItemModel>()

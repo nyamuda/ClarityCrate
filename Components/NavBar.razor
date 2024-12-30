@@ -1,11 +1,9 @@
 ﻿@using Clarity_Crate.Components.Layout
 
 <style>
-   
-    .app-brand {
-        
-    }
 
+    .app-brand {
+    }
 
 </style>
 
@@ -31,10 +29,14 @@
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Tools</a>
                 <div class="dropdown-menu fade-down m-0 mb-2">
-                    <a href="/convert-to-pdf" class="dropdown-item">Convert file to PDF</a>
-                    <a href="/" class="dropdown-item">Extract text from file</a>
-                    <a href="/" class="dropdown-item">Merge PDFs</a>
-                    
+                    <NavLink class="dropdown-item" href="/convert-to-pdf" Match="NavLinkMatch.All">Convert file to PDF</NavLink>
+                    <NavLink class="dropdown-item" href="/extract-from-pdf" Match="NavLinkMatch.All">Extract text from PDF</NavLink>
+                    <!--
+                          <a href="/convert-to-pdf" class="dropdown-item">Convert file to PDF</a>
+                      <a href="/extract-from-pdf" class="dropdown-item">Extract text from PDF</a>
+                      <a href="/extract-from-image" class="dropdown-item">Extract text from image</a>
+                      <a href="/" class="dropdown-item">Merge PDFs</a>
+                    -->
                 </div>
             </div>
 
@@ -48,11 +50,6 @@
     </div>
 </nav>
 <!-- Navbar Desktop End -->
-
-
-
-
-
 <!-- Navbar Mobile Start -->
 <nav class="navbar d-flex d-lg-none navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
     <a href="index.html" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
@@ -85,5 +82,3 @@
     </div>
 </nav>
 <!-- Navbar Mobile End -->
-
-

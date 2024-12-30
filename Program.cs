@@ -4,7 +4,6 @@ using Clarity_Crate.Data;
 using Clarity_Crate.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using Syncfusion.Blazor;
@@ -81,9 +80,10 @@ builder.Services.AddMemoryCache(); // Required for Syncfusion PDF Viewer Server
 builder.Services.AddServerSideBlazor().AddHubOptions(options =>
 {
     options.MaximumReceiveMessageSize = 1024 * 1024 * 100; // 100 MB
-    options.ClientTimeoutInterval = TimeSpan.FromMinutes(5); // Adjust as needed
-    options.KeepAliveInterval = TimeSpan.FromMinutes(2); // Adjust to prevent timeouts
+   // options.ClientTimeoutInterval = TimeSpan.FromMinutes(5); // Adjust as needed
+    //options.KeepAliveInterval = TimeSpan.FromMinutes(2); // Adjust to prevent timeouts
 });
+
 
 
 

@@ -203,7 +203,7 @@ namespace Clarity_Crate.Services
                     {
                         // Handle other errors
                         IsSummarizing = false;
-                        _appService.ShowSnackBar(message:"Temporary issue. Please try again later.",severity:"warning");
+                        
 
                         var errorContent = response.Content ?? "No details provided.";
                         throw new HttpRequestException($"Error: {response.StatusCode}, Details: {errorContent}");
@@ -219,7 +219,8 @@ namespace Clarity_Crate.Services
             catch (Exception ex)
             {
                 IsSummarizing = false;
-                throw new Exception($"An error occurred while summarizing: {ex.Message}", ex);
+                _appService.ShowSnackBar(message: "Temporary issue. Please try again later.", severity: "warning");
+                //throw new Exception($"An error occurred while summarizing: {ex.Message}", ex);
             }
         }
         

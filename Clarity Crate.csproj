@@ -22,6 +22,7 @@
   
 
   <ItemGroup>
+    <PackageReference Include="Blazored.TextEditor" Version="1.1.0" />
     <PackageReference Include="IronOcr" Version="2024.12.2" />
     <PackageReference Include="itext7" Version="9.0.0" />
     <PackageReference Include="itext7.bouncy-castle-adapter" Version="9.0.0" />
@@ -45,6 +46,30 @@
     <PackageReference Include="Syncfusion.Presentation.Net.Core" Version="28.1.35" />
     <PackageReference Include="Syncfusion.PresentationRenderer.Net.Core" Version="28.1.35" />
     <PackageReference Include="Syncfusion.XlsIORenderer.Net.Core" Version="28.1.35" />
+  </ItemGroup>
+
+  
+
+  <ItemGroup>
+    <None Remove="C:\Users\Pierce T. Nyamuda\.nuget\packages\itext.pdfocr.tesseract4\3.0.2\build\\..\runtimes\x64\liblept1760.dll" />
+  </ItemGroup>
+
+  
+
+  <ItemGroup>
+    <None Remove="C:\Users\Pierce T. Nyamuda\.nuget\packages\itext.pdfocr.tesseract4\3.0.2\build\\..\runtimes\x64\libtesseract400.dll" />
+  </ItemGroup>
+
+  
+
+  <ItemGroup>
+    <None Remove="C:\Users\Pierce T. Nyamuda\.nuget\packages\itext.pdfocr.tesseract4\3.0.2\build\\..\runtimes\x86\liblept1760.dll" />
+  </ItemGroup>
+
+  
+
+  <ItemGroup>
+    <None Remove="C:\Users\Pierce T. Nyamuda\.nuget\packages\itext.pdfocr.tesseract4\3.0.2\build\\..\runtimes\x86\libtesseract400.dll" />
   </ItemGroup>
 
   

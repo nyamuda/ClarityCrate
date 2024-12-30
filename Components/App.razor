@@ -17,14 +17,18 @@
 
     <!--Syncfusion-->
     <link href="_content/Syncfusion.Blazor.Themes/bootstrap5.css" rel="stylesheet" />
+
+    <!--Blazored Text Editor-->
+    <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link href="//cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
+    <!--Blazored Text Editor-->
     
    
     <HeadOutlet />
 
 
     <!--Designs links-->
-    
-
+   
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
     
 
@@ -32,7 +36,7 @@
 
 <body>
     <Routes @rendermode="RenderModeForPage" />
-    <script src="_framework/blazor.web.js"></script>
+    
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
    
@@ -41,10 +45,18 @@
     <!-- Syncfusion Blazor PDF Viewer controls scripts -->   
     <script src="_content/Syncfusion.Blazor.SfPdfViewer/scripts/syncfusion-blazor-sfpdfviewer.min.js" type="text/javascript"></script>
 
+    <!--Blazored Text Editor-->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="_content/Blazored.TextEditor/quill-blot-formatter.min.js"></script>
+    <script src="_content/Blazored.TextEditor/Blazored-BlazorQuill.js"></script>
+    <!--Blazored Text Editor-->
     <!--Some JavaScript Code-->
     <script src="js/Layout.js"></script>
     <script src="js/JavaScript.js"></script>
     <script src="js/Uploader.js"></script>
+
+
+    <script src="_framework/blazor.web.js"></script>
     @code {
         [CascadingParameter]
         private HttpContext HttpContext { get; set; } = default!;

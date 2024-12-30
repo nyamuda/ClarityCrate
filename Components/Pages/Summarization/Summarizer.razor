@@ -55,7 +55,7 @@
     }
 
     .mobile-summarizer {
-        min-height: 32rem;
+        min-height: 28rem;
     }
 </style>
 
@@ -102,8 +102,10 @@
     </MudDrawerContainer>
 </MudPaper>
 <!--Feedback End-->
+<!--Summarizer Start-->
+<div class="container">
 <!--Desktop Tabs Start-->
-<div class="container m-auto d-none d-md-block">
+<div class="m-auto d-none d-md-block">
 
     <MudPaper Class="" Elevation="4">
         <!--Slider Start-->
@@ -114,7 +116,7 @@
         -->
         <!--Slider End-->
 
-        <MudTabs @ref="tabs" Class="desktop-summarizer" @bind-ActivePanelIndex="_activeTab" HideSlider="true" Border="true" Elevation="0" Rounded="true"
+        <MudTabs Class="desktop-summarizer" @bind-ActivePanelIndex="_activeTab" HideSlider="true" Border="true" Elevation="0" Rounded="true"
                  ApplyEffectsToContainer="true" PanelClass="pa-0 pa-md-6">
             <MudTabPanel Disabled="true" Class="d-none d-lg-flex">
                 <TabContent>
@@ -169,29 +171,20 @@
     </MudPaper>
 
 
-    <!--Summary Block-->
-    @if (!string.IsNullOrEmpty(_summary))
-    {
-        <MudPaper id="summaryContainer" Class="mt-3" Elevation="3">
-
-            <TextEditorItem Value="@_summary" NumOfWords="@_summaryWords" EditorPurpose="Summary" FileName="@_fileName" />
-
-        </MudPaper>
-    }
-    <!--Summary Block End-->
+    
 </div>
 <!--Desktop Tabs End-->
 <!--Mobile Tabs Start-->
 <div class="w-100 d-block d-md-none">
     <MudPaper Class="pt-5">
-        <MudPaper Class="m-auto pb-2 w-75" Elevation="0">
-            <SummarySlider />
-        </MudPaper>
-        <MudTabs MinimumTabWidth="2rem" Centered="true" Class="mobile-summarizer" ActivePanelIndex="0" HideSlider="true" Border="true" Elevation="0" Rounded="false"
-                 ApplyEffectsToContainer="true" PanelClass="pa-0 pa-md-6">
+        <!-- <MudPaper Class="m-auto pb-2 w-75" Elevation="0">
+             <SummarySlider />
+         </MudPaper>-->
+        <MudTabs MinimumTabWidth="2rem" Centered="true" Class="mobile-summarizer" @bind-ActivePanelIndex="_mobileActiveTab" HideSlider="true" Border="true" Elevation="0" Rounded="false"
+                 ApplyEffectsToContainer="true" PanelClass="pa-3">
             <MudTabPanel>
                 <ChildContent>
-                    <SummaryItem Mode="paragraph" />
+                    <SummaryItem Mode="paragraph" TransferSummary="GetSummary" />
                 </ChildContent>
 
                 <TabContent>
@@ -202,7 +195,7 @@
             </MudTabPanel>
             <MudTabPanel>
                 <ChildContent>
-                    <SummaryItem Mode="bullet" />
+                    <SummaryItem Mode="bullet" TransferSummary="GetSummary" />
                 </ChildContent>
 
                 <TabContent>
@@ -213,7 +206,7 @@
             </MudTabPanel>
             <MudTabPanel>
                 <ChildContent>
-                    <SummaryItem Mode="custom" />
+                    <SummaryItem Mode="custom" TransferSummary="GetSummary" />
                 </ChildContent>
 
                 <TabContent>
@@ -225,12 +218,28 @@
 
         </MudTabs>
     </MudPaper>
-
+    
 </div>
 <!--Mobile Tabs End-->
+    <!--Text Editor Block Start-->
+    @if (!string.IsNullOrEmpty(_summary))
+    {
+        <MudPaper id="summaryContainer" Class="mt-3" Elevation="3">
+
+            <TextEditorItem Value="@_summary" NumOfWords="@_summaryWords" EditorPurpose="Summary" FileName="@_fileName" ShowFullPanel="true" />
+
+        </MudPaper>
+    }
+    <!--Text Editor Block End-->
+
+
+</div>
+<!--Summarizer End-->
+
 @code {
-    MudTabs tabs;
+   
     private int _activeTab = 1;
+    private int _mobileActiveTab = 0;
     private int _summaryPercentage = 50;
     private string _summary = string.Empty;
     private string _fileName = string.Empty;

@@ -165,7 +165,7 @@
         else if (FileService.ConvertedResultingPdf == null)
         {
             <div class="d-flex justify-content-start mt-3">
-                <MudButton Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled" StartIcon="fas fa-file-alt" OnClick="ConvertToPdf">
+                <MudButton Class="blue-grey darken-4 text-light mt-1" Variant="Variant.Filled" StartIcon="fas fa-file-alt" OnClick="ConvertFileToPdf">
                     Convert to PDF
                 </MudButton>
             </div>
@@ -384,7 +384,7 @@
         }
     }
 
-    private async Task ConvertToPdf()
+    private async Task ConvertFileToPdf()
     {
         if (_uploadedFileStream != null)
         {

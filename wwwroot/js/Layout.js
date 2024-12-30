@@ -43,6 +43,7 @@ function _toggleMenuIcon() {
 
 // Scroll to top button appear
 document.addEventListener('scroll', () => {
+    let scrollToTopVisible = false;
     const scrollToTop = document.body.querySelector('.scroll-to-top');
     if (document.documentElement.scrollTop > 100) {
         if (!scrollToTopVisible) {
