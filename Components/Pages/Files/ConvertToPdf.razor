@@ -148,6 +148,16 @@
     </MudCollapse>
 
 
+    <!--Processing file btn-->
+    @if (_isProcessingFile && !_isFileUploaded)
+    {
+        <div class="d-flex justify-content-start mt-3">
+            <MudButton class="blue-grey darken-4 text-light cursor-progress mt-1" Variant="Variant.Filled" StartIcon="fas fa-file-alt">
+                Processing file...
+            </MudButton>
+        </div>
+    }
+
     <!-- Convert to PDF Button -->
     @if (_isFileUploaded)
     {
@@ -325,6 +335,7 @@
     private bool _isFileUploaded = false;
     private bool _showPdf = false;
     private bool _isConvertingToPdf = false;
+    private bool _isProcessingFile = false;
     private SfPdfViewer2 PdfViewer { get; set; }
     private string _documentPath { get; set; } = "wwwroot/data/pdf1.pdf";
     bool _expanded = true;
@@ -368,11 +379,16 @@
                     throw new NotSupportedException(message);
                 }
 
+                //show processing file loader
+                _isProcessingFile = true;
 
                 // Save file to memory stream
                 await file.File.OpenReadStream(long.MaxValue).CopyToAsync(_uploadedFileStream);
-                _uploadedFileStream.Position = 0; // Reset stream position for further use
+                _uploadedFileStream.Position = 0; // Reset stream position for further use                                            
+                _isProcessingFile = false; //hide processing file loader
                 _isFileUploaded = true; // Show "Convert to PDF" button
+
+               
             }
         }
         catch (Exception ex)
@@ -527,6 +543,12 @@
 
     private async Task DownloadPdf(byte[] pdfBytes)
     {
+        var message = "Your download is starting. Please wait...";
+        //show snack bar message
+        AppService.ShowSnackBar(message: message);
+
+        await Task.Delay(1000);
+       
         // Trigger the download with the correct file name
         await TriggerDownload(pdfBytes, _fileName);
 
@@ -535,13 +557,13 @@
 
     private async Task TriggerDownload(byte[] fileBytes, string fileName)
     {
+      
+
         var base64Data = Convert.ToBase64String(fileBytes);
         var fileUrl = $"data:application/pdf;base64,{base64Data}";
         await JSRuntime.InvokeVoidAsync("downloadFile", fileUrl, fileName);
 
-        //show snack bar message
-        //that the file has been downloaded
-        AppService.ShowSnackBar(message: "File downloaded successfully");
+       
     }
     //Toggle view PDF
     private async Task ToggleViewPdf()

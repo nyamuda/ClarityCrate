@@ -163,7 +163,15 @@
         </MudPaper>
     </MudCollapse>
 
-
+    <!--Processing file btn-->
+    @if (_isProcessingFile && !_isFileUploaded)
+    {
+        <div class="d-flex justify-content-start mt-3">
+            <MudButton class="blue-grey darken-4 text-light cursor-progress mt-1" Variant="Variant.Filled" StartIcon="fas fa-file-alt">
+                Processing file...
+            </MudButton>
+        </div>
+    }
     <!-- Extract from PDF Button -->
     @if (_isFileUploaded)
     {
@@ -223,6 +231,7 @@
     private bool _isFileUploaded = false;
     private bool _showExtractedText = false;
     private bool _isExtractingText = false;
+    private bool _isProcessingFile = false;
     private string _extractedText = string.Empty;
     private int _extractedTextNumWords = 0;
     private readonly string[] _supportedImageExtensions =
@@ -274,11 +283,14 @@
                     throw new NotSupportedException(message);
                 }
 
+                //show processing file loader
+                _isProcessingFile = true;
 
                 // Save file to memory stream
                 await file.File.OpenReadStream(long.MaxValue).CopyToAsync(_uploadedFileStream);
                 _uploadedFileStream.Position = 0; // Reset stream position for further use
-                _isFileUploaded = true; // Show "Convert to PDF" button
+                _isProcessingFile = false; //hide processing file loader
+                _isFileUploaded = true; // Show extract from image button
             }
         }
         catch (Exception ex)
@@ -446,6 +458,10 @@
             }
             _isExtractingText = false;
 
+        }
+        else
+        {
+            _isExtractingText = false;
         }
     }
 
