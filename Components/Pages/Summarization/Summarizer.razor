@@ -8,41 +8,9 @@
 @inject SummarizationService SummarizationService
 @using Clarity_Crate.Components.Pages.TextEditor
 @inject IJSRuntime JSRuntime
+@inject ISnackbar SnackbarService
 <style>
-    /*Feedback Start*/
-    .feedback-section {
-        position: fixed;
-        left: 0;
-        top: 40%;
-        transform: translateY(-50%);
-        z-index: 1000; /* Ensures it stays on top of other elements */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .feedback-button-container {
-        background-color: #EF6C00;
-        position: fixed;
-        left: 0;
-        top: 50%;
-        transform: translateY(0%);
-        z-index: 1000; /* Ensures it stays on top of other elements */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .vertical-text {
-        writing-mode: vertical-rl; /* Rotates the text to be vertical */
-        transform: rotate(180deg); /* Optional: Adjust the direction */
-        white-space: nowrap; /* Ensures the text stays on a single line */
-    }
-
-
-    /*Feedback End */
-
-
+  
     .desktop-summarizer {
         min-height: 25rem;
     }
@@ -60,167 +28,126 @@
 </style>
 
 
-<!--Feedback Start-->
-<MudPaper Class="feedback-section">
-    <MudDrawerContainer Class="">
-        <MudDrawer Width="18rem" Style="height:auto;" @bind-Open="@_open" Anchor="Anchor.Start" Elevation="2" Variant="@DrawerVariant.Persistent">
-            <MudNavMenu>
 
-                <EditForm class="px-3 pt-5 pb-3" Model="@_summaryFeedback" OnValidSubmit="OnValidSubmit">
-                    <DataAnnotationsValidator />
-                    <MudText Typo="Typo.h6">Feedback</MudText>
-                    <MudText>Share your thoughts to help us improve.</MudText>
-                    <div class="mt-1">
-
-                        <MudTextField T="string" Immediate="true" Label="Enter Feedback" Lines="5" Variant="Variant.Filled" @bind-Value="_summaryFeedback.Content" For="@(() => _summaryFeedback.Content)" />
-
-                        <div class="d-flex justify-content-end mt-3">
-                            <MudButton Disabled="@SummarizationService.IsSendingFeedback" Variant="Variant.Filled" DisableElevation="true" Color="Color.Dark" ButtonType="ButtonType.Submit">
-                                @if (@SummarizationService.IsSendingFeedback)
-                                {
-                                    <MudProgressCircular Class="ms-n1 text-dark" Size="Size.Small" Indeterminate="true" />
-                                    <MudText Class="ms-2 text-dark">Please wait...</MudText>
-                                }
-                                else
-                                {
-                                    <MudText>Send</MudText>
-                                }
-                            </MudButton>
-                        </div>
-                    </div>
-                </EditForm>
-            </MudNavMenu>
-        </MudDrawer>
-
-
-        <div @onclick="ToggleDrawer" class="feedback-button-container shadow flex-column align-items-center py-1 cursor-pointer text-light rounded-end">
-            <MudText Class="vertical-text vertical-text me-2 ms-2">Feedback</MudText>
-
-            <MudIcon Icon="@Icons.Material.Filled.Message" />
-        </div>
-
-    </MudDrawerContainer>
-</MudPaper>
-<!--Feedback End-->
 <!--Summarizer Start-->
 <div class="container">
-<!--Desktop Tabs Start-->
-<div class="m-auto d-none d-md-block">
+    <!--Desktop Tabs Start-->
+    <div class="m-auto d-none d-md-block">
 
-    <MudPaper Class="" Elevation="4">
-        <!--Slider Start-->
-        <!--
-         <MudPaper Class="desk-slider" Elevation="0">
-                    <SummarySlider />
-                </MudPaper>
-        -->
-        <!--Slider End-->
+        <MudPaper Class="" Elevation="4">
+            <!--Slider Start-->
+            <!--
+             <MudPaper Class="desk-slider" Elevation="0">
+                        <SummarySlider />
+                    </MudPaper>
+            -->
+            <!--Slider End-->
 
-        <MudTabs Class="desktop-summarizer" @bind-ActivePanelIndex="_activeTab" HideSlider="true" Border="true" Elevation="0" Rounded="true"
-                 ApplyEffectsToContainer="true" PanelClass="pa-0 pa-md-6">
-            <MudTabPanel Disabled="true" Class="d-none d-lg-flex">
-                <TabContent>
-                    <MudText Class="grey-text text-darken-4">Modes:</MudText>
-                </TabContent>
+            <MudTabs Class="desktop-summarizer" @bind-ActivePanelIndex="_activeTab" HideSlider="true" Border="true" Elevation="0" Rounded="true"
+                     ApplyEffectsToContainer="true" PanelClass="pa-0 pa-md-6">
+                <MudTabPanel Disabled="true" Class="d-none d-lg-flex">
+                    <TabContent>
+                        <MudText Class="grey-text text-darken-4">Modes:</MudText>
+                    </TabContent>
 
-            </MudTabPanel>
-            <MudTabPanel>
-                <ChildContent>
-                    <SummaryItem Mode="paragraph" TransferSummary="GetSummary" />
-                </ChildContent>
-                <TabWrapperContent>
-                    <MudTooltip Text="Summarizes the content in a single cohesive paragraph.">
-                        @context
-                    </MudTooltip>
-                </TabWrapperContent>
-                <TabContent>
-                    <MudText>Paragraph</MudText>
-                </TabContent>
+                </MudTabPanel>
+                <MudTabPanel>
+                    <ChildContent>
+                        <SummaryItem Mode="paragraph" TransferSummary="GetSummary" />
+                    </ChildContent>
+                    <TabWrapperContent>
+                        <MudTooltip Text="Summarizes the content in a single cohesive paragraph.">
+                            @context
+                        </MudTooltip>
+                    </TabWrapperContent>
+                    <TabContent>
+                        <MudText>Paragraph</MudText>
+                    </TabContent>
 
-            </MudTabPanel>
-            <MudTabPanel>
-                <ChildContent>
-                    <SummaryItem Mode="bullet" TransferSummary="GetSummary" />
-                </ChildContent>
-                <TabWrapperContent>
-                    <MudTooltip Text="Summarizes the content in a list format, with each point highlighting a key idea.">
-                        @context
-                    </MudTooltip>
-                </TabWrapperContent>
-                <TabContent>
-                    <MudText class="">Bullet Points</MudText>
-                </TabContent>
+                </MudTabPanel>
+                <MudTabPanel>
+                    <ChildContent>
+                        <SummaryItem Mode="bullet" TransferSummary="GetSummary" />
+                    </ChildContent>
+                    <TabWrapperContent>
+                        <MudTooltip Text="Summarizes the content in a list format, with each point highlighting a key idea.">
+                            @context
+                        </MudTooltip>
+                    </TabWrapperContent>
+                    <TabContent>
+                        <MudText class="">Bullet Points</MudText>
+                    </TabContent>
 
-            </MudTabPanel>
-            <MudTabPanel>
-                <ChildContent>
-                    <SummaryItem Mode="custom" TransferSummary="GetSummary" />
-                </ChildContent>
-                <TabWrapperContent>
-                    <MudTooltip Text="Enter specific custom instructions on how you want the text to be summarized.">
-                        @context
-                    </MudTooltip>
-                </TabWrapperContent>
-                <TabContent>
-                    <MudText class="">Custom</MudText>
-                </TabContent>
-            </MudTabPanel>
-
-
-        </MudTabs>
-    </MudPaper>
+                </MudTabPanel>
+                <MudTabPanel>
+                    <ChildContent>
+                        <SummaryItem Mode="custom" TransferSummary="GetSummary" />
+                    </ChildContent>
+                    <TabWrapperContent>
+                        <MudTooltip Text="Enter specific custom instructions on how you want the text to be summarized.">
+                            @context
+                        </MudTooltip>
+                    </TabWrapperContent>
+                    <TabContent>
+                        <MudText class="">Custom</MudText>
+                    </TabContent>
+                </MudTabPanel>
 
 
-    
-</div>
-<!--Desktop Tabs End-->
-<!--Mobile Tabs Start-->
-<div class="w-100 d-block d-md-none">
-    <MudPaper Class="pt-5">
-        <!-- <MudPaper Class="m-auto pb-2 w-75" Elevation="0">
-             <SummarySlider />
-         </MudPaper>-->
-        <MudTabs MinimumTabWidth="2rem" Centered="true" Class="mobile-summarizer" @bind-ActivePanelIndex="_mobileActiveTab" HideSlider="true" Border="true" Elevation="0" Rounded="false"
-                 ApplyEffectsToContainer="true" PanelClass="pa-3">
-            <MudTabPanel>
-                <ChildContent>
-                    <SummaryItem Mode="paragraph" TransferSummary="GetSummary" />
-                </ChildContent>
-
-                <TabContent>
-                    <MudIcon Icon="fas fa-align-left" />
-                    <MudText class="ml-1">Paragraph</MudText>
-                </TabContent>
-
-            </MudTabPanel>
-            <MudTabPanel>
-                <ChildContent>
-                    <SummaryItem Mode="bullet" TransferSummary="GetSummary" />
-                </ChildContent>
-
-                <TabContent>
-                    <MudIcon Icon="fas fa-list-ul" />
-                    <MudText class="ml-1">Bullet Points</MudText>
-                </TabContent>
-
-            </MudTabPanel>
-            <MudTabPanel>
-                <ChildContent>
-                    <SummaryItem Mode="custom" TransferSummary="GetSummary" />
-                </ChildContent>
-
-                <TabContent>
-                    <MudIcon Icon="fas fa-sliders-h" />
-                    <MudText class="ml-1">Custom</MudText>
-                </TabContent>
-            </MudTabPanel>
+            </MudTabs>
+        </MudPaper>
 
 
-        </MudTabs>
-    </MudPaper>
-    
-</div>
-<!--Mobile Tabs End-->
+
+    </div>
+    <!--Desktop Tabs End-->
+    <!--Mobile Tabs Start-->
+    <div class="w-100 d-block d-md-none">
+        <MudPaper Class="pt-5">
+            <!-- <MudPaper Class="m-auto pb-2 w-75" Elevation="0">
+                 <SummarySlider />
+             </MudPaper>-->
+            <MudTabs MinimumTabWidth="2rem" Centered="true" Class="mobile-summarizer" @bind-ActivePanelIndex="_mobileActiveTab" HideSlider="true" Border="true" Elevation="0" Rounded="false"
+                     ApplyEffectsToContainer="true" PanelClass="pa-3">
+                <MudTabPanel>
+                    <ChildContent>
+                        <SummaryItem Mode="paragraph" TransferSummary="GetSummary" />
+                    </ChildContent>
+
+                    <TabContent>
+                        <MudIcon Icon="fas fa-align-left" />
+                        <MudText class="ml-1">Paragraph</MudText>
+                    </TabContent>
+
+                </MudTabPanel>
+                <MudTabPanel>
+                    <ChildContent>
+                        <SummaryItem Mode="bullet" TransferSummary="GetSummary" />
+                    </ChildContent>
+
+                    <TabContent>
+                        <MudIcon Icon="fas fa-list-ul" />
+                        <MudText class="ml-1">Bullet Points</MudText>
+                    </TabContent>
+
+                </MudTabPanel>
+                <MudTabPanel>
+                    <ChildContent>
+                        <SummaryItem Mode="custom" TransferSummary="GetSummary" />
+                    </ChildContent>
+
+                    <TabContent>
+                        <MudIcon Icon="fas fa-sliders-h" />
+                        <MudText class="ml-1">Custom</MudText>
+                    </TabContent>
+                </MudTabPanel>
+
+
+            </MudTabs>
+        </MudPaper>
+
+    </div>
+    <!--Mobile Tabs End-->
     <!--Text Editor Block Start-->
     @if (!string.IsNullOrEmpty(_summary))
     {
@@ -235,55 +162,57 @@
 
 </div>
 <!--Summarizer End-->
-
 @code {
-   
+
     private int _activeTab = 1;
     private int _mobileActiveTab = 0;
     private int _summaryPercentage = 50;
     private string _summary = string.Empty;
     private string _fileName = string.Empty;
     private int _summaryWords = 0;
-    private SummaryFeedbackDto _summaryFeedback = new SummaryFeedbackDto();
+   
 
-    private bool _open = false;
+  
 
 
     protected override async Task OnInitializedAsync()
     {
-        // Console.WriteLine($"Active tab is {_activeTab}");
-        //show the summary if its there
-        /*
-        var summaryText = SummarizationService.Summary;
-        if (!string.IsNullOrEmpty(summaryText))
-            {
+        //show snackbar telling about maximum file size
+        if (SummarizationService.ShowFileSizeMessage)
+        {
 
-            ShowSummary(summaryText);
+            ShowFileSizeMessage();
+            //turn off show file size message
+            SummarizationService.ShowFileSizeMessage = false;
         }
-        */
 
     }
-    private void ToggleDrawer()
-    {
-        _open = !_open;
-    }
+   
 
-    private async Task OnValidSubmit()
-    {
-        await SummarizationService.SendFeedback(_summaryFeedback.Content);
-
-        //close the drawer
-        _summaryFeedback.Content = string.Empty;
-        _open = !_open;
-    }
+   
 
     //get summary from child component
     private void GetSummary((string Summary, string FileName, int SummaryWords) result)
     {
         _summary = result.Summary;
-        _fileName =result.FileName;
+        _fileName = result.FileName;
         _summaryWords = result.SummaryWords;
 
+    }
+
+    //show maximum file size message
+    private void ShowFileSizeMessage()
+    {
+        SnackbarService.Add
+    (
+    @<div>
+        <ul>
+            <li>We're currently using a free server, so the maximum size for file uploads for non-scanned PDFs is <strong>5MB</strong>.</li>
+            <li>For other files (e.g., Excel, images, DOCX, scanned documents, etc.), the limit is <strong>1MB</strong>.</li>
+        </ul>
+    </div>
+    , Severity.Info, config => { config.ShowCloseIcon = true; config.VisibleStateDuration = 15000; config.SnackbarVariant = Variant.Outlined; }
+        );
     }
 }
 

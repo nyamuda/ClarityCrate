@@ -125,7 +125,7 @@
 <div class="container">
     <div class="row mb-n3">
         <div class="col-md-8">
-            <div id="convert-to-pdf" class="text-start mb-5">
+            <div id="convert-to-pdf" class="text-start">
                 <p class="h1">Extract text from images</p>
                 <div class="d-block d-md-none mb-3" data-wow-delay="0.5s">
                     <img style="width:8rem;" class="img-fluid" src="img/file-extraction.png" alt="file extraction image">
@@ -133,6 +133,10 @@
                 <p>Extract text from images, make edits, and export it as a PDF or Word file.</p>
 
             </div>
+            <MudAlert Class="my-3" Severity="Severity.Warning" Icon="warning" Elevation="2">
+                <strong>Notice:</strong> The current maximum size for image uploads is <strong>1MB</strong> due to server limitations. We’re sorry for the inconvenience.
+            </MudAlert>
+
             <!-- File Upload Section -->
             <div id="extractFromImage">
 
@@ -239,12 +243,17 @@
     bool _expanded = true;
     //file size
     private long _fileSize = 0;
+    
 
     //MudBlazor Dialog
     [Inject] private IDialogService DialogService { get; set; }
     private readonly DialogOptions dialogOptions = new DialogOptions() { CloseButton = true };
 
+    protected override async Task OnInitializedAsync()
+    {
+       
 
+    }
 
 
     private async Task FileUploaded(Syncfusion.Blazor.Inputs.UploadChangeEventArgs args)
@@ -276,9 +285,9 @@
                 _fileSize = file.File.Size;
 
                 //maximum file size for files is 1.5MB
-                if (_fileSize > 5 * 1024 * 1024)
+                if (_fileSize > 1 * 1024 * 1024)
                 {
-                    var message = "Maximum file size for extraction is 5MB";
+                    var message = "Maximum image size for extraction is 1MB";
 
                     throw new NotSupportedException(message);
                 }
@@ -364,7 +373,7 @@
             //hide loader
             _isExtractingText = false;
             //show error message
-            var message = $"Error: {ex.Message}";
+            var message = $"{ex.Message}";
             AppService.ShowSnackBar(message: message, severity: "error");
 
         }

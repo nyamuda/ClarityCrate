@@ -122,11 +122,14 @@
 
 
 <div class="container">
-    <div class="text-start mb-5">
+    <div class="text-start">
         <p class="h1">Convert files to PDF</p>
         <p>We support various document and image file types for uploading and converting to PDF.</p>
         <p>Choose your file, and we’ll handle the conversion.</p>
     </div>
+    <MudAlert Class="my-3" Severity="Severity.Warning" Icon="warning" Elevation="2">
+        <strong>Notice:</strong> The current maximum file size for uploads is <strong>1MB</strong> due to server limitations. We apologize for the inconvenience.
+    </MudAlert>
     <!-- File Upload Section -->
     <div id="convert-to-pdf">
         <h5>Upload your file</h5>
@@ -371,10 +374,10 @@
                 // Get file size
                 _fileSize = file.File.Size;
 
-                //maximum file size for files is 1.5MB
-                if (_fileSize > 1.5 * 1024 * 1024)
+                //maximum file size for files is 1MB
+                if (_fileSize > 1 * 1024 * 1024)
                 {
-                    var message = "Maximum file size for conversion is 1.5MB";
+                    var message = "Maximum file size for conversion is 1MB";
 
                     throw new NotSupportedException(message);
                 }

@@ -269,16 +269,16 @@
 
                 //max file size for pdf is 20MB and 1.5MB for other files
                 //if size exceeds 1.5MB, show error message
-                if (fileSize > 1.5 * 1024 * 1024 && fileExtension != ".pdf")
+                if (fileSize > 1 * 1024 * 1024 && fileExtension != ".pdf")
                 {
-                    //maximun file size for non-pdf files is 1.5MB
-                    var message = "Maximum file size for non-PDF files is 1.5MB";
+                    //maximun file size for non-pdf files is 1MB
+                    var message = "Maximum file size for non-PDF files is 1MB";
                     throw new NotSupportedException(message);
                 }
-                //if file is pdf, and size exceeds 20MB, show error message
-                if (fileExtension == ".pdf" && fileSize > 20 * 1024 * 1024)
+                //if file is pdf, and size exceeds 5MB, show error message
+                if (fileExtension == ".pdf" && fileSize > 5 * 1024 * 1024)
                 {
-                    var message = "Maximum file size for PDF files is 20MB";
+                    var message = "Maximum file size for PDF files is 5MB";
                     throw new NotSupportedException(message);
                 }
 
@@ -298,6 +298,14 @@
                     {
 
                         //perform OCR on the PDF
+                        //but first check file size
+                        if (fileSize > 1 * 1024 * 1024)
+                        {
+                            //maximum file size for non-pdf files is 1MB
+                            var message = "Maximum supported file size for scanned PDF files is 1MB";
+                            throw new NotSupportedException(message);
+                        }
+
                         await PerformOcr(memoryStream);
 
                     }

@@ -28,6 +28,8 @@ namespace Clarity_Crate.Data
 
         public DbSet<Summary> Summary { get; set; } = default!;
 
+		public DbSet<Feedback> Feedback { get; set; } = default!;
+
 
         protected override void OnModelCreating(ModelBuilder builder)
 		{

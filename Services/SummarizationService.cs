@@ -38,6 +38,9 @@ namespace Clarity_Crate.Services
         private readonly ApplicationDbContext _context;
         private readonly AppService _appService;
 
+        //show file size state
+        public bool ShowFileSizeMessage { get; set; } = true;
+
         public SummarizationService(ApplicationDbContext context, AppService appService, IConfiguration configuration)
         {
             _restClient = new RestClient("https://any-jumbo-stone-curlew.anvil.app"); // Base URL

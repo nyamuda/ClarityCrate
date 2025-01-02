@@ -124,8 +124,8 @@
 
 <div class="container">
     <div class="row">
-       <div class="col-md-8">
-            <div class="text-start mb-5">
+        <div class="col-md-8">
+            <div class="text-start">
                 <p class="h1">Extract text from PDF files</p>
                 <div class="d-block d-md-none mb-3" data-wow-delay="0.5s">
                     <img style="width:8rem;" class="img-fluid" src="img/file-extraction.png" alt="file extraction image">
@@ -133,6 +133,10 @@
                 <p>Extract text from any PDF, including scanned files, quickly and easily.</p>
                 <p>Edit the extracted content in a rich text editor and export it as a PDF or Word document.</p>
             </div>
+            <MudAlert Class="my-3" Severity="Severity.Warning" Icon="warning" Elevation="2">
+                <strong>Notice:</strong> Due to server limitations, the current maximum size for PDF files is <strong>5MB</strong>. For scanned PDFs, the limit is <strong>1MB</strong>. We apologize for the inconvenience.
+            </MudAlert>
+
             <!-- File Upload Section -->
             <div id="extractPdf">
                 <h5 class="mb-3 mb-md-1">Upload your file</h5>
@@ -140,7 +144,7 @@
                     <Syncfusion.Blazor.Inputs.UploaderEvents ValueChange="@FileUploaded" OnRemove="OnFileRemove" Created="OnCreateUploader"></Syncfusion.Blazor.Inputs.UploaderEvents>
                 </SfUploader>
             </div>
-       </div>
+        </div>
         <!-- PDF -->
         <div class="d-none d-md-block col-md-4 align-self-end text-center text-md-end wow fadeIn" data-wow-delay="0.5s">
             <img style="max-width:18rem;" class="img-fluid" src="img/file-extraction.png" alt="file extraction image">
@@ -148,14 +152,14 @@
     </div>
 
 
-   
+
 
 
     <!--Extracted Text Editor-->
 
     <MudCollapse Expanded="_showExtractedText">
         <MudPaper id="pdfText" Class="mt-3 mb-n3" Elevation="3">
-            <TextEditorItem Value="@_extractedText" NumOfWords="@_extractedTextNumWords" EditorPurpose="Extracted_text" FileName="@_fileName" ShowFullPanel="true" />        
+            <TextEditorItem Value="@_extractedText" NumOfWords="@_extractedTextNumWords" EditorPurpose="Extracted_text" FileName="@_fileName" ShowFullPanel="true" />
         </MudPaper>
     </MudCollapse>
 
@@ -196,7 +200,7 @@
         else
         {
             <div class="d-flex justify-content-start mt-3">
-               
+
                 @if (_showExtractedText)
                 {
                     <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="far fa-eye-slash" OnClick="() => ToggleView()">
@@ -230,8 +234,8 @@
     private bool _isFileUploaded = false;
     private bool _showExtractedText = false;
     private bool _isExtractingText = false;
-    private string _extractedText=string.Empty;
-    private int _extractedTextNumWords= 0;
+    private string _extractedText = string.Empty;
+    private int _extractedTextNumWords = 0;
     private bool _isProcessingFile = false;
 
     bool _expanded = true;
@@ -255,7 +259,7 @@
             _isFileUploaded = false;
             _showExtractedText = false;
             _extractedText = string.Empty;
-            _extractedTextNumWords= 0;
+            _extractedTextNumWords = 0;
 
 
 
@@ -281,13 +285,13 @@
                     throw new NotSupportedException(message);
                 }
 
-               //show processing file loader
-                   _isProcessingFile = true;
+                //show processing file loader
+                _isProcessingFile = true;
 
 
                 // Save file to memory stream
                 await file.File.OpenReadStream(long.MaxValue).CopyToAsync(_uploadedFileStream);
-                _uploadedFileStream.Position = 0; // Reset stream position for further use    
+                _uploadedFileStream.Position = 0; // Reset stream position for further use
                 _isProcessingFile = false; //hide processing file loader
                 _isFileUploaded = true; // Show extract from PDF button
             }
@@ -330,8 +334,8 @@
 
 
                 // Convert extract text from PDF
-                _extractedText=FileService.ExtractTextFromPdf(fileStream);
-               
+                _extractedText = FileService.ExtractTextFromPdf(fileStream);
+
 
 
 
@@ -352,7 +356,7 @@
                     AppService.ShowSnackBar(message: message, severity: "normal");
                 }
 
-              
+
 
             }
 
@@ -371,13 +375,13 @@
 
             }
 
-            
+
 
         }
         catch (Exception ex)
         {
             //hide loader
-            _isExtractingText= false;
+            _isExtractingText = false;
             //show error message
             var message = $"Error: {ex.Message}";
             AppService.ShowSnackBar(message: message, severity: "error");
