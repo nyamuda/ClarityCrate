@@ -31,6 +31,10 @@
 
 <!--Summarizer Start-->
 <div class="container">
+    <!--Feedback Start-->
+    <Feedback SuccessMessage="@_feedbackSuccessMessage" Title="@_feedbackTitle" />
+    <!--Feedback End-->
+
     <!--Desktop Tabs Start-->
     <div class="m-auto d-none d-md-block">
 
@@ -170,7 +174,9 @@
     private string _summary = string.Empty;
     private string _fileName = string.Empty;
     private int _summaryWords = 0;
-   
+    private string _feedbackTitle = "Summarizer";
+    private string _feedbackSuccessMessage = "Your feedback has been received. Thanks for helping us improve our summarization tool.";
+
 
   
 

@@ -1,6 +1,7 @@
 ﻿@using Clarity_Crate.Dtos
 @using Clarity_Crate.Services
 @inject FeedbackService FeedbackService 
+@inject AppService AppService
 <style>
     /*Feedback Start*/
     .feedback-section {
@@ -44,7 +45,7 @@
 
                 <EditForm class="px-3 pt-5 pb-3" Model="@FeedbackDto" OnValidSubmit="OnValidSubmit">
                     <DataAnnotationsValidator />
-                    <MudText Typo="Typo.h6">Feedback</MudText>
+                    <MudText Typo="Typo.h6">@Title</MudText>
                     <MudText>Share your thoughts to help us improve.</MudText>
                     <div class="mt-1">
 
@@ -84,7 +85,10 @@
 
     [Parameter]
     public string Title { get; set; } = "Feedback";
+    [Parameter]
+    public string SuccessMessage { get; set; } = "We’ve received your feedback. Thanks for helping us improve.";
     private FeedbackCreateDto FeedbackDto = new FeedbackCreateDto();
+
 
 
     protected override async Task OnInitializedAsync()
@@ -100,10 +104,23 @@
 
     private async Task OnValidSubmit()
     {
-        //await SummarizationService.SendFeedback(_summaryFeedback.Content);
+        //save the feedback
+        bool isSuccess = await FeedbackService.AddFeedback(FeedbackDto);
 
-        //close the drawer
-       // _summaryFeedback.Content = string.Empty;
-        _open = !_open;
+        if(isSuccess)
+        {
+            FeedbackDto.Content = string.Empty;
+            //show snack bar
+            AppService.ShowSnackBar(message: SuccessMessage, severity: "success");
+            //close the drawer
+            _open = !_open;
+        }
+        else
+        {
+            var message = "An error occurred while sending your feedback. Please try again.";
+            AppService.ShowSnackBar(message: message, severity: "error");
+        }
+
+      
     }
 }
