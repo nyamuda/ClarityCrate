@@ -8,5 +8,8 @@ namespace Clarity_Crate.Dtos
         public string Title { get; set; }
         [Required(ErrorMessage = "Field is required.")]
         public string Content { get; set; }
+
+
+        public int Rating { get; set; } = 1;
     }
 }

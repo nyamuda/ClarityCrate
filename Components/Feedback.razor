@@ -45,10 +45,10 @@
 
                 <EditForm class="px-3 pt-5 pb-3" Model="@FeedbackDto" OnValidSubmit="OnValidSubmit">
                     <DataAnnotationsValidator />
-                    <MudText Typo="Typo.h6">@Title</MudText>
+                    <MudText Typo="Typo.h5">@Title</MudText>
                     <MudText>Share your thoughts to help us improve.</MudText>
                     <div class="mt-1">
-
+                        <MudRating @bind-SelectedValue="FeedbackDto.Rating"/>
                         <MudTextField T="string" Immediate="true" Label="Enter Feedback" Lines="5" Variant="Variant.Filled" @bind-Value="FeedbackDto.Content" For="@(() =>FeedbackDto.Content)" />
 
                         <div class="d-flex justify-content-end mt-3">
@@ -88,6 +88,7 @@
     [Parameter]
     public string SuccessMessage { get; set; } = "We’ve received your feedback. Thanks for helping us improve.";
     private FeedbackCreateDto FeedbackDto = new FeedbackCreateDto();
+    
 
 
 

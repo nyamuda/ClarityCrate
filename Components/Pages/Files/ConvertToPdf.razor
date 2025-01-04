@@ -122,6 +122,9 @@
 
 
 <div class="container">
+    <!--Feedback Start-->
+    <Feedback SuccessMessage="@_feedbackSuccessMessage" Title="@_feedbackTitle" />
+    <!--Feedback End-->
     <div class="text-start">
         <p class="h1">Convert files to PDF</p>
         <p>We support various document and image file types for uploading and converting to PDF.</p>
@@ -344,7 +347,8 @@
     bool _expanded = true;
     //file size
     private long _fileSize = 0;
-
+    private string _feedbackTitle = "File to PDF";
+    private string _feedbackSuccessMessage = "Thanks for sharing your feedback!";
 
 
     private async Task FileUploaded(Syncfusion.Blazor.Inputs.UploadChangeEventArgs args)

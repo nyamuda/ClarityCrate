@@ -21,10 +21,10 @@
         <div class="row">
             <div class="col-lg-6 pt-5 mt-5 text-light">
                 <h2 class="display-1 ls-1">
-                    <span class="fw-bold secondary-colored-text">Simplify</span> Your Reading with <span class="fw-bold">Clarity Crate</span>
+                    <span class="fw-bold secondary-colored-text">Work<br /></span> Smarter with <br /><span class="fw-bold">Clarity Crate</span>
                 </h2>
                 <p class="fs-4">
-                    Summarize lengthy documents in seconds. Save time, stay informed, and focus on what truly matters.
+                    Extract text from images and PDFs, summarize, and convert files – all in one place.
                 </p>
                 <div class="d-flex gap-3">
                     <MudButton Href="/summarizer" Class="mt-3" Variant="Variant.Filled" Style="background-color: #00897B; color: white; width: 8rem; height: 3rem;">
@@ -37,32 +37,32 @@
                 </div>
                 <div class="row my-5 text-light">
                     <div class="col">
-                        <div class="row">
-                            <div class="col-auto">
+                        <div class="d-flex flex-column align-items-start">
+                            <div class="">
                                 <p class="fs-1 fw-bold lh-sm mb-0">@SummarizationService.TotalWordsSummarized</p>
                             </div>
-                            <div class="col fw-bold">
+                            <div class="fw-bold">
                                 <p class="text-uppercase lh-sm mb-0">Words Summarized</p>
                             </div>
                         </div>
                     </div>
                     <div class="col">
-                        <div class="row">
-                            <div class="col-auto">
-                                <p class="fs-1 fw-bold lh-sm mb-0">500+</p>
+                        <div class="d-flex flex-column align-items-start">
+                            <div class="">
+                                <p class="fs-1 fw-bold lh-sm mb-0">@SummarizationService.TotalDocumentsSummarized</p>
                             </div>
-                            <div class="col fw-bold">
-                                <p class="text-uppercase lh-sm mb-0">Pages Supported</p>
+                            <div class="fw-bold">
+                                <p class="text-uppercase lh-sm mb-0">Files Processed</p>
                             </div>
                         </div>
                     </div>
                     <div class="col">
-                        <div class="row">
-                            <div class="col-auto">
-                                <p class="fs-1 fw-bold lh-sm mb-0">3+</p>
+                        <div class="d-flex flex-column align-items-start">
+                            <div class="">
+                                <p class="fs-1 fw-bold lh-sm mb-0">5+</p>
                             </div>
-                            <div class="col fw-bold">
-                                <p class="text-uppercase lh-sm mb-0">Modes of Summarization</p>
+                            <div class="fw-bold">
+                                <p class="text-uppercase lh-sm mb-0">File Types Supported</p>
                             </div>
                         </div>
                     </div>
@@ -79,9 +79,9 @@
                         </div>
                         <div class="col-md-9">
                             <div class="card-body p-0">
-                                <h5 class="text-light">Long Document Support</h5>
+                                <h5 class="text-light">Image Text Extraction</h5>
                                 <p class="card-text">
-                                    Quick summaries for up to 200,000 words or 1000 pages.
+                                    Extract and edit text from images and scanned PDFs using OCR.
                                 </p>
                             </div>
                         </div>
@@ -109,13 +109,13 @@
                 <div class="card border-0 bg-danger rounded-0 p-4 text-light">
                     <div class="row">
                         <div class="col-md-3 text-center">
-                            <i class="fas fa-pen fa-3x"></i>
+                            <i class="fas fa-exchange-alt fa-3x"></i>
                         </div>
                         <div class="col-md-9">
                             <div class="card-body p-0">
-                                <h5 class="text-light">OCR for Scanned PDFs</h5>
+                                <h5 class="text-light">File Conversion to PDF</h5>
                                 <p class="card-text">
-                                    Extract and summarize scanned PDFs with ease.
+                                    Convert images, PowerPoints, and Excel files to PDF.
                                 </p>
                             </div>
                         </div>
@@ -138,10 +138,10 @@
         <div class="row g-5">
             <div class="col-lg-6 align-self-center mb-md-5 pb-md-5 wow fadeIn" data-wow-delay="0.3s">
                 <p class="mb-4">
-                    Clarity Crate is a powerful AI-driven summarization tool that helps you process and understand vast amounts of text in seconds. Whether you're working with reports, academic papers, podcasts, or meeting notes, we provide accurate and concise summaries, saving you hours of reading time.
+                    Clarity Crate is an AI-powered tool that simplifies document processing by extracting or summarizing text from scanned documents, images, and lengthy reports. After extraction or summarization, you can edit the text using an intuitive text editor and export the final content as a polished PDF or Word document.
                 </p>
                 <p class="mb-4">
-                    Our platform leverages an advanced machine learning model and automatic OCR technology to extract and summarize text from scanned PDFs. It's quick, efficient, and customizable to your needs—allowing you to choose between paragraph summaries, bullet points, or even custom formats.
+                    The app also supports file conversion, allowing you to convert images, PowerPoint presentations, and Excel files into PDFs effortlessly.
                 </p>
                 <div class="mb-4">
                     <div class="d-flex align-items-start">
@@ -150,7 +150,18 @@
                         </div>
                         <div>
                             <span class="fw-bold d-block">Supports Multiple File Types</span>
-                            <span class="">Summarize PDFs, Word documents, images, and plain text files without any hassle.</span>
+                            <span class="">Extract, summarize, and convert text from PDFs, Word documents, images, PowerPoint presentations, and Excel files.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Title="Text Editing" />
+                        </div>
+                        <div>
+                            <span class="fw-bold d-block">Built-in Text Editing</span>
+                            <span class="">Edit extracted text in a rich text editor before exporting your results.</span>
                         </div>
                     </div>
                 </div>
@@ -161,7 +172,7 @@
                         </div>
                         <div>
                             <span class="fw-bold d-block">Accurate Summarization</span>
-                            <span class="">Get clear, concise summaries of long documents while preserving key details.</span>
+                            <span class="">Get clear, concise summaries of documents while preserving key details.</span>
                         </div>
                     </div>
                 </div>
@@ -171,8 +182,8 @@
                             <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.Pageview" Title="OCR" />
                         </div>
                         <div>
-                            <span class="fw-bold d-block">OCR for Scanned PDFs</span>
-                            <span class="">Easily extract and summarize text from scanned PDF files using built-in OCR technology.</span>
+                            <span class="fw-bold d-block">Advanced OCR Technology</span>
+                            <span class="">Extract text from scanned PDFs and images using highly accurate OCR technology.</span>
                         </div>
                     </div>
                 </div>
@@ -187,7 +198,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="mb-4">
+                  <div class="mb-4">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.CompareArrows" Title="File Conversion" />
+                        </div>
+                        <div>
+                            <span class="fw-bold d-block">File Conversion</span>
+                            <span class="">Convert images, PowerPoint presentations, and Excel files into professional PDF documents.</span>
+                        </div>
+                    </div>
+                </div>
+                <!--
+                    <div class="mb-4">
                     <div class="d-flex align-items-start">
                         <div class="me-3">
                             <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.FileCopy" Title="Large Documents" />
@@ -198,6 +221,7 @@
                         </div>
                     </div>
                 </div>
+                -->
                 <div class="mb-4">
                     <div class="d-flex align-items-start">
                         <div class="me-3">
@@ -228,12 +252,12 @@
                         </div>
                         <div>
                             <span class="fw-bold d-block">User-Friendly Interface</span>
-                            <span class="">Navigate and use the app effortlessly, even if you're new to text summarization tools.</span>
+                            <span class="">Simple and intuitive design suitable for all users.</span>
                         </div>
                     </div>
                 </div>
 
-
+                 <!-- Statistics Section -->
                 <div class="row g-4 pt-3">
                     <div class="col-sm-6">
                         <div class="d-flex rounded p-3" style="background: #26A69A;">
@@ -255,6 +279,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Image Section -->
             <div class="col-lg-6 align-self-end text-center text-md-end wow fadeIn" data-wow-delay="0.5s">
                 <img class="img-fluid" src="img/about-img.jpg" alt="about section image">
             </div>

@@ -27,7 +27,8 @@ namespace Clarity_Crate.Services
                 var feedback = new Feedback
                 {
                     Title = feedbackDto.Title,
-                    Content = feedbackDto.Content
+                    Content = feedbackDto.Content,
+                    Rating=feedbackDto.Rating
                 };
                 _context.Feedback.Add(feedback);
                 await _context.SaveChangesAsync();

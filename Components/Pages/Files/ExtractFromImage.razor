@@ -123,6 +123,9 @@
 
 
 <div class="container">
+    <!--Feedback Start-->
+    <Feedback SuccessMessage="@_feedbackSuccessMessage" Title="@_feedbackTitle" />
+    <!--Feedback End-->
     <div class="row mb-n3">
         <div class="col-md-8">
             <div id="convert-to-pdf" class="text-start">
@@ -248,6 +251,9 @@
     //MudBlazor Dialog
     [Inject] private IDialogService DialogService { get; set; }
     private readonly DialogOptions dialogOptions = new DialogOptions() { CloseButton = true };
+    private string _feedbackTitle = "Image Extraction";
+    private string _feedbackSuccessMessage = "Your feedback has been received.";
+
 
     protected override async Task OnInitializedAsync()
     {

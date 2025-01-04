@@ -123,6 +123,9 @@
 
 
 <div class="container">
+    <!--Feedback Start-->
+    <Feedback SuccessMessage="@_feedbackSuccessMessage" Title="@_feedbackTitle" />
+    <!--Feedback End-->
     <div class="row">
         <div class="col-md-8">
             <div class="text-start">
@@ -245,6 +248,8 @@
     //MudBlazor Dialog
     [Inject] private IDialogService DialogService { get; set; }
     private readonly DialogOptions dialogOptions = new DialogOptions() { CloseButton = true };
+    private string _feedbackTitle = "PDF Extraction";
+    private string _feedbackSuccessMessage = "Feedback sent! Thanks for helping us improve the PDF extraction tool.";
 
 
 
