@@ -186,17 +186,17 @@ namespace Clarity_Crate.Services
                 return memoryStream.ToArray();
             }
         }
-        //Increment the number of documents summarized
+        //Increment the number of documents processed
         public async Task IncrementDocumentCount()
         {
 
 
-            var summary = await _context.Summary.FirstOrDefaultAsync();
-            if (summary != null)
+            var statistics = await _context.Statistics.FirstOrDefaultAsync();
+            if (statistics != null)
             {
-                summary.NumDocumentsSummarized += 1;
+                statistics.NumDocumentsProcessed += 1;
 
-                _context.Summary.Update(summary);
+                _context.Statistics.Update(statistics);
                 await _context.SaveChangesAsync();
             }
 

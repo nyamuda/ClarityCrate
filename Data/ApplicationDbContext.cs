@@ -26,7 +26,7 @@ namespace Clarity_Crate.Data
 
 		public DbSet<Comment<Definition>> DefinitionComment { get; set; } = default!;
 
-        public DbSet<Summary> Summary { get; set; } = default!;
+        public DbSet<Statistics> Statistics { get; set; } = default!;
 
 		public DbSet<Feedback> Feedback { get; set; } = default!;
 

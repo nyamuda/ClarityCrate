@@ -27,7 +27,7 @@ namespace Clarity_Crate.Services
         public bool IsSendingFeedback { get; set; } = false;
 
         public int SummaryPercentage { get; set; } = 40;
-        public string TotalDocumentsSummarized { get; set; } = "0";
+        public string TotalDocumentsProcessed { get; set; } = "0";
         public string TotalWordsSummarized { get; set; } = "0";
 
         private string? _huggingFaceApiKey;
@@ -63,44 +63,44 @@ namespace Clarity_Crate.Services
         {
             int numWordsSummarized = WordCount(text);
 
-            var summary = await _context.Summary.FirstOrDefaultAsync();
-            if (summary != null)
+            var statistics = await _context.Statistics.FirstOrDefaultAsync();
+            if (statistics != null)
             {
-                summary.NumWordsSummarized += numWordsSummarized;
+                statistics.NumWordsSummarized += numWordsSummarized;
 
-                _context.Summary.Update(summary);
+                _context.Statistics.Update(statistics);
                 await _context.SaveChangesAsync();
             }
             else
             {
-                var item = new Summary
+                var item = new Statistics
                 {
                     NumWordsSummarized = numWordsSummarized
                 };
-                _context.Summary.Add(item);
+                _context.Statistics.Add(item);
                 await _context.SaveChangesAsync();
             }
 
         }
         //Get the total number of words and documents summarized so far
-        public async Task GetSummaryInfo()
+        public async Task GetStatistics()
         {
            
           try
             {
 
-                var summary = await _context.Summary.FirstOrDefaultAsync();
+                var summary = await _context.Statistics.FirstOrDefaultAsync();
                 if (summary != null)
                 {
 
                     var words = summary.NumWordsSummarized;
-                    var documents = summary.NumDocumentsSummarized;
+                    var documents = summary.NumDocumentsProcessed;
 
 
 
                     //format the numbers
                     TotalWordsSummarized = FormatNumber(words);
-                    TotalDocumentsSummarized = FormatNumber(documents);
+                    TotalDocumentsProcessed = FormatNumber(documents);
 
 
 
@@ -117,7 +117,7 @@ namespace Clarity_Crate.Services
                 Console.WriteLine(e);
 
                 TotalWordsSummarized = FormatNumber(1000);
-                TotalDocumentsSummarized = FormatNumber(50);
+                TotalDocumentsProcessed = FormatNumber(50);
 
             }
         }
@@ -229,33 +229,6 @@ namespace Clarity_Crate.Services
         
 
 
-        public async Task SendFeedback(string feedbackContent)
-        {
-            IsSendingFeedback = true;
-            // Check if summary exists
-            var summary = await _context.Summary.FirstOrDefaultAsync();
-
-            if (summary != null)
-            {
-                summary.Feedback.Add(feedbackContent);
-                // Save changes to the database
-                await _context.SaveChangesAsync();
-
-                IsSendingFeedback = false;
-
-                // show snack bar
-                _appService.ShowSnackBar(message: "Thanks for your feedback! We’ll use it to make improvements.", position:"bottom-left",severity:"normal");
-
-            }
-
-            else
-            {
-                IsSendingFeedback = false;
-                // show snack bar
-                _appService.ShowSnackBar(message:"Sorry, we encountered an issue while processing your feedback. Please try again.", severity:"error");
-
-            }
-
-        }
+        
     }
 }
