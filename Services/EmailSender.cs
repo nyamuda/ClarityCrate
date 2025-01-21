@@ -15,7 +15,7 @@ namespace Clarity_Crate.Services
             {
                 var messageToSend = new MimeMessage();
                 messageToSend.From.Add(new MailboxAddress("Clarity Crate", "cratecrarity@gmail.com"));
-                messageToSend.To.Add(new MailboxAddress(email, "ptnrlab@gmail.com"));
+                messageToSend.To.Add(new MailboxAddress(email, email));
                 messageToSend.Subject = subject;
 
 
